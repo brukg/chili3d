@@ -17,3 +17,4 @@ export * from "./sew";
 export * from "./simplify";
 export * from "./split";
 export * from "./trim";
+export * from "./variableFillet";
