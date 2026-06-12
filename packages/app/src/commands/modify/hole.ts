@@ -22,11 +22,11 @@ import { MultistepCommand } from "../multistepCommand";
 })
 export class HoleCommand extends MultistepCommand {
     @property("circle.radius")
-    get diameter() {
-        return this.getPrivateValue("diameter", 6);
+    get radius() {
+        return this.getPrivateValue("radius", 3);
     }
-    set diameter(value: number) {
-        this.setProperty("diameter", value);
+    set radius(value: number) {
+        this.setProperty("radius", value);
     }
 
     @property("common.length")
@@ -54,22 +54,12 @@ export class HoleCommand extends MultistepCommand {
             // Work in world space: transform the local solid + face by the node transform.
             const worldSolid: IShape = node.shape.value.transformedMul(node.transform);
             const worldFace = selected.shape.transformedMul(node.transform) as IFace;
-            const [, normal] = worldFace.normal(0, 0);
+            const [, normal] = worldFace.normal(0.5, 0.5);
 
             const location = this.stepDatas[1].point!;
             const direction = normal.multiply(-1); // drill inward, opposite the outward face normal
 
-            const holed = shapeFactory.makeHole(
-                worldSolid,
-                location,
-                direction,
-                this.diameter / 2,
-                this.depth,
-            );
-            if (!holed.isOk) {
-                return;
-            }
-
+            const holed = shapeFactory.makeHole(worldSolid, location, direction, this.radius, this.depth);
             const model = new EditableShapeNode({
                 document: this.document,
                 name: node.name,
