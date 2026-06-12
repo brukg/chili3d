@@ -559,11 +559,13 @@ public:
         }
 
         TopoDS_Shape result = makeFillet.Shape();
+        // BRepFilletAPI_MakeFillet returns a compound; extract the solid so callers get a solid back.
         if (result.ShapeType() == TopAbs_COMPOUND) {
             TopExp_Explorer ex(result, TopAbs_SOLID);
-            if (ex.More()) {
-                result = ex.Current();
+            if (!ex.More()) {
+                return ShapeResult { TopoDS_Shape(), false, "Variable fillet produced no solid" };
             }
+            result = ex.Current();
         }
         return ShapeResult { result, true, "" };
     }
@@ -582,12 +584,13 @@ public:
             return ShapeResult { TopoDS_Shape(), false, "Failed to build hole" };
         }
         TopoDS_Shape result = hole.Shape();
-        // BOPAlgo returns a compound; extract the first solid so callers get a solid back.
+        // BRepFeat_MakeCylindricalHole returns a compound; extract the solid so callers get a solid back.
         if (result.ShapeType() == TopAbs_COMPOUND) {
             TopExp_Explorer ex(result, TopAbs_SOLID);
-            if (ex.More()) {
-                result = ex.Current();
+            if (!ex.More()) {
+                return ShapeResult { TopoDS_Shape(), false, "Hole produced no solid" };
             }
+            result = ex.Current();
         }
         return ShapeResult { result, true, "" };
     }
