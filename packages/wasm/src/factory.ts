@@ -130,6 +130,13 @@ export class ShapeFactory implements IShapeFactory {
         return Result.err("Not OccShape");
     }
 
+    fillSurface(edges: IEdge[]): Result<IShape> {
+        if (edges.length === 0) {
+            return Result.err("The edges is empty.");
+        }
+        return convertShapeResult(wasm.ShapeFactory.fillSurface(ensureOccShape(edges)));
+    }
+
     makeHole(
         shape: IShape,
         location: XYZLike,

@@ -56,6 +56,7 @@ export interface IShapeFactory {
         neutralOrigin: XYZLike,
         neutralNormal: XYZLike,
     ): Result<IShape>;
+    fillSurface(edges: IEdge[]): Result<IShape>;
     makeHole(
         shape: IShape,
         location: XYZLike,
