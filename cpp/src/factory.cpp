@@ -40,6 +40,7 @@
 #include <ShapeFix_FixSmallFace.hxx>
 #include <ShapeFix_Shape.hxx>
 #include <ShapeUpgrade_UnifySameDomain.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <gp_Ax2.hxx>
@@ -549,7 +550,19 @@ public:
         if (hole.Status() != BRepFeat_NoError) {
             return ShapeResult { TopoDS_Shape(), false, "Failed to make hole" };
         }
-        return ShapeResult { hole.Shape(), true, "" };
+        hole.Build();
+        if (hole.Status() != BRepFeat_NoError) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to build hole" };
+        }
+        TopoDS_Shape result = hole.Shape();
+        // BOPAlgo returns a compound; extract the first solid so callers get a solid back.
+        if (result.ShapeType() == TopAbs_COMPOUND) {
+            TopExp_Explorer ex(result, TopAbs_SOLID);
+            if (ex.More()) {
+                result = ex.Current();
+            }
+        }
+        return ShapeResult { result, true, "" };
     }
 
     static ShapeResult chamfer(const TopoDS_Shape& shape, const NumberArray& edges, double distance)
