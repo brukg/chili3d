@@ -23,6 +23,7 @@
 #include <BRepFeat_Status.hxx>
 #include <BRepFilletAPI_MakeChamfer.hxx>
 #include <BRepFilletAPI_MakeFillet.hxx>
+#include <BRepOffsetAPI_DraftAngle.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
 #include <BRepOffsetAPI_MakePipeShell.hxx>
 #include <BRepOffsetAPI_MakeThickSolid.hxx>
@@ -591,6 +592,30 @@ public:
         return ShapeResult { result, true, "" };
     }
 
+    static ShapeResult draftAngle(const TopoDS_Shape& shape, const NumberArray& faces, const Vector3& direction, double angle, const Vector3& neutralOrigin, const Vector3& neutralNormal)
+    {
+        std::vector<int> faceVec = vecFromJSArray<int>(faces);
+
+        NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher> faceMap;
+        TopExp::MapShapes(shape, TopAbs_FACE, faceMap);
+
+        BRepOffsetAPI_DraftAngle draft(shape);
+        gp_Dir dir = Vector3::toDir(direction);
+        gp_Pln neutral(Vector3::toPnt(neutralOrigin), Vector3::toDir(neutralNormal));
+        for (auto f : faceVec) {
+            draft.Add(TopoDS::Face(faceMap.FindKey(f + 1)), dir, angle, neutral);
+            if (!draft.AddDone()) {
+                return ShapeResult { TopoDS_Shape(), false, "Failed to add draft to face" };
+            }
+        }
+        draft.Build();
+        if (!draft.IsDone()) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to draft" };
+        }
+
+        return ShapeResult { draft.Shape(), true, "" };
+    }
+
     static ShapeResult chamfer(const TopoDS_Shape& shape, const NumberArray& edges, double distance)
     {
         std::vector<int> edgeVec = vecFromJSArray<int>(edges);
@@ -703,6 +728,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("combine", &ShapeFactory::combine)
         .class_function("fillet", &ShapeFactory::fillet)
         .class_function("variableFillet", &ShapeFactory::variableFillet)
+        .class_function("draftAngle", &ShapeFactory::draftAngle)
         .class_function("makeHole", &ShapeFactory::makeHole)
         .class_function("chamfer", &ShapeFactory::chamfer)
         .class_function("fixShape", &ShapeFactory::fixShape)
