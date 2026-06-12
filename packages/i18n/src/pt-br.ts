@@ -67,6 +67,7 @@ export default {
         "command.file.export": "Exportar",
         "command.file.import": "Importar",
         "command.modify.draft": "Inclinação",
+        "command.modify.fillSurface": "Preencher Superfície",
         "command.modify.hole": "Furo",
         "command.modify.variableFillet": "Filete Variável",
         "prompt.pickHoleLocation": "Selecione a posição do furo",

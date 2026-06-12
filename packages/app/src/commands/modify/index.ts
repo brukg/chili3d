@@ -8,6 +8,7 @@ export * from "./chamfer";
 export * from "./draft";
 export * from "./explode";
 export * from "./fillet";
+export * from "./fillSurface";
 export * from "./hole";
 export * from "./mirror";
 export * from "./move";

@@ -99,6 +99,7 @@ export const I18N_KEYS = [
     "command.modify.deleteNode",
     "command.modify.explode",
     "command.modify.fillet",
+    "command.modify.fillSurface",
     "command.modify.variableFillet",
     "command.modify.hole",
     "command.modify.mirror",

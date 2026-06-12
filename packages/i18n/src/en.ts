@@ -104,6 +104,7 @@ export default {
         "command.modify.deleteNode": "Delete Node",
         "command.modify.explode": "Explode",
         "command.modify.fillet": "Fillet",
+        "command.modify.fillSurface": "Fill Surface",
         "command.modify.variableFillet": "Variable Fillet",
         "command.modify.hole": "Hole",
         "command.modify.mirror": "Mirror",

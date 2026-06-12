@@ -44,6 +44,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         "modify.fillet",
                         "modify.variableFillet",
                         "modify.draft",
+                        "modify.fillSurface",
                         "modify.chamfer",
                         "modify.hole",
                         "modify.explode",

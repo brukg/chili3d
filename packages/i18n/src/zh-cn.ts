@@ -104,6 +104,7 @@ export default {
         "command.modify.deleteNode": "删除",
         "command.modify.explode": "分解",
         "command.modify.fillet": "圆角",
+        "command.modify.fillSurface": "填充曲面",
         "command.modify.variableFillet": "变半径圆角",
         "command.modify.hole": "孔",
         "command.modify.mirror": "镜像",
