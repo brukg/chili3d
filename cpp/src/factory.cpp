@@ -557,7 +557,14 @@ public:
             return ShapeResult { TopoDS_Shape(), false, "Failed to variable fillet" };
         }
 
-        return ShapeResult { makeFillet.Shape(), true, "" };
+        TopoDS_Shape result = makeFillet.Shape();
+        if (result.ShapeType() == TopAbs_COMPOUND) {
+            TopExp_Explorer ex(result, TopAbs_SOLID);
+            if (ex.More()) {
+                result = ex.Current();
+            }
+        }
+        return ShapeResult { result, true, "" };
     }
 
     static ShapeResult makeHole(const TopoDS_Shape& base, const Vector3& location, const Vector3& direction, double radius, double depth)

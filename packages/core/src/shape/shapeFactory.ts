@@ -47,6 +47,7 @@ export interface IShapeFactory {
     makeThickSolidBySimple(shape: IShape, thickness: number): Result<IShape>;
     makeThickSolidByJoin(shape: IShape, closingFaces: IShape[], thickness: number): Result<IShape>;
     fillet(shape: IShape, edges: number[], radius: number): Result<IShape>;
+    variableFillet(shape: IShape, edges: number[], radius1: number, radius2: number): Result<IShape>;
     makeHole(
         shape: IShape,
         location: XYZLike,

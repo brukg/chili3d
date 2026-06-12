@@ -589,6 +589,7 @@ interface EmbindModule {
     polygon(_0: Array<Vector3>): ShapeResult;
     bezier(_0: Array<Vector3>, _1: Array<number>): ShapeResult;
     fillet(_0: TopoDS_Shape, _1: Array<number>, _2: number): ShapeResult;
+    variableFillet(_0: TopoDS_Shape, _1: Array<number>, _2: number, _3: number): ShapeResult;
     chamfer(_0: TopoDS_Shape, _1: Array<number>, _2: number): ShapeResult;
     sweep(_0: Array<TopoDS_Shape>, _1: TopoDS_Wire, _2: boolean, _3: boolean): ShapeResult;
     makeThickSolidByJoin(_0: TopoDS_Shape, _1: Array<TopoDS_Shape>, _2: number): ShapeResult;

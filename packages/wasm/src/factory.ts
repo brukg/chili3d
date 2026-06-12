@@ -91,6 +91,19 @@ export class ShapeFactory implements IShapeFactory {
         return Result.err("Not OccShape");
     }
 
+    variableFillet(shape: IShape, edges: number[], radius1: number, radius2: number): Result<IShape> {
+        if (radius1 < Precision.Distance || radius2 < Precision.Distance) {
+            return Result.err("The radius is too small.");
+        }
+        if (edges.length === 0) {
+            return Result.err("The edges is empty.");
+        }
+        if (shape instanceof OccShape) {
+            return convertShapeResult(wasm.ShapeFactory.variableFillet(shape.shape, edges, radius1, radius2));
+        }
+        return Result.err("Not OccShape");
+    }
+
     makeHole(
         shape: IShape,
         location: XYZLike,
