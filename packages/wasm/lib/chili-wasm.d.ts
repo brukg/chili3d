@@ -600,6 +600,7 @@ interface EmbindModule {
     combine(_0: Array<TopoDS_Shape>): ShapeResult;
     loft(_0: Array<TopoDS_Shape>, _1: boolean, _2: boolean, _3: GeomAbs_Shape): ShapeResult;
     wire(_0: Array<TopoDS_Edge>): ShapeResult;
+    fillSurface(_0: Array<TopoDS_Edge>): ShapeResult;
     shell(_0: Array<TopoDS_Face>): ShapeResult;
     face(_0: Array<TopoDS_Wire>): ShapeResult;
     solid(_0: Array<TopoDS_Shell>): ShapeResult;

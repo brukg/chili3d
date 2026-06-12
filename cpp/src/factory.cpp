@@ -24,6 +24,8 @@
 #include <BRepFilletAPI_MakeChamfer.hxx>
 #include <BRepFilletAPI_MakeFillet.hxx>
 #include <BRepOffsetAPI_DraftAngle.hxx>
+#include <BRepOffsetAPI_MakeFilling.hxx>
+#include <GeomAbs_Shape.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
 #include <BRepOffsetAPI_MakePipeShell.hxx>
 #include <BRepOffsetAPI_MakeThickSolid.hxx>
@@ -619,6 +621,33 @@ public:
         return ShapeResult { draft.Shape(), true, "" };
     }
 
+    static ShapeResult fillSurface(const EdgeArray& edges)
+    {
+        std::vector<TopoDS_Edge> edgeVec = vecFromJSArray<TopoDS_Edge>(edges);
+        if (edgeVec.size() == 0) {
+            return ShapeResult { TopoDS_Shape(), false, "No edges provided" };
+        }
+
+        BRepOffsetAPI_MakeFilling filling;
+        for (auto& edge : edgeVec) {
+            filling.Add(edge, GeomAbs_C0);
+        }
+        filling.Build();
+        if (!filling.IsDone()) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to fill surface" };
+        }
+
+        TopoDS_Shape result = filling.Shape();
+        if (result.ShapeType() != TopAbs_FACE) {
+            TopExp_Explorer ex(result, TopAbs_FACE);
+            if (!ex.More()) {
+                return ShapeResult { TopoDS_Shape(), false, "Fill produced no face" };
+            }
+            result = ex.Current();
+        }
+        return ShapeResult { result, true, "" };
+    }
+
     static ShapeResult chamfer(const TopoDS_Shape& shape, const NumberArray& edges, double distance)
     {
         std::vector<int> edgeVec = vecFromJSArray<int>(edges);
@@ -732,6 +761,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("fillet", &ShapeFactory::fillet)
         .class_function("variableFillet", &ShapeFactory::variableFillet)
         .class_function("draftAngle", &ShapeFactory::draftAngle)
+        .class_function("fillSurface", &ShapeFactory::fillSurface)
         .class_function("makeHole", &ShapeFactory::makeHole)
         .class_function("chamfer", &ShapeFactory::chamfer)
         .class_function("fixShape", &ShapeFactory::fixShape)
