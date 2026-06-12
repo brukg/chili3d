@@ -47,6 +47,13 @@ export interface IShapeFactory {
     makeThickSolidBySimple(shape: IShape, thickness: number): Result<IShape>;
     makeThickSolidByJoin(shape: IShape, closingFaces: IShape[], thickness: number): Result<IShape>;
     fillet(shape: IShape, edges: number[], radius: number): Result<IShape>;
+    makeHole(
+        shape: IShape,
+        location: XYZLike,
+        direction: XYZLike,
+        radius: number,
+        depth: number,
+    ): Result<IShape>;
     chamfer(shape: IShape, edges: number[], distance: number): Result<IShape>;
     loft(
         sections: (IVertex | IEdge | IWire)[],

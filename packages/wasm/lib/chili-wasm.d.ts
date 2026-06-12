@@ -613,6 +613,7 @@ interface EmbindModule {
     arc(_0: Vector3, _1: Vector3, _2: Vector3, _3: number): ShapeResult;
     point(_0: Vector3): ShapeResult;
     line(_0: Vector3, _1: Vector3): ShapeResult;
+    makeHole(_0: TopoDS_Shape, _1: Vector3, _2: Vector3, _3: number, _4: number): ShapeResult;
     revolve(_0: TopoDS_Shape, _1: Ax1, _2: number): ShapeResult;
     box(_0: Pln, _1: number, _2: number, _3: number): ShapeResult;
     pyramid(_0: Pln, _1: number, _2: number, _3: number): ShapeResult;

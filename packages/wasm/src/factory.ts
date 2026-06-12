@@ -91,6 +91,27 @@ export class ShapeFactory implements IShapeFactory {
         return Result.err("Not OccShape");
     }
 
+    makeHole(
+        shape: IShape,
+        location: XYZLike,
+        direction: XYZLike,
+        radius: number,
+        depth: number,
+    ): Result<IShape> {
+        if (radius < Precision.Distance) {
+            return Result.err("The radius is too small.");
+        }
+        if (depth < Precision.Distance) {
+            return Result.err("The depth is too small.");
+        }
+        if (shape instanceof OccShape) {
+            return convertShapeResult(
+                wasm.ShapeFactory.makeHole(shape.shape, location, direction, radius, depth),
+            );
+        }
+        return Result.err("Not OccShape");
+    }
+
     chamfer(shape: IShape, edges: number[], distance: number): Result<IShape> {
         if (distance < Precision.Distance) {
             return Result.err("The distance is too small.");

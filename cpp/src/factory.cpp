@@ -18,7 +18,9 @@
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
+#include <BRepFeat_MakeCylindricalHole.hxx>
 #include <BRepFeat_MakePrism.hxx>
+#include <BRepFeat_Status.hxx>
 #include <BRepFilletAPI_MakeChamfer.hxx>
 #include <BRepFilletAPI_MakeFillet.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
@@ -538,6 +540,18 @@ public:
         return ShapeResult { makeFillet.Shape(), true, "" };
     }
 
+    static ShapeResult makeHole(const TopoDS_Shape& base, const Vector3& location, const Vector3& direction, double radius, double depth)
+    {
+        gp_Ax1 axis(Vector3::toPnt(location), Vector3::toDir(direction));
+        BRepFeat_MakeCylindricalHole hole;
+        hole.Init(base, axis);
+        hole.PerformBlind(radius, depth);
+        if (hole.Status() != BRepFeat_NoError) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to make hole" };
+        }
+        return ShapeResult { hole.Shape(), true, "" };
+    }
+
     static ShapeResult chamfer(const TopoDS_Shape& shape, const NumberArray& edges, double distance)
     {
         std::vector<int> edgeVec = vecFromJSArray<int>(edges);
@@ -649,6 +663,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("booleanFuse", &ShapeFactory::booleanFuse)
         .class_function("combine", &ShapeFactory::combine)
         .class_function("fillet", &ShapeFactory::fillet)
+        .class_function("makeHole", &ShapeFactory::makeHole)
         .class_function("chamfer", &ShapeFactory::chamfer)
         .class_function("fixShape", &ShapeFactory::fixShape)
         .class_function("fixSmallFace", &ShapeFactory::fixSmallFace)
