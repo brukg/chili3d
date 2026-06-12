@@ -541,6 +541,25 @@ public:
         return ShapeResult { makeFillet.Shape(), true, "" };
     }
 
+    static ShapeResult variableFillet(const TopoDS_Shape& shape, const NumberArray& edges, double radius1, double radius2)
+    {
+        std::vector<int> edgeVec = vecFromJSArray<int>(edges);
+
+        NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher> edgeMap;
+        TopExp::MapShapes(shape, TopAbs_EDGE, edgeMap);
+
+        BRepFilletAPI_MakeFillet makeFillet(shape);
+        for (auto edge : edgeVec) {
+            makeFillet.Add(radius1, radius2, TopoDS::Edge(edgeMap.FindKey(edge + 1)));
+        }
+        makeFillet.Build();
+        if (!makeFillet.IsDone()) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to variable fillet" };
+        }
+
+        return ShapeResult { makeFillet.Shape(), true, "" };
+    }
+
     static ShapeResult makeHole(const TopoDS_Shape& base, const Vector3& location, const Vector3& direction, double radius, double depth)
     {
         gp_Ax1 axis(Vector3::toPnt(location), Vector3::toDir(direction));
@@ -676,6 +695,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("booleanFuse", &ShapeFactory::booleanFuse)
         .class_function("combine", &ShapeFactory::combine)
         .class_function("fillet", &ShapeFactory::fillet)
+        .class_function("variableFillet", &ShapeFactory::variableFillet)
         .class_function("makeHole", &ShapeFactory::makeHole)
         .class_function("chamfer", &ShapeFactory::chamfer)
         .class_function("fixShape", &ShapeFactory::fixShape)
