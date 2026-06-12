@@ -7,6 +7,7 @@ import {
     type IFace,
     type IShape,
     PointStep,
+    PubSub,
     property,
     SelectShapeStep,
     type ShapeNode,
@@ -60,6 +61,13 @@ export class HoleCommand extends MultistepCommand {
             const direction = normal.multiply(-1); // drill inward, opposite the outward face normal
 
             const holed = shapeFactory.makeHole(worldSolid, location, direction, this.radius, this.depth);
+            if (!holed.isOk) {
+                // EditableShapeNode's constructor assigns the shape directly (bypassing the
+                // setShape error path), so guard here to surface the failure and keep the
+                // original solid instead of silently replacing it with an empty node.
+                PubSub.default.pub("displayError", holed.error);
+                return;
+            }
             const model = new EditableShapeNode({
                 document: this.document,
                 name: node.name,
