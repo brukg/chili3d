@@ -43,6 +43,8 @@ export default {
         "box.dz": "Height",
         "circle.center": "Center",
         "circle.radius": "Radius",
+        "fillet.endRadius": "End Radius",
+        "fillet.startRadius": "Start Radius",
         "command.act.alignCamera": "Align Camera",
         "command.boolean.common": "Intersect",
         "command.boolean.cut": "Cut",

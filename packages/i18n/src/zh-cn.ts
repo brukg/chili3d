@@ -43,6 +43,8 @@ export default {
         "box.dz": "高",
         "circle.center": "圆心",
         "circle.radius": "半径",
+        "fillet.endRadius": "结束半径",
+        "fillet.startRadius": "起始半径",
         "command.act.alignCamera": "从相机创建",
         "command.boolean.common": "交集",
         "command.boolean.cut": "减去",

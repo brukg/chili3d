@@ -28,6 +28,8 @@ export default {
         "box.dz": "Altura",
         "circle.center": "Centro",
         "circle.radius": "Raio",
+        "fillet.endRadius": "Raio Final",
+        "fillet.startRadius": "Raio Inicial",
         "command.act.alignCamera": "Alinhar Câmera",
         "command.boolean.common": "Interseção",
         "command.boolean.cut": "Cortar",

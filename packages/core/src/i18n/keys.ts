@@ -38,6 +38,8 @@ export const I18N_KEYS = [
     "box.dz",
     "circle.center",
     "circle.radius",
+    "fillet.endRadius",
+    "fillet.startRadius",
     "command.act.alignCamera",
     "command.boolean.common",
     "command.boolean.cut",

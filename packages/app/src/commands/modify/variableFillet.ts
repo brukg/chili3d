@@ -20,7 +20,7 @@ import { MultistepCommand } from "../multistepCommand";
     icon: "icon-fillet",
 })
 export class VariableFilletCommand extends MultistepCommand {
-    @property("common.length")
+    @property("fillet.startRadius")
     get radius1() {
         return this.getPrivateValue("radius1", 5);
     }
@@ -28,7 +28,7 @@ export class VariableFilletCommand extends MultistepCommand {
         this.setProperty("radius1", value);
     }
 
-    @property("common.length")
+    @property("fillet.endRadius")
     get radius2() {
         return this.getPrivateValue("radius2", 15);
     }
