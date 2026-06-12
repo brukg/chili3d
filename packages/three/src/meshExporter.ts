@@ -3,6 +3,7 @@
 
 import { type IMeshExporter, Result, type VisualNode } from "@chili3d/core";
 import { Group, Mesh, Object3D } from "three";
+import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
 import { OBJExporter } from "three/examples/jsm/exporters/OBJExporter.js";
 import { PLYExporter } from "three/examples/jsm/exporters/PLYExporter.js";
 import { STLExporter } from "three/examples/jsm/exporters/STLExporter.js";
@@ -38,6 +39,21 @@ export class ThreeMeshExporter implements IMeshExporter {
         const blobPart = exporter.parse(group);
         this.disposeObject(group);
         return Result.ok(blobPart);
+    }
+
+    async exportToGltf(nodes: VisualNode[], binary: boolean): Promise<Result<BlobPart>> {
+        const exporter = new GLTFExporter();
+        const group = this.parseNodeToGroup(nodes);
+        try {
+            const result = await exporter.parseAsync(group, { binary });
+            return Result.ok(
+                binary ? (result as ArrayBuffer as BlobPart) : (JSON.stringify(result) as BlobPart),
+            );
+        } catch (e) {
+            return Result.err(`can not export to gltf: ${e}`);
+        } finally {
+            this.disposeObject(group);
+        }
     }
 
     private disposeObject(object: Object3D) {

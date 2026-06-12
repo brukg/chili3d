@@ -8,4 +8,5 @@ export interface IMeshExporter {
     exportToStl(node: VisualNode[], asciiMode: boolean): Result<BlobPart>;
     exportToPly(node: VisualNode[], asciiMode: boolean): Result<BlobPart>;
     exportToObj(node: VisualNode[]): Result<BlobPart>;
+    exportToGltf(node: VisualNode[], binary: boolean): Promise<Result<BlobPart>>;
 }

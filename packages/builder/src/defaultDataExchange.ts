@@ -20,7 +20,18 @@ export class DefaultDataExchange implements IDataExchange {
     }
 
     exportFormats(): string[] {
-        return [".step", ".iges", ".brep", ".stl", ".stl binary", ".ply", ".ply binary", ".obj"];
+        return [
+            ".step",
+            ".iges",
+            ".brep",
+            ".stl",
+            ".stl binary",
+            ".ply",
+            ".ply binary",
+            ".obj",
+            ".gltf",
+            ".glb",
+        ];
     }
 
     async import(document: IDocument, files: FileList | File[]): Promise<void> {
@@ -96,6 +107,10 @@ export class DefaultDataExchange implements IDataExchange {
             shapeResult = document.visual.meshExporter.exportToPly(nodes, false);
         } else if (type === ".obj") {
             shapeResult = document.visual.meshExporter.exportToObj(nodes);
+        } else if (type === ".gltf") {
+            shapeResult = await document.visual.meshExporter.exportToGltf(nodes, false);
+        } else if (type === ".glb") {
+            shapeResult = await document.visual.meshExporter.exportToGltf(nodes, true);
         } else {
             const shapes = this.getExportShapes(nodes);
             if (!shapes.length) return undefined;
