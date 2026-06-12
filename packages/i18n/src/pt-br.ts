@@ -64,5 +64,7 @@ export default {
         "command.edit.undo": "Desfazer",
         "command.file.export": "Exportar",
         "command.file.import": "Importar",
+        "command.modify.hole": "Furo",
+        "prompt.pickHoleLocation": "Selecione a posição do furo",
     },
 } satisfies Locale;

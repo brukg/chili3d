@@ -40,12 +40,10 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     ["modify.move", "modify.rotate", "modify.mirror"],
                     ["modify.array", "modify.trim", "modify.sew"],
                     ["modify.split", "modify.break", "modify.simplifyShape"],
-                    ["modify.fillet", "modify.chamfer", "modify.explode"],
-                    ["modify.deleteNode", "modify.removeShapes", "modify.removeFeature"]
+                    ["modify.fillet", "modify.chamfer", "modify.hole", "modify.explode"],
+                    ["modify.deleteNode", "modify.removeShapes", "modify.removeFeature"],
                 ],
-                collapsedItems: [
-                    "modify.brushAdd", "modify.brushRemove", "modify.brushClear"
-                ]
+                collapsedItems: ["modify.brushAdd", "modify.brushRemove", "modify.brushClear"],
             },
             {
                 groupName: "ribbon.group.converter",

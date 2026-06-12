@@ -7,6 +7,7 @@ export * from "./brush";
 export * from "./chamfer";
 export * from "./explode";
 export * from "./fillet";
+export * from "./hole";
 export * from "./mirror";
 export * from "./move";
 export * from "./removeFeature";
