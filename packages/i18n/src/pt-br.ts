@@ -66,8 +66,10 @@ export default {
         "command.edit.undo": "Desfazer",
         "command.file.export": "Exportar",
         "command.file.import": "Importar",
+        "command.modify.draft": "Inclinação",
         "command.modify.hole": "Furo",
         "command.modify.variableFillet": "Filete Variável",
         "prompt.pickHoleLocation": "Selecione a posição do furo",
+        "prompt.select.neutralFace": "Selecione a face do plano neutro",
     },
 } satisfies Locale;
