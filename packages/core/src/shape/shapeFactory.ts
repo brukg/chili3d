@@ -48,6 +48,14 @@ export interface IShapeFactory {
     makeThickSolidByJoin(shape: IShape, closingFaces: IShape[], thickness: number): Result<IShape>;
     fillet(shape: IShape, edges: number[], radius: number): Result<IShape>;
     variableFillet(shape: IShape, edges: number[], radius1: number, radius2: number): Result<IShape>;
+    draftAngle(
+        shape: IShape,
+        faces: number[],
+        direction: XYZLike,
+        angle: number,
+        neutralOrigin: XYZLike,
+        neutralNormal: XYZLike,
+    ): Result<IShape>;
     makeHole(
         shape: IShape,
         location: XYZLike,

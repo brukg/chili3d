@@ -104,6 +104,32 @@ export class ShapeFactory implements IShapeFactory {
         return Result.err("Not OccShape");
     }
 
+    draftAngle(
+        shape: IShape,
+        faces: number[],
+        direction: XYZLike,
+        angle: number,
+        neutralOrigin: XYZLike,
+        neutralNormal: XYZLike,
+    ): Result<IShape> {
+        if (faces.length === 0) {
+            return Result.err("The faces is empty.");
+        }
+        if (shape instanceof OccShape) {
+            return convertShapeResult(
+                wasm.ShapeFactory.draftAngle(
+                    shape.shape,
+                    faces,
+                    direction,
+                    angle,
+                    neutralOrigin,
+                    neutralNormal,
+                ),
+            );
+        }
+        return Result.err("Not OccShape");
+    }
+
     makeHole(
         shape: IShape,
         location: XYZLike,
