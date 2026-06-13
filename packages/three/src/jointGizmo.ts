@@ -54,8 +54,21 @@ export class JointGizmo implements IDisposable {
         this.controls.attach(this.proxy);
         this.controls.addEventListener("objectChange", this.onObjectChange);
         this.controls.addEventListener("dragging-changed", this.onDraggingChanged);
+        // When the pointer is over a gizmo handle (controls.axis is set during hover),
+        // stop the pointerdown from bubbling to chili3d's Viewport handler — otherwise the
+        // selection handler treats it as an empty-space click, deselects the joint, and
+        // disposes this gizmo before the drag can start. Registered AFTER TransformControls'
+        // own canvas listener so `axis` is already updated when this runs.
+        this.view.renderer.domElement.addEventListener("pointerdown", this.stopWhenOverGizmo);
         this.view.update();
+        console.log("[JointGizmo] created:", this.joint.jointType, "enabled:", this.controls.enabled);
     }
+
+    private readonly stopWhenOverGizmo = (event: Event) => {
+        if (this.controls.axis) {
+            event.stopPropagation();
+        }
+    };
 
     // Rest world frame = parentWorld · origin, where parentWorld = jointWorld · jointLocal⁻¹
     // and jointLocal = origin · dof (so jointWorld · jointLocal⁻¹ · origin = parentWorld · origin).
@@ -93,6 +106,7 @@ export class JointGizmo implements IDisposable {
     }
 
     private readonly onDraggingChanged = (event: { value: unknown }) => {
+        console.log("[JointGizmo] dragging-changed:", event.value);
         this.dragging = event.value === true;
         // Suspend chili3d's own pointer handlers while dragging the gizmo so the camera
         // doesn't orbit and selection doesn't change mid-drag.
@@ -103,6 +117,7 @@ export class JointGizmo implements IDisposable {
     };
 
     private readonly onObjectChange = () => {
+        console.log("[JointGizmo] objectChange, dragging:", this.dragging);
         if (!this.dragging) return;
         this.proxy.updateMatrix();
         const dof = ThreeHelper.toMatrix(this.proxy.matrix); // proxy LOCAL transform = canonical-Z DOF
@@ -111,6 +126,7 @@ export class JointGizmo implements IDisposable {
     };
 
     dispose(): void {
+        this.view.renderer.domElement.removeEventListener("pointerdown", this.stopWhenOverGizmo);
         this.controls.removeEventListener("objectChange", this.onObjectChange);
         this.controls.removeEventListener("dragging-changed", this.onDraggingChanged);
         this.controls.detach();
