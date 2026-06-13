@@ -26,6 +26,7 @@ export class JointGizmo implements IDisposable {
     private readonly proxy = new Object3D();
     private readonly controls: TransformControls;
     private dragging = false;
+    private readonly dom: HTMLElement;
 
     constructor(
         private readonly view: ThreeView,
@@ -36,7 +37,12 @@ export class JointGizmo implements IDisposable {
         this.syncProxyToValue();
         this.view.content.scene.add(this.frame);
 
-        this.controls = new TransformControls(this.view.camera, this.view.renderer.domElement);
+        // The WebGL canvas is covered by the CSS2DRenderer overlay (position:absolute, top:0,
+        // pointer-events:auto), so pointer events never reach the canvas — they bubble to the
+        // view container. Attach TransformControls (and our guard) to that container so it
+        // actually receives the events. Its getBoundingClientRect matches the render area.
+        this.dom = this.view.dom ?? this.view.renderer.domElement;
+        this.controls = new TransformControls(this.view.camera, this.dom);
         this.controls.setSpace("local");
         this.controls.showX = false;
         this.controls.showY = false;
@@ -59,9 +65,8 @@ export class JointGizmo implements IDisposable {
         // selection handler treats it as an empty-space click, deselects the joint, and
         // disposes this gizmo before the drag can start. Registered AFTER TransformControls'
         // own canvas listener so `axis` is already updated when this runs.
-        this.view.renderer.domElement.addEventListener("pointerdown", this.stopWhenOverGizmo);
+        this.dom.addEventListener("pointerdown", this.stopWhenOverGizmo);
         this.view.update();
-        console.log("[JointGizmo] created:", this.joint.jointType, "enabled:", this.controls.enabled);
     }
 
     private readonly stopWhenOverGizmo = (event: Event) => {
@@ -126,7 +131,7 @@ export class JointGizmo implements IDisposable {
     };
 
     dispose(): void {
-        this.view.renderer.domElement.removeEventListener("pointerdown", this.stopWhenOverGizmo);
+        this.dom.removeEventListener("pointerdown", this.stopWhenOverGizmo);
         this.controls.removeEventListener("objectChange", this.onObjectChange);
         this.controls.removeEventListener("dragging-changed", this.onDraggingChanged);
         this.controls.detach();
