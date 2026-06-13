@@ -95,6 +95,7 @@ export const I18N_KEYS = [
     "command.modify.brushClear",
     "command.modify.brushRemove",
     "command.modify.chamfer",
+    "command.modify.createJoint",
     "command.modify.draft",
     "command.modify.deleteNode",
     "command.modify.explode",

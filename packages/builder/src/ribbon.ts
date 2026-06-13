@@ -48,6 +48,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         "modify.chamfer",
                         "modify.hole",
                         "modify.explode",
+                        "modify.createJoint",
                     ],
                     ["modify.deleteNode", "modify.removeShapes", "modify.removeFeature"],
                 ],
