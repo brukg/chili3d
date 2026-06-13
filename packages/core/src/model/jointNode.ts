@@ -92,6 +92,14 @@ export class JointNode extends GroupNode {
         this.updateTransform();
     }
 
+    // `transform` (inherited from GroupNode) is DERIVED state: the joint's parameters
+    // (origin, jointType, axis, value) are the single source of truth, and this is the
+    // ONLY writer of `transform` — every parameter setter routes through here. It is
+    // written (rather than computed on read) so the "transform" property-change event
+    // drives the viewport's transform sync (threeVisualObject), and serialized so the
+    // loaded frame matches the inputs without a post-deserialize recompute hook (the
+    // serializer restores fields via setPrivateValue, which does not re-run setters).
+    // Invariant: never assign `transform` directly on a JointNode — actuate via `value`.
     private updateTransform() {
         this.transform = this.origin.multiply(this.dofMatrix());
     }
