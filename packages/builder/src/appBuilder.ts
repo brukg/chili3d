@@ -14,7 +14,7 @@ import {
     type IVisualFactory,
     type IWindow,
     type Locale,
-    Logger
+    Logger,
 } from "@chili3d/core";
 import { DefaultDataExchange } from "./defaultDataExchange";
 
@@ -87,6 +87,7 @@ export class AppBuilder {
 
             const three = await import("@chili3d/three");
             this._visualFactory = new three.ThreeVisulFactory((d) => new ShowPropertyEventHandler(d));
+            new three.JointGizmoController();
         });
         return this;
     }
@@ -167,9 +168,6 @@ export class AppBuilder {
     }
 
     protected getServices(): IService[] {
-        return [
-            new CommandService(),
-            new HotkeyService(),
-        ];
+        return [new CommandService(), new HotkeyService()];
     }
 }
