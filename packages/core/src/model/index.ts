@@ -6,6 +6,7 @@ export * from "./facebaseNode";
 export * from "./folderNode";
 export * from "./geometryNode";
 export * from "./groupNode";
+export * from "./jointNode";
 export * from "./meshNode";
 export * from "./node";
 export * from "./shapeNode";
