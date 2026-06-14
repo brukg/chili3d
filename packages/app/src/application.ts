@@ -102,11 +102,24 @@ export class Application extends Observable implements IApplication {
         }
     };
 
+    // A drag carries OS files (an import) iff its dataTransfer advertises the "Files" type. Internal
+    // drags (e.g. reordering nodes in the project tree) do not, and must be left to their own widgets.
+    private static isFileDrag(ev: DragEvent): boolean {
+        return Array.from(ev.dataTransfer?.types ?? []).includes("Files");
+    }
+
     private readonly handleDragStart = (ev: DragEvent) => {
-        ev.preventDefault();
+        // Block the browser's native drag for stray content (text/image selection), but never for an
+        // in-app draggable widget — those manage their own drag (the project tree's node DnD relies on
+        // this; preventing default here would cancel the drag before it begins).
+        if (!(ev.target as HTMLElement)?.closest?.('[draggable="true"]')) {
+            ev.preventDefault();
+        }
     };
 
     private readonly handleDragOver = (ev: DragEvent) => {
+        // Only claim file-import drags; let internal drags reach the widget under the cursor.
+        if (!Application.isFileDrag(ev)) return;
         ev.stopPropagation();
         ev.preventDefault();
         if (ev.dataTransfer) {
@@ -115,6 +128,7 @@ export class Application extends Observable implements IApplication {
     };
 
     private readonly handleDrop = (ev: DragEvent) => {
+        if (!Application.isFileDrag(ev)) return;
         ev.stopPropagation();
         ev.preventDefault();
         const files = this.extractDroppedFiles(ev.dataTransfer);

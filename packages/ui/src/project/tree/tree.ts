@@ -255,6 +255,12 @@ export class Tree extends HTMLElement {
 
     private readonly onDragStart = (event: DragEvent) => {
         event.stopPropagation();
+        // Mark this as an internal node drag (not an OS file drop). Firefox refuses to start a drag
+        // unless some data is set, and the explicit type lets the app's file-import handler ignore us.
+        if (event.dataTransfer) {
+            event.dataTransfer.effectAllowed = "move";
+            event.dataTransfer.setData("application/x-chili-node", "");
+        }
         const item = this.getTreeItem(event.target as HTMLElement)?.node;
         this.dragging = NodeUtils.findTopLevelNodes(this.selectedNodes);
         if (item && !NodeUtils.containsDescendant(this.selectedNodes, item)) {
