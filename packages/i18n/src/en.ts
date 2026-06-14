@@ -19,6 +19,7 @@ export default {
         "body.linkedExtrude": "Linked Extrude",
         "body.linkedRevolve": "Linked Revolve",
         "body.linkedArray": "Linked Array",
+        "body.linkedCircularArray": "Linked Circular Array",
         "linkedArray.count": "Count",
         "linkedExtrude.distance": "Distance",
         "feature.suppressed": "Suppressed",

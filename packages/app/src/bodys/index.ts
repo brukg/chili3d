@@ -10,6 +10,7 @@ export * from "./extrude";
 export * from "./line";
 export * from "./linkedArray";
 export * from "./linkedBoolean";
+export * from "./linkedCircularArray";
 export * from "./linkedExtrude";
 export * from "./linkedRevolve";
 export * from "./linkedTransform";

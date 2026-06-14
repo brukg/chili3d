@@ -19,6 +19,7 @@ export default {
         "body.linkedExtrude": "关联拉伸",
         "body.linkedRevolve": "关联旋转",
         "body.linkedArray": "关联阵列",
+        "body.linkedCircularArray": "关联环形阵列",
         "linkedArray.count": "数量",
         "linkedExtrude.distance": "距离",
         "feature.suppressed": "抑制",

@@ -14,6 +14,7 @@ export const I18N_KEYS = [
     "body.linkedExtrude",
     "body.linkedRevolve",
     "body.linkedArray",
+    "body.linkedCircularArray",
     "linkedArray.count",
     "linkedExtrude.distance",
     "feature.suppressed",
