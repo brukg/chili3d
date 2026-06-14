@@ -213,6 +213,7 @@ export default {
         "items.tool.newFolder": "文件夹",
         "items.tool.unexpandAll": "折叠所有",
         "joint.axis": "轴",
+        "joint.pivot": "旋转点",
         "joint.lowerLimit": "下限",
         "joint.type": "关节类型",
         "joint.upperLimit": "上限",

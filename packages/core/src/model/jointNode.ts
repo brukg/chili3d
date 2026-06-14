@@ -29,6 +29,19 @@ export class JointNode extends GroupNode {
         });
     }
 
+    /** The rotation/pivot point — the origin frame's location, editable in the property panel. */
+    @property("joint.pivot")
+    get pivot(): XYZ {
+        return this.origin.translationPart();
+    }
+    set pivot(value: XYZ) {
+        const array = [...this.origin.toArray()];
+        array[12] = value.x;
+        array[13] = value.y;
+        array[14] = value.z;
+        this.origin = Matrix4.fromArray(array);
+    }
+
     @serialize()
     @property("joint.type")
     get jointType(): JointType {

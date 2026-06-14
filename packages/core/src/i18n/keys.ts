@@ -203,6 +203,7 @@ export const I18N_KEYS = [
     "home.recent",
     "home.welcome",
     "joint.axis",
+    "joint.pivot",
     "joint.lowerLimit",
     "joint.type",
     "joint.upperLimit",
