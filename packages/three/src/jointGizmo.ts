@@ -87,8 +87,10 @@ export class JointGizmo implements IDisposable {
         const jointWorld = this.jointWorldTransform();
         const inverseLocal = this.joint.transform.invert(); // (origin · dof(value))⁻¹
         if (!jointWorld || !inverseLocal) return;
-        const parentWorld = jointWorld.multiply(inverseLocal);
-        const restWorld = parentWorld.multiply(this.joint.origin);
+        // Matrix4.multiply applies `this` first, so `b.multiply(a)` yields a·b (standard product).
+        // parentWorld = jointWorld · jointLocal⁻¹ ; restWorld = parentWorld · origin.
+        const parentWorld = inverseLocal.multiply(jointWorld);
+        const restWorld = this.joint.origin.multiply(parentWorld);
 
         const pos = new Vector3();
         const quat = new Quaternion();
@@ -111,7 +113,6 @@ export class JointGizmo implements IDisposable {
     }
 
     private readonly onDraggingChanged = (event: { value: unknown }) => {
-        console.log("[JointGizmo] dragging-changed:", event.value);
         this.dragging = event.value === true;
         // Suspend chili3d's own pointer handlers while dragging the gizmo so the camera
         // doesn't orbit and selection doesn't change mid-drag.
@@ -122,7 +123,6 @@ export class JointGizmo implements IDisposable {
     };
 
     private readonly onObjectChange = () => {
-        console.log("[JointGizmo] objectChange, dragging:", this.dragging);
         if (!this.dragging) return;
         this.proxy.updateMatrix();
         const dof = ThreeHelper.toMatrix(this.proxy.matrix); // proxy LOCAL transform = canonical-Z DOF
