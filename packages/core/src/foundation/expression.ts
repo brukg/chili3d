@@ -22,6 +22,15 @@ const FUNCTIONS: Record<string, (args: number[]) => number> = {
     min: (a) => Math.min(...a),
     max: (a) => Math.max(...a),
     pow: (a) => a[0] ** a[1],
+    atan2: (a) => Math.atan2(a[0], a[1]),
+    hypot: (a) => Math.hypot(...a),
+    sign: (a) => Math.sign(a[0]),
+    trunc: (a) => Math.trunc(a[0]),
+    cbrt: (a) => Math.cbrt(a[0]),
+    log10: (a) => Math.log10(a[0]),
+    deg: (a) => (a[0] * 180) / Math.PI,
+    rad: (a) => (a[0] * Math.PI) / 180,
+    clamp: (a) => Math.min(Math.max(a[0], a[1]), a[2]),
 };
 
 type Token = { type: "num" | "id" | "op" | "lparen" | "rparen" | "comma"; value: string };

@@ -31,6 +31,15 @@ describe("evaluateExpression", () => {
         expect(ok("abs(-7)")).toBe(7);
         expect(ok("round(pi * 100)")).toBe(314);
     });
+    test("extended functions (deg/rad/hypot/clamp/atan2/sign)", () => {
+        expect(ok("deg(pi)")).toBeCloseTo(180, 9);
+        expect(ok("rad(180)")).toBeCloseTo(Math.PI, 9);
+        expect(ok("hypot(3, 4)")).toBe(5);
+        expect(ok("clamp(15, 0, 10)")).toBe(10);
+        expect(ok("clamp(-3, 0, 10)")).toBe(0);
+        expect(ok("sign(-7)")).toBe(-1);
+        expect(ok("atan2(1, 0)")).toBeCloseTo(Math.PI / 2, 9);
+    });
     test("errors: syntax, unknown id, unknown fn, div by zero", () => {
         expect(evaluateExpression("2 +", {}).isOk).toBe(false);
         expect(evaluateExpression("foo + 1", {}).isOk).toBe(false);
