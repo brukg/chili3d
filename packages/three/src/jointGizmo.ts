@@ -1,49 +1,38 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
-import { type IDisposable, type JointNode, type Matrix4, type Ray, XYZ } from "@chili3d/core";
-import {
-    BufferGeometry,
-    Float32BufferAttribute,
-    Object3D,
-    Points,
-    PointsMaterial,
-    Quaternion,
-    Vector3,
-} from "three";
+import { type IDisposable, type JointNode, type Matrix4, XYZ } from "@chili3d/core";
+import { Object3D, Quaternion, Vector3 } from "three";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 import { dofToValue, valueToDof } from "./jointGizmoMath";
 import { ThreeHelper } from "./threeHelper";
 import type { ThreeView } from "./threeView";
 
 const UNIT_Z = new Vector3(0, 0, 1);
-// Screen-pixel radius within which a click counts as grabbing the rotation-centre dot.
-const HANDLE_GRAB_PX = 14;
 
 /**
- * Handles for a single JointNode:
- *   - the rotation arc (TransformControls) actuates the joint's one DOF;
- *   - a draggable dot at the rotation centre repositions `joint.pivot`. The dot moves ONLY the centre
- *     point (it slides in the joint's rotation plane); at the rest pose this never moves the part.
+ * A 3D drag handle for actuating a single JointNode. Built on Three.js TransformControls,
+ * constrained to the joint's one DOF (rotate-about-axis for revolute/continuous, translate-
+ * along-axis for prismatic, hidden for fixed).
  *
  * Frame layout (separates world placement from the canonical-Z DOF that jointGizmoMath reads):
  *   - `frame`  — placed at the joint REST world frame (value 0), oriented so its local Z
  *                aligns with `joint.axis`.
  *   - `proxy`  — child of `frame`; its LOCAL transform is the DOF in the canonical Z frame.
+ *                TransformControls drags `proxy` in local space; `proxy.matrix` → dofToValue → value.
  */
 export class JointGizmo implements IDisposable {
     private readonly frame = new Object3D();
     private readonly proxy = new Object3D();
     private readonly controls: TransformControls;
+    // Second handle: world-aligned translate arrows at the rotation centre, driving joint.pivot.
+    private readonly pivotProxy = new Object3D();
+    private pivotControls?: TransformControls;
+    // The joint's parent world frame (invariant to actuation and pivot). Maps joint-local ⇄ world,
+    // so a pivot dragged in world space converts back to the joint's own coordinates.
+    private parentWorld?: Matrix4;
     private dragging = false;
     private readonly dom: HTMLElement;
-
-    // Rotation-centre dot and its drag state.
-    private readonly centerHandle?: Points;
-    private parentWorld?: Matrix4;
-    private centerDragging = false;
-    private dragPlanePoint?: XYZ;
-    private dragPlaneNormal?: XYZ;
 
     constructor(
         private readonly view: ThreeView,
@@ -56,7 +45,7 @@ export class JointGizmo implements IDisposable {
 
         // The WebGL canvas is covered by the CSS2DRenderer overlay (position:absolute, top:0,
         // pointer-events:auto), so pointer events never reach the canvas — they bubble to the
-        // view container. Attach TransformControls (and our guards) to that container so it
+        // view container. Attach TransformControls (and our guard) to that container so it
         // actually receives the events. Its getBoundingClientRect matches the render area.
         this.dom = this.view.dom ?? this.view.renderer.domElement;
         this.controls = new TransformControls(this.view.camera, this.dom);
@@ -71,116 +60,63 @@ export class JointGizmo implements IDisposable {
             this.controls.showZ = false;
         } else {
             this.controls.setMode("rotate");
+            // Enlarge the rotation ring so it sits well outside the compact pivot-translate handles;
+            // overlapping them at the same radius let one drag grab both (rotating + moving at once).
+            this.controls.size = 1.6;
         }
 
         this.view.content.scene.add(this.controls.getHelper());
         this.controls.attach(this.proxy);
         this.controls.addEventListener("objectChange", this.onObjectChange);
         this.controls.addEventListener("dragging-changed", this.onDraggingChanged);
-
-        // Only rotational joints have a meaningful rotation centre to reposition.
-        if (this.joint.jointType === "revolute" || this.joint.jointType === "continuous") {
-            this.centerHandle = this.createCenterHandle();
-            this.view.content.scene.add(this.centerHandle);
-        }
-
-        // Registered AFTER TransformControls' own canvas listener so `axis` is already updated.
-        // Grabbing the centre dot (or a rotation handle) must stop the pointerdown from bubbling to
-        // chili3d's Viewport handler — otherwise it treats it as an empty-space click, deselects the
-        // joint, and disposes this gizmo before the drag can start.
-        this.dom.addEventListener("pointerdown", this.onPointerDown);
+        // When the pointer is over a gizmo handle (controls.axis is set during hover),
+        // stop the pointerdown from bubbling to chili3d's Viewport handler — otherwise the
+        // selection handler treats it as an empty-space click, deselects the joint, and
+        // disposes this gizmo before the drag can start. Registered AFTER TransformControls'
+        // own canvas listener so `axis` is already updated when this runs.
+        this.dom.addEventListener("pointerdown", this.stopWhenOverGizmo);
+        this.setupPivotControls();
         this.view.update();
     }
 
-    private createCenterHandle(): Points {
-        const geometry = new BufferGeometry();
-        geometry.setAttribute("position", new Float32BufferAttribute([0, 0, 0], 3));
-        // Constant screen-size dot (sizeAttenuation: false), drawn on top so it is always grabbable.
-        const material = new PointsMaterial({
-            size: 13,
-            sizeAttenuation: false,
-            color: 0xffaa00,
-            depthTest: false,
-            transparent: true,
-        });
-        const handle = new Points(geometry, material);
-        handle.position.copy(this.frame.position);
-        handle.renderOrder = 999;
-        return handle;
+    // A draggable centre-of-rotation handle. Only rotational joints have a meaningful pivot, so the
+    // arrows are shown for revolute/continuous; prismatic translates along its axis and fixed has no
+    // DOF, so neither exposes a pivot.
+    private setupPivotControls() {
+        if (this.joint.jointType !== "revolute" && this.joint.jointType !== "continuous") return;
+        this.pivotProxy.position.copy(this.frame.position);
+        this.pivotProxy.updateMatrixWorld(true);
+        this.view.content.scene.add(this.pivotProxy);
+
+        const controls = new TransformControls(this.view.camera, this.dom);
+        controls.setMode("translate");
+        controls.setSpace("world");
+        controls.size = 0.85; // compact, so it stays inside the enlarged rotation ring
+        controls.attach(this.pivotProxy);
+        controls.addEventListener("objectChange", this.onPivotChange);
+        controls.addEventListener("dragging-changed", this.onDraggingChanged);
+        this.view.content.scene.add(controls.getHelper());
+        this.pivotControls = controls;
     }
 
-    private readonly onPointerDown = (event: PointerEvent) => {
-        // Grab the rotation-centre dot?
-        if (this.centerHandle && this.isOverCenterHandle(event)) {
-            event.stopPropagation();
-            event.preventDefault();
-            this.beginCenterDrag();
-            return;
-        }
-        // Otherwise, if over a rotation handle, just shield it from the viewport selection handler.
-        if (this.controls.axis) {
+    private readonly stopWhenOverGizmo = (event: Event) => {
+        if (this.controls.axis || this.pivotControls?.axis) {
             event.stopPropagation();
         }
     };
 
-    private isOverCenterHandle(event: PointerEvent): boolean {
-        const rect = this.dom.getBoundingClientRect();
-        const mx = event.clientX - rect.left;
-        const my = event.clientY - rect.top;
-        const p = this.frame.position;
-        const screen = this.view.worldToScreen(new XYZ({ x: p.x, y: p.y, z: p.z }));
-        return Math.hypot(screen.x - mx, screen.y - my) <= HANDLE_GRAB_PX;
-    }
-
-    private beginCenterDrag() {
-        const p = this.frame.position;
-        // Drag stays in the plane through the current centre, perpendicular to the joint axis — the
-        // only motion that changes a revolute joint's rotation centre. Captured once so it doesn't
-        // shift under the cursor mid-drag.
-        this.dragPlanePoint = new XYZ({ x: p.x, y: p.y, z: p.z });
-        this.dragPlaneNormal = this.parentWorld?.ofVector(this.joint.axis)?.normalize() ?? UNIT_Z_XYZ;
-        this.centerDragging = true;
-        this.controls.enabled = false; // the rotation arc must not also respond
-        this.setViewHandlersEnabled(false);
-        window.addEventListener("pointermove", this.onCenterDragMove);
-        window.addEventListener("pointerup", this.onCenterDragEnd);
-    }
-
-    private readonly onCenterDragMove = (event: PointerEvent) => {
-        if (!this.centerDragging || !this.parentWorld || !this.dragPlanePoint || !this.dragPlaneNormal) {
-            return;
-        }
-        const rect = this.dom.getBoundingClientRect();
-        const ray = this.view.rayAt(event.clientX - rect.left, event.clientY - rect.top);
-        const hit = intersectPlane(ray, this.dragPlanePoint, this.dragPlaneNormal);
-        if (!hit) return;
-
+    // Dragging the pivot handle: convert its world position into the joint's local space and store it
+    // as the new centre of rotation, then re-anchor the rotation arc so it follows the centre.
+    private readonly onPivotChange = () => {
+        if (!this.dragging || !this.parentWorld) return;
         const toLocal = this.parentWorld.invert();
         if (!toLocal) return;
-        // Move ONLY the centre: store the new pivot and slide the dot + arc there. The part is a child
-        // of the joint and its transform is identity at rest, so it stays exactly where it is.
-        this.joint.pivot = toLocal.ofPoint(hit);
-        this.frame.position.set(hit.x, hit.y, hit.z);
+        const p = this.pivotProxy.position;
+        this.joint.pivot = toLocal.ofPoint(new XYZ({ x: p.x, y: p.y, z: p.z }));
+        this.frame.position.copy(p);
         this.frame.updateMatrixWorld(true);
-        this.centerHandle?.position.set(hit.x, hit.y, hit.z);
         this.view.update();
     };
-
-    private readonly onCenterDragEnd = () => {
-        if (!this.centerDragging) return;
-        this.centerDragging = false;
-        this.controls.enabled = this.joint.jointType !== "fixed";
-        this.setViewHandlersEnabled(true);
-        window.removeEventListener("pointermove", this.onCenterDragMove);
-        window.removeEventListener("pointerup", this.onCenterDragEnd);
-        this.view.update();
-    };
-
-    private setViewHandlersEnabled(enabled: boolean) {
-        const visual = this.view.document.visual;
-        visual.viewHandler.isEnabled = enabled;
-        visual.eventHandler.isEnabled = enabled;
-    }
 
     // The joint's parent world transform = jointWorld · jointLocal⁻¹ (it removes the actuation, so
     // it is the same at any value). JointNode extends GroupNode (not VisualNode), so it has no
@@ -223,9 +159,25 @@ export class JointGizmo implements IDisposable {
 
     private readonly onDraggingChanged = (event: { value: unknown }) => {
         this.dragging = event.value === true;
+        // While one handle is actively dragging, disable the other so a single gesture can't grab
+        // both (rotating the joint and moving its centre at the same time).
+        if (this.pivotControls && this.joint.jointType !== "fixed") {
+            this.controls.enabled = !this.pivotControls.dragging;
+            this.pivotControls.enabled = !this.controls.dragging;
+            // The rotation centre is defined on the joint's neutral pose. If the joint is actuated
+            // when the user grabs the pivot, rotating about a relocated centre by the current angle
+            // would fling the part. Return to rest first; then moving the pivot only moves the centre
+            // and never the part. (At value 0 the transform is identity for any pivot.)
+            if (this.pivotControls.dragging && this.joint.value !== 0) {
+                this.joint.value = 0;
+                this.syncProxyToValue();
+            }
+        }
         // Suspend chili3d's own pointer handlers while dragging the gizmo so the camera
         // doesn't orbit and selection doesn't change mid-drag.
-        this.setViewHandlersEnabled(!this.dragging);
+        const visual = this.view.document.visual;
+        visual.viewHandler.isEnabled = !this.dragging;
+        visual.eventHandler.isEnabled = !this.dragging;
         this.view.update();
     };
 
@@ -238,38 +190,25 @@ export class JointGizmo implements IDisposable {
     };
 
     dispose(): void {
-        this.dom.removeEventListener("pointerdown", this.onPointerDown);
-        window.removeEventListener("pointermove", this.onCenterDragMove);
-        window.removeEventListener("pointerup", this.onCenterDragEnd);
+        this.dom.removeEventListener("pointerdown", this.stopWhenOverGizmo);
         this.controls.removeEventListener("objectChange", this.onObjectChange);
         this.controls.removeEventListener("dragging-changed", this.onDraggingChanged);
         this.controls.detach();
         this.view.content.scene.remove(this.controls.getHelper());
         this.controls.dispose();
-        if (this.centerHandle) {
-            this.view.content.scene.remove(this.centerHandle);
-            this.centerHandle.geometry.dispose();
-            (this.centerHandle.material as PointsMaterial).dispose();
+        if (this.pivotControls) {
+            this.pivotControls.removeEventListener("objectChange", this.onPivotChange);
+            this.pivotControls.removeEventListener("dragging-changed", this.onDraggingChanged);
+            this.pivotControls.detach();
+            this.view.content.scene.remove(this.pivotControls.getHelper());
+            this.pivotControls.dispose();
         }
+        this.view.content.scene.remove(this.pivotProxy);
         this.view.content.scene.remove(this.frame);
         // Restore handlers in case disposal happens mid-drag.
-        this.setViewHandlersEnabled(true);
+        const visual = this.view.document.visual;
+        visual.viewHandler.isEnabled = true;
+        visual.eventHandler.isEnabled = true;
         this.view.update();
     }
-}
-
-const UNIT_Z_XYZ = new XYZ({ x: 0, y: 0, z: 1 });
-
-// Intersect a ray with the plane (point, normal); returns the world hit, or undefined if parallel /
-// behind the ray origin.
-function intersectPlane(ray: Ray, point: XYZ, normal: XYZ): XYZ | undefined {
-    const denom = normal.dot(ray.direction);
-    if (Math.abs(denom) < 1e-6) return undefined;
-    const t = normal.dot(point.sub(ray.point)) / denom;
-    if (t < 0) return undefined;
-    return new XYZ({
-        x: ray.point.x + t * ray.direction.x,
-        y: ray.point.y + t * ray.direction.y,
-        z: ray.point.z + t * ray.direction.z,
-    });
 }
