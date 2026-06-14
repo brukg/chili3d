@@ -14,6 +14,7 @@ import {
     ShapeNode,
     type VisualNode,
 } from "@chili3d/core";
+import { exportDxf } from "./dxf/dxfExporter";
 import { exportThreeMf } from "./threemf/threeMfExporter";
 import { exportUrdf } from "./urdf/urdfExporter";
 import { importUrdf } from "./urdf/urdfImporter";
@@ -36,6 +37,7 @@ export class DefaultDataExchange implements IDataExchange {
             ".obj",
             ".gltf",
             ".glb",
+            ".dxf",
             ".urdf",
         ];
     }
@@ -156,6 +158,8 @@ export class DefaultDataExchange implements IDataExchange {
             if (type === ".step") shapeResult = this.exportStep(document, shapes);
             if (type === ".iges") shapeResult = this.exportIges(document, shapes);
             if (type === ".brep") shapeResult = this.exportBrep(document, shapes);
+            // DXF reads 2D curve geometry directly from the shapes (no kernel converter).
+            if (type === ".dxf") shapeResult = Result.ok(exportDxf(shapes));
         }
 
         if (shapeResult) {
