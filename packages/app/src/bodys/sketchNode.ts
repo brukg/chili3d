@@ -2,6 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 import {
+    analyzeConstraints,
     type I18nKeys,
     type IDocument,
     type IShape,
@@ -10,6 +11,7 @@ import {
     type Plane,
     type Point2d,
     PubSub,
+    property,
     Result,
     type SketchConstraint,
     serializable,
@@ -50,6 +52,27 @@ export class SketchNode extends ParameterShapeNode {
     }
     set constraints(value: SketchConstraint[]) {
         this.setPropertyEmitShapeChanged("constraints", value);
+    }
+
+    /** Read-only solver state — "Fully constrained", or the remaining degrees of freedom / redundant
+     * constraints. The sketcher feedback that tells you whether the profile is fully defined. */
+    @property("sketch.status")
+    get constraintStatus(): string {
+        return SketchNode.describeStatus(this.points, this.constraints, this.document);
+    }
+
+    static describeStatus(points: Point2d[], constraints: SketchConstraint[], document: IDocument): string {
+        const scope = new ParameterStore(document).resolve();
+        const parameters = scope.isOk ? scope.value : {};
+        const analysis = analyzeConstraints(
+            points,
+            constraints.map((c) => toConstraint(c, parameters)),
+        );
+        if (analysis.status === "fully-constrained") return "Fully constrained";
+        if (analysis.status === "over-constrained") {
+            return `Over-constrained (${analysis.redundant} redundant)`;
+        }
+        return `Under-constrained (${analysis.degreesOfFreedom} DoF)`;
     }
 
     constructor(options: SketchNodeOptions) {

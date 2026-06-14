@@ -235,6 +235,7 @@ export default {
         "joint.mimicMultiplier": "Mimic multiplier",
         "joint.mimicOffset": "Mimic offset",
         "joint.value": "Value",
+        "sketch.status": "Status",
         "line.end": "End",
         "line.start": "Start",
         "line.type.line": "Line",

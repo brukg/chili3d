@@ -235,6 +235,7 @@ export default {
         "joint.mimicMultiplier": "模仿系数",
         "joint.mimicOffset": "模仿偏移",
         "joint.value": "值",
+        "sketch.status": "状态",
         "line.end": "终点",
         "line.start": "起点",
         "line.type.line": "直线",

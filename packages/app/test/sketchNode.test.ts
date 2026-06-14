@@ -68,4 +68,21 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         expect(d(1, 2)).toBeCloseTo(10, 6);
         expect(d(3, 2)).toBeCloseTo(10, 6);
     });
+
+    test("constraintStatus reports remaining degrees of freedom", () => {
+        const doc = new TestDocument() as any;
+        const pts: Point2d[] = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+        ];
+        // Only one point pinned → 6 of the 8 coordinates are still free.
+        const partial: SketchConstraint[] = [{ type: "fixed", point: 0, x: 0, y: 0 }];
+        expect(SketchNode.describeStatus(pts, partial, doc)).toBe("Under-constrained (6 DoF)");
+
+        // Pin every point → fully defined.
+        const full: SketchConstraint[] = pts.map((p, i) => ({ type: "fixed", point: i, x: p.x, y: p.y }));
+        expect(SketchNode.describeStatus(pts, full, doc)).toBe("Fully constrained");
+    });
 });

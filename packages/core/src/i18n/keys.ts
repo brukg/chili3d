@@ -224,6 +224,7 @@ export const I18N_KEYS = [
     "joint.maxEffort",
     "joint.maxVelocity",
     "joint.value",
+    "sketch.status",
     "items.header",
     "items.tool.delete",
     "items.tool.expandAll",
