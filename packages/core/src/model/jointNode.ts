@@ -7,9 +7,19 @@ import { serializable, serialize } from "../serialize";
 import type { FolderNodeOptions } from "./folderNode";
 import { GroupNode } from "./groupNode";
 
-export type JointType = "revolute" | "continuous" | "prismatic" | "fixed";
+// The full set of URDF joint types: 1-DOF revolute/continuous/prismatic, 0-DOF fixed, and the
+// multi-DOF planar (3-DOF in a plane) and floating (6-DOF). The single `value` slider actuates the
+// 1-DOF types; planar/floating are valid for export and structure but are not single-value actuated.
+export type JointType = "revolute" | "continuous" | "prismatic" | "planar" | "floating" | "fixed";
 
-const JOINT_TYPES: JointType[] = ["revolute", "continuous", "prismatic", "fixed"];
+const JOINT_TYPES: readonly JointType[] = [
+    "revolute",
+    "continuous",
+    "prismatic",
+    "planar",
+    "floating",
+    "fixed",
+];
 
 export interface JointNodeOptions extends FolderNodeOptions {
     jointType?: JointType;
@@ -35,7 +45,7 @@ export class JointNode extends GroupNode {
     }
 
     @serialize()
-    @property("joint.type")
+    @property("joint.type", { type: "select", options: JOINT_TYPES })
     get jointType(): JointType {
         return this.getPrivateValue("jointType", "revolute");
     }
@@ -71,6 +81,42 @@ export class JointNode extends GroupNode {
     }
     set upperLimit(value: number) {
         this.setProperty("upperLimit", value);
+    }
+
+    @serialize()
+    @property("joint.maxVelocity")
+    get maxVelocity(): number {
+        return this.getPrivateValue("maxVelocity", 10);
+    }
+    set maxVelocity(value: number) {
+        this.setProperty("maxVelocity", value);
+    }
+
+    @serialize()
+    @property("joint.maxEffort")
+    get maxEffort(): number {
+        return this.getPrivateValue("maxEffort", 100);
+    }
+    set maxEffort(value: number) {
+        this.setProperty("maxEffort", value);
+    }
+
+    @serialize()
+    @property("joint.damping")
+    get damping(): number {
+        return this.getPrivateValue("damping", 0);
+    }
+    set damping(value: number) {
+        this.setProperty("damping", value);
+    }
+
+    @serialize()
+    @property("joint.friction")
+    get friction(): number {
+        return this.getPrivateValue("friction", 0);
+    }
+    set friction(value: number) {
+        this.setProperty("friction", value);
     }
 
     @serialize()

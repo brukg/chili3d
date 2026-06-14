@@ -47,16 +47,25 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
             `  <joint name="${sanitize(joint.name)}" type="${joint.jointType}">\n` +
             `    <parent link="${parent}"/>\n    <child link="${child}"/>\n` +
             `    <origin xyz="${xyz}" rpy="${rpy}"/>\n`;
-        if (joint.jointType === "fixed") return `${head}  </joint>`;
+        // fixed and floating joints carry no axis or limit.
+        if (joint.jointType === "fixed" || joint.jointType === "floating") return `${head}  </joint>`;
+
         const axis = `    <axis xyz="${num(a.x)} ${num(a.y)} ${num(a.z)}"/>\n`;
+        const dynamics =
+            joint.damping !== 0 || joint.friction !== 0
+                ? `    <dynamics damping="${num(joint.damping)}" friction="${num(joint.friction)}"/>\n`
+                : "";
         const angular = joint.jointType === "revolute" || joint.jointType === "continuous";
-        const lower = angular ? MathUtils.degToRad(joint.lowerLimit) : joint.lowerLimit * MM_TO_M;
-        const upper = angular ? MathUtils.degToRad(joint.upperLimit) : joint.upperLimit * MM_TO_M;
+        const eff = num(joint.maxEffort);
+        const vel = num(joint.maxVelocity);
+        // continuous and planar joints have no position limits; the others export lower/upper.
         const limit =
-            joint.jointType === "continuous"
-                ? `    <limit effort="100" velocity="10"/>\n`
-                : `    <limit lower="${num(lower)}" upper="${num(upper)}" effort="100" velocity="10"/>\n`;
-        return `${head}${axis}${limit}  </joint>`;
+            joint.jointType === "continuous" || joint.jointType === "planar"
+                ? `    <limit effort="${eff}" velocity="${vel}"/>\n`
+                : `    <limit lower="${num(angular ? MathUtils.degToRad(joint.lowerLimit) : joint.lowerLimit * MM_TO_M)}" ` +
+                  `upper="${num(angular ? MathUtils.degToRad(joint.upperLimit) : joint.upperLimit * MM_TO_M)}" ` +
+                  `effort="${eff}" velocity="${vel}"/>\n`;
+        return `${head}${axis}${limit}${dynamics}  </joint>`;
     };
 
     const walkLink = (link: LinkNode): string => {

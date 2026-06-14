@@ -4,7 +4,7 @@
 import type { IConverter } from "./foundation";
 import type { I18nKeys } from "./i18n";
 
-export type PropertyType = "color" | "materialId";
+export type PropertyType = "color" | "materialId" | "select";
 
 export interface Property {
     name: string;
@@ -13,6 +13,8 @@ export interface Property {
     group?: I18nKeys;
     icon?: string;
     type?: PropertyType;
+    /** For `type: "select"` — the allowed values shown as a dropdown. */
+    options?: readonly string[];
     dependencies?: {
         property: string | number | symbol;
         value: any;
