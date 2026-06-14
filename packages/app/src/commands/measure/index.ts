@@ -2,5 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 export * from "./angle";
+export * from "./interferenceCheck";
 export * from "./length";
+export * from "./properties";
 export * from "./select";
