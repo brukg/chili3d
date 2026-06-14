@@ -14,6 +14,7 @@ export * from "./fillSurface";
 export * from "./hole";
 export * from "./mirror";
 export * from "./move";
+export * from "./pipeFeature";
 export * from "./removeFeature";
 export * from "./removeSubShapes";
 export * from "./rib";

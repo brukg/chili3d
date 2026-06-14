@@ -9,6 +9,7 @@ export * from "./ellipse";
 export * from "./extrude";
 export * from "./line";
 export * from "./pipe";
+export * from "./pipeFeature";
 export * from "./point";
 export * from "./polygon";
 export * from "./pyramid";
