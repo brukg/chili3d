@@ -97,6 +97,7 @@ export default {
         "command.create.rect": "矩形",
         "command.create.revol": "旋转",
         "command.create.section": "相交曲线",
+        "command.create.sketch": "草图",
         "command.create.sphere": "球体",
         "command.create.sweep": "扫略",
         "command.create.thickSolid": "加厚实体",

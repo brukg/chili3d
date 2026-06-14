@@ -11,6 +11,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                 groupName: "ribbon.group.draw",
                 items: [
                     "create.line",
+                    "create.sketch",
                     {
                         type: "split",
                         items: ["create.rect", "create.circle", "create.ellipse", "create.regularPolygon"],
