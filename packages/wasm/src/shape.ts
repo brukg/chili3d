@@ -28,6 +28,7 @@ import {
     type JoinType,
     Line,
     Logger,
+    type MassProperties,
     MathUtils,
     type Matrix4,
     type Orientation,
@@ -41,7 +42,7 @@ import {
     serializable,
     type VertexMeshData,
     VisualConfig,
-    type XYZ,
+    XYZ,
     type XYZLike,
 } from "@chili3d/core";
 import type {
@@ -620,6 +621,20 @@ export class OccSolid extends OccShape implements ISolid {
 
     volume(): number {
         return wasm.Solid.volume(this.solid);
+    }
+
+    massProperties(): MassProperties {
+        const m = wasm.Solid.massProperties(this.solid);
+        return {
+            volume: m.volume,
+            area: m.area,
+            centerOfMass: new XYZ({ x: m.centerOfMass.x, y: m.centerOfMass.y, z: m.centerOfMass.z }),
+            momentOfInertia: new XYZ({
+                x: m.momentOfInertia.x,
+                y: m.momentOfInertia.y,
+                z: m.momentOfInertia.z,
+            }),
+        };
     }
 }
 

@@ -99,8 +99,18 @@ export interface IFace extends IShape {
 
 export interface IShell extends IShape {}
 
+/** Inertial / mass properties of a solid (uniform unit density). */
+export interface MassProperties {
+    volume: number;
+    area: number;
+    centerOfMass: XYZ;
+    /** Diagonal of the inertia matrix about the centre of mass: (Ixx, Iyy, Izz). */
+    momentOfInertia: XYZ;
+}
+
 export interface ISolid extends IShape {
     volume(): number;
+    massProperties(): MassProperties;
 }
 
 export interface ICompound extends IShape {}

@@ -504,6 +504,13 @@ public:
     }
 };
 
+struct MassProperties {
+    double volume;
+    double area;
+    Vector3 centerOfMass;
+    Vector3 momentOfInertia; // diagonal of the inertia matrix (Ixx, Iyy, Izz)
+};
+
 class Solid {
 public:
     static double volume(const TopoDS_Solid& solid)
@@ -511,6 +518,22 @@ public:
         GProp_GProps props;
         BRepGProp::VolumeProperties(solid, props);
         return props.Mass();
+    }
+
+    static MassProperties massProperties(const TopoDS_Solid& solid)
+    {
+        GProp_GProps vprops;
+        BRepGProp::VolumeProperties(solid, vprops);
+        GProp_GProps sprops;
+        BRepGProp::SurfaceProperties(solid, sprops);
+        gp_Pnt com = vprops.CentreOfMass();
+        gp_Mat inertia = vprops.MatrixOfInertia();
+        return MassProperties {
+            vprops.Mass(),
+            sprops.Mass(),
+            Vector3 { com.X(), com.Y(), com.Z() },
+            Vector3 { inertia(1, 1), inertia(2, 2), inertia(3, 3) },
+        };
     }
 };
 
@@ -563,5 +586,13 @@ EMSCRIPTEN_BINDINGS(Shape)
         .class_function("curveOnSurface", &Face::curveOnSurface)
         .class_function("pointOnFace", &Face::pointOnFace);
 
-    class_<Solid>("Solid").class_function("volume", &Solid::volume);
+    value_object<MassProperties>("MassProperties")
+        .field("volume", &MassProperties::volume)
+        .field("area", &MassProperties::area)
+        .field("centerOfMass", &MassProperties::centerOfMass)
+        .field("momentOfInertia", &MassProperties::momentOfInertia);
+
+    class_<Solid>("Solid")
+        .class_function("volume", &Solid::volume)
+        .class_function("massProperties", &Solid::massProperties);
 }

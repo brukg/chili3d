@@ -513,6 +513,13 @@ export type Vector3 = {
   z: number
 };
 
+export type MassProperties = {
+  volume: number,
+  area: number,
+  centerOfMass: Vector3,
+  momentOfInertia: Vector3
+};
+
 export type BoundingBox = {
   min: Vector3,
   max: Vector3
@@ -811,6 +818,7 @@ interface EmbindModule {
   };
   Solid: {
     volume(_0: TopoDS_Solid): number;
+    massProperties(_0: TopoDS_Solid): MassProperties;
   };
   ShapeVector: {
     new(): ShapeVector;
