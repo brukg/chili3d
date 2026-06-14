@@ -103,6 +103,31 @@ export function pointOnLine(p: number, a: number, b: number): Constraint {
     };
 }
 
+/** Signed horizontal distance from a to b equals `dx`. */
+export function distanceX(a: number, b: number, dx: number): Constraint {
+    return { residuals: (v) => [v[px(b)] - v[px(a)] - dx] };
+}
+
+/** Signed vertical distance from a to b equals `dy`. */
+export function distanceY(a: number, b: number, dy: number): Constraint {
+    return { residuals: (v) => [v[py(b)] - v[py(a)] - dy] };
+}
+
+/** The angle from segment a→b to segment c→d equals `radians`. */
+export function angle(a: number, b: number, c: number, d: number, radians: number): Constraint {
+    return {
+        residuals: (v) => {
+            const ux = v[px(b)] - v[px(a)];
+            const uy = v[py(b)] - v[py(a)];
+            const wx = v[px(d)] - v[px(c)];
+            const wy = v[py(d)] - v[py(c)];
+            const cross = ux * wy - uy * wx;
+            const dot = ux * wx + uy * wy;
+            return [Math.atan2(cross, dot) - radians];
+        },
+    };
+}
+
 export interface SolveOptions {
     maxIterations?: number;
     tolerance?: number;

@@ -3,8 +3,11 @@
 
 import { describe, expect, test } from "@rstest/core";
 import {
+    angle,
     coincident,
     distance,
+    distanceX,
+    distanceY,
     equalLength,
     fixed,
     horizontal,
@@ -121,6 +124,36 @@ describe("solveConstraints", () => {
         expect(result.converged).toBe(true);
         const p2 = result.points[2];
         expect(p2.x).toBeCloseTo(p2.y, 4); // on the line y = x
+    });
+
+    test("distanceX / distanceY dimension a point precisely", () => {
+        const result = solveConstraints(
+            [
+                { x: 0, y: 0 },
+                { x: 1, y: 1 },
+            ],
+            [fixed(0, 0, 0), distanceX(0, 1, 30), distanceY(0, 1, 20)],
+        );
+        expect(result.converged).toBe(true);
+        expect(result.points[1].x).toBeCloseTo(30, 6);
+        expect(result.points[1].y).toBeCloseTo(20, 6);
+    });
+
+    test("angle constrains the opening between two segments", () => {
+        const result = solveConstraints(
+            [
+                { x: 0, y: 0 },
+                { x: 10, y: 0 },
+                { x: 8, y: 2 }, // start at a shallow angle
+            ],
+            [fixed(0, 0, 0), fixed(1, 10, 0), distance(1, 2, 10), angle(1, 0, 1, 2, Math.PI / 4)],
+        );
+        expect(result.converged).toBe(true);
+        const [p0, p1, p2] = result.points;
+        const u = { x: p0.x - p1.x, y: p0.y - p1.y };
+        const w = { x: p2.x - p1.x, y: p2.y - p1.y };
+        const measured = Math.atan2(u.x * w.y - u.y * w.x, u.x * w.x + u.y * w.y);
+        expect(Math.abs(measured)).toBeCloseTo(Math.PI / 4, 4); // 45°
     });
 
     test("under-constrained system still converges (free DoF stay near start)", () => {

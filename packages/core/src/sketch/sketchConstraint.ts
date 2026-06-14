@@ -2,9 +2,12 @@
 // See LICENSE file in the project root for full license information.
 
 import {
+    angle,
     type Constraint,
     coincident,
     distance,
+    distanceX,
+    distanceY,
     equalLength,
     fixed,
     horizontal,
@@ -28,7 +31,10 @@ export type SketchConstraint =
     | { type: "parallel"; a: number; b: number; c: number; d: number }
     | { type: "perpendicular"; a: number; b: number; c: number; d: number }
     | { type: "equalLength"; a: number; b: number; c: number; d: number }
-    | { type: "pointOnLine"; point: number; a: number; b: number };
+    | { type: "pointOnLine"; point: number; a: number; b: number }
+    | { type: "distanceX"; a: number; b: number; dx: number }
+    | { type: "distanceY"; a: number; b: number; dy: number }
+    | { type: "angle"; a: number; b: number; c: number; d: number; radians: number };
 
 /** Map a serializable {@link SketchConstraint} descriptor to a live solver {@link Constraint}. */
 export function toConstraint(c: SketchConstraint): Constraint {
@@ -51,5 +57,11 @@ export function toConstraint(c: SketchConstraint): Constraint {
             return equalLength(c.a, c.b, c.c, c.d);
         case "pointOnLine":
             return pointOnLine(c.point, c.a, c.b);
+        case "distanceX":
+            return distanceX(c.a, c.b, c.dx);
+        case "distanceY":
+            return distanceY(c.a, c.b, c.dy);
+        case "angle":
+            return angle(c.a, c.b, c.c, c.d, c.radians);
     }
 }
