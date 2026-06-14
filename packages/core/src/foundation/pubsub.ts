@@ -27,6 +27,7 @@ export interface PubSubEventMap {
     executeCommand: (commandName: CommandKeys) => void;
     modelUpdate: (model: INode) => void;
     openCommandContext: (command: ICommand) => void;
+    parametersChanged: (document: IDocument) => void;
     parentVisibleChanged: (model: INode) => void;
     selectionChanged: (document: IDocument, selected: INode[], unselected: INode[]) => void;
     showDialog: (title: I18nKeys, content: HTMLElement, buttons?: DialogButton[] | (() => void)) => void;
