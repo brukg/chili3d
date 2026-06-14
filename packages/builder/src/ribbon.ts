@@ -68,6 +68,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                 items: [
                     "convert.curveProjection",
                     "create.group",
+                    "parameter.manage",
                     ["create.section", "create.offset", "create.copyShape"],
                 ],
             },
