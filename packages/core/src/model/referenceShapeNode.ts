@@ -92,6 +92,12 @@ export abstract class ReferenceShapeNode extends ParameterShapeNode {
         this.subscriptions.length = 0;
     }
 
+    /** Re-wire input subscriptions after a document load: the constructor ran before the referenced
+     * input nodes were deserialized, so it subscribed to nothing. Called once the whole tree exists. */
+    onDeserialized(): void {
+        this.subscribeInputs();
+    }
+
     private rebuild(): void {
         if (this.rebuilding) return;
         this.rebuilding = true;

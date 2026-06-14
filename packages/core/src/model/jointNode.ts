@@ -195,6 +195,13 @@ export class JointNode extends GroupNode {
         if (master) this.value = master.value * this.mimicMultiplier + this.mimicOffset;
     }
 
+    /** Re-wire the mimic subscription after a document load: the serializer restores `mimicJoint` via
+     * setPrivateValue (bypassing the setter), and the master joint only exists once the whole tree is
+     * deserialized — so the constructor's subscribeMimic() saw an empty id and did nothing. */
+    onDeserialized(): void {
+        this.subscribeMimic();
+    }
+
     override disposeInternal(): void {
         if (this.masterSubscription) {
             this.masterSubscription.master.removePropertyChanged(this.masterSubscription.handler);

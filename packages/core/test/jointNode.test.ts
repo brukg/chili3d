@@ -84,6 +84,29 @@ describe("JointNode", () => {
         expect(slave.value).toBe(-15);
     });
 
+    test("a mimic re-wires after a save/reload round-trip", async () => {
+        // Build master+slave, serialize the whole model, then reload into a fresh document. The
+        // serializer restores mimicJoint via setPrivateValue (no setter) and the master only exists
+        // once the tree is loaded — so without the onDeserialized() hook the slave would not follow.
+        const sourceDoc = new TestDocument() as any;
+        const master = new JointNode({ document: sourceDoc, name: "master", jointType: "revolute" });
+        const slave = new JointNode({ document: sourceDoc, name: "slave", jointType: "revolute" });
+        sourceDoc.modelManager.rootNode.add(master, slave);
+        slave.mimicMultiplier = 2;
+        slave.mimicJoint = master.id;
+
+        const data = sourceDoc.modelManager.serialize();
+        const loadedDoc = new TestDocument() as any;
+        await loadedDoc.modelManager.deserialize(data);
+
+        const master2 = loadedDoc.modelManager.findNode((n: any) => n.name === "master") as JointNode;
+        const slave2 = loadedDoc.modelManager.findNode((n: any) => n.name === "slave") as JointNode;
+        expect(master2 && slave2).toBeTruthy();
+
+        master2.value = 30; // the reloaded slave must follow: 30 × 2 = 60
+        expect(slave2.value).toBe(60);
+    });
+
     test("setting the pivot does NOT move the part (identity at value 0)", () => {
         // This is the core guarantee: the rotation point only sets WHERE rotation happens; changing
         // it never translates the part. At value 0 the transform stays identity for any pivot.

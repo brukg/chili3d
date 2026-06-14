@@ -113,6 +113,22 @@ export class ModelManager extends Observable {
 
         const rootNode = await NodeUtils.deserializeNode(this.document, data.nodes);
         this.rootNode = rootNode!;
+        this.notifyDeserialized(this.rootNode);
+    }
+
+    // Once the whole tree exists, let nodes re-establish runtime subscriptions the serializer could
+    // not: it restores fields via setPrivateValue (bypassing the setters that normally wire them), and
+    // cross-node references (a mimic's master, a referential feature's inputs) require every node to
+    // be present first. Nodes opt in by implementing onDeserialized().
+    private notifyDeserialized(node: INode) {
+        (node as Partial<{ onDeserialized(): void }>).onDeserialized?.();
+        if (NodeUtils.isLinkedListNode(node)) {
+            let child = node.firstChild;
+            while (child) {
+                this.notifyDeserialized(child);
+                child = child.nextSibling;
+            }
+        }
     }
 
     override disposeInternal(): void {
