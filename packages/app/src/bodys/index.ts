@@ -13,6 +13,7 @@ export * from "./linkedBoolean";
 export * from "./linkedCircularArray";
 export * from "./linkedExtrude";
 export * from "./linkedMirror";
+export * from "./linkedPathArray";
 export * from "./linkedRevolve";
 export * from "./linkedTransform";
 export * from "./pipe";

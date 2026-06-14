@@ -20,6 +20,7 @@ export default {
         "body.linkedRevolve": "Linked Revolve",
         "body.linkedArray": "Linked Array",
         "body.linkedCircularArray": "Linked Circular Array",
+        "body.linkedPathArray": "Linked Path Array",
         "body.linkedMirror": "Linked Mirror",
         "linkedArray.count": "Count",
         "linkedExtrude.distance": "Distance",
