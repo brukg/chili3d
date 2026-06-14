@@ -3,13 +3,16 @@
 
 import {
     BoundingBox,
+    type INode,
+    type INodeLinkedList,
     type IShape,
     type IShapeConverter,
     JointNode,
     LinkNode,
     MathUtils,
+    Matrix4,
+    NodeUtils,
     ShapeNode,
-    type VisualNode,
 } from "@chili3d/core";
 
 const MM_TO_M = 0.001;
@@ -107,35 +110,76 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
     return { urdf, meshes };
 }
 
+// A nested Link or Joint starts its own body/articulation in the kinematic tree, so when gathering a
+// link's own contents we descend through organizational folders/groups but never cross those.
+function isStructuralBoundary(node: INode): boolean {
+    return node instanceof LinkNode || node instanceof JointNode;
+}
+
+// The node's local placement, if it carries one (VisualNode and GroupNode both do).
+function nodeTransform(node: INode): Matrix4 | undefined {
+    const transform = (node as { transform?: unknown }).transform;
+    return transform instanceof Matrix4 ? transform : undefined;
+}
+
+// Collect every shape belonging to this link, recursing into nested folders/groups and composing
+// each group's transform so geometry organised under folders exports at the right place. Without the
+// recursion, a link whose meshes are tucked inside a folder would export with no geometry at all.
 function collectLinkShapes(link: LinkNode): IShape[] {
     const shapes: IShape[] = [];
-    let n = link.firstChild;
-    while (n) {
-        if (n instanceof ShapeNode && n.shape.isOk) {
-            shapes.push(n.shape.value.transformedMul((n as VisualNode).transform));
+    const walk = (parent: INodeLinkedList, parentTransform: Matrix4) => {
+        let n = parent.firstChild;
+        while (n) {
+            if (!isStructuralBoundary(n)) {
+                const local = nodeTransform(n);
+                const transform = local ? parentTransform.multiply(local) : parentTransform;
+                if (n instanceof ShapeNode && n.shape.isOk) {
+                    shapes.push(n.shape.value.transformedMul(transform));
+                } else if (NodeUtils.isLinkedListNode(n)) {
+                    walk(n, transform);
+                }
+            }
+            n = n.nextSibling;
         }
-        n = n.nextSibling;
-    }
+    };
+    walk(link, Matrix4.identity());
     return shapes;
 }
 
+// Joints attached to this link, found through any nesting folders but stopping at a nested link
+// (whose joints belong to it, not to us).
 function childJoints(link: LinkNode): JointNode[] {
     const out: JointNode[] = [];
-    let n = link.firstChild;
-    while (n) {
-        if (n instanceof JointNode) out.push(n);
-        n = n.nextSibling;
-    }
+    const walk = (parent: INodeLinkedList) => {
+        let n = parent.firstChild;
+        while (n) {
+            if (n instanceof JointNode) {
+                out.push(n);
+            } else if (!(n instanceof LinkNode) && NodeUtils.isLinkedListNode(n)) {
+                walk(n);
+            }
+            n = n.nextSibling;
+        }
+    };
+    walk(link);
     return out;
 }
 
+// The child link a joint drives, found through any nesting folders.
 function childLinkOf(joint: JointNode): LinkNode | undefined {
-    let n = joint.firstChild;
-    while (n) {
-        if (n instanceof LinkNode) return n;
-        n = n.nextSibling;
-    }
-    return undefined;
+    const walk = (parent: INodeLinkedList): LinkNode | undefined => {
+        let n = parent.firstChild;
+        while (n) {
+            if (n instanceof LinkNode) return n;
+            if (!(n instanceof JointNode) && NodeUtils.isLinkedListNode(n)) {
+                const found = walk(n);
+                if (found) return found;
+            }
+            n = n.nextSibling;
+        }
+        return undefined;
+    };
+    return walk(joint);
 }
 
 function boundingBoxOf(shapes: IShape[]): BoundingBox | undefined {

@@ -3,7 +3,7 @@
 
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { EditableShapeNode, JointNode, LinkNode, Plane, XYZ } from "@chili3d/core";
+import { EditableShapeNode, GroupNode, JointNode, LinkNode, Plane, XYZ } from "@chili3d/core";
 import { initWasm, ShapeFactory } from "@chili3d/wasm";
 import { describe, expect, test } from "@rstest/core";
 import { TestDocument } from "../../core/test/testDocument";
@@ -53,5 +53,44 @@ describe("exportUrdf", () => {
         expect(meshes.has("base_link.stl")).toBe(true);
         expect(meshes.get("base_link.stl")!.length).toBeGreaterThan(0);
         expect(meshes.has("child_link.stl")).toBe(true);
+    });
+
+    test("collects geometry and joints nested inside folders, not just direct children", async () => {
+        await initWasm({ wasmBinary: WASM_BINARY });
+        const factory = new ShapeFactory();
+        const doc = new TestDocument() as any;
+
+        // base_link's mesh lives inside a folder (organizational group), not directly under the link.
+        const base = new LinkNode({ document: doc, name: "base_link" });
+        const geometryFolder = new GroupNode({ document: doc, name: "geometry" });
+        geometryFolder.add(
+            new EditableShapeNode({ document: doc, name: "g", shape: factory.box(Plane.XY, 20, 20, 20) }),
+        );
+        base.add(geometryFolder);
+
+        // The child link (and its mesh) are also nested in folders, and the joint sits inside a folder.
+        const child = new LinkNode({ document: doc, name: "child_link" });
+        const childGeometry = new GroupNode({ document: doc, name: "geometry" });
+        childGeometry.add(
+            new EditableShapeNode({ document: doc, name: "g", shape: factory.box(Plane.XY, 10, 10, 10) }),
+        );
+        child.add(childGeometry);
+
+        const joint = new JointNode({ document: doc, name: "j1", jointType: "revolute" });
+        joint.add(child);
+        const articulation = new GroupNode({ document: doc, name: "articulation" });
+        articulation.add(joint);
+        base.add(articulation);
+
+        const { urdf, meshes } = exportUrdf(base, "robot", factory.converter);
+
+        // Both links' meshes are collected despite the folder nesting (the bug emitted empty links).
+        expect(meshes.has("base_link.stl")).toBe(true);
+        expect(meshes.get("base_link.stl")!.length).toBeGreaterThan(0);
+        expect(meshes.has("child_link.stl")).toBe(true);
+        expect(meshes.get("child_link.stl")!.length).toBeGreaterThan(0);
+        // The folder-nested joint and its child link are still discovered.
+        expect(urdf).toContain('type="revolute"');
+        expect(urdf).toContain('<child link="child_link"/>');
     });
 });
