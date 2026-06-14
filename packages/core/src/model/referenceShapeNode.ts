@@ -102,6 +102,16 @@ export abstract class ReferenceShapeNode extends ParameterShapeNode {
         }
     }
 
+    /**
+     * Re-wire subscriptions and regenerate — for STRUCTURAL changes the per-input `shape` listeners
+     * don't catch (an input added or removed from the model). The rebuild service calls this when a
+     * referenced input node is removed.
+     */
+    forceRebuild(): void {
+        this.subscribeInputs();
+        this.rebuild();
+    }
+
     override disposeInternal(): void {
         this.unsubscribeInputs();
         super.disposeInternal();

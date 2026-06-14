@@ -114,4 +114,28 @@ describe("ReferenceShapeNode / LinkedBooleanNode (C1 rebuild)", () => {
         inner.suppressed = false; // un-suppress restores it
         expect(totalVolume(outer)).toBeGreaterThan(after);
     });
+
+    test("force-rebuilding after an input is removed excludes it (C1 robustness)", () => {
+        const doc = new TestDocument() as any;
+        const boxA = new BoxNode({ document: doc, plane: Plane.XY, dx: 20, dy: 20, dz: 20 });
+        const boxB = new BoxNode({ document: doc, plane: Plane.XY, dx: 15, dy: 15, dz: 15 });
+        const boxC = new BoxNode({ document: doc, plane: Plane.XY, dx: 10, dy: 10, dz: 10 });
+        doc.modelManager.rootNode.add(boxA, boxB, boxC);
+
+        const linked = new LinkedBooleanNode({
+            document: doc,
+            inputIds: [boxA.id, boxB.id, boxC.id],
+            booleanType: "fuse",
+        });
+        doc.modelManager.rootNode.add(linked);
+
+        const before = totalVolume(linked); // nested boxes -> fuse is the biggest, 20³ = 8000
+        expect(before).toBeCloseTo(8000, 0);
+
+        doc.modelManager.rootNode.remove(boxA); // remove the dominant input
+        linked.forceRebuild(); // the rebuild service calls this on removal
+        const after = totalVolume(linked);
+        expect(after).toBeLessThan(before); // now 15³ = 3375
+        expect(after).toBeCloseTo(3375, 0);
+    });
 });
