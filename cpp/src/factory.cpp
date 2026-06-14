@@ -19,6 +19,7 @@
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepFeat_MakeCylindricalHole.hxx>
+#include <BRepFeat_MakeLinearForm.hxx>
 #include <BRepFeat_MakePrism.hxx>
 #include <BRepFeat_Status.hxx>
 #include <BRepFilletAPI_MakeChamfer.hxx>
@@ -42,6 +43,7 @@
 #include <GeomAbs_Shape.hxx>
 #include <Geom_BezierCurve.hxx>
 #include <Geom_CylindricalSurface.hxx>
+#include <Geom_Plane.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <ShapeAnalysis_WireOrder.hxx>
 #include <ShapeFix_FixSmallFace.hxx>
@@ -288,6 +290,32 @@ public:
         }
         pipe.MakeSolid();
         return ShapeResult { pipe.Shape(), true, "" };
+    }
+
+    // Rib (fuse=true) or groove/slot (fuse=false): the planar profile wire is the rib silhouette
+    // lying in the plane (planeOrigin, planeNormal); it is thickened PERPENDICULAR to that plane
+    // (along planeNormal) by thickness1 on one side and thickness2 on the other, then fused to /
+    // cut from the base. Directions along the plane normal is the convention BRepFeat_MakeLinearForm
+    // requires (height = thickness1 + thickness2).
+    static ShapeResult rib(const TopoDS_Shape& base, const TopoDS_Shape& profile,
+        const Vector3& planeOrigin, const Vector3& planeNormal, double thickness1, double thickness2,
+        bool fuse)
+    {
+        if (profile.ShapeType() != TopAbs_WIRE) {
+            return ShapeResult { TopoDS_Shape(), false, "Rib profile must be a wire" };
+        }
+        gp_Dir normal = Vector3::toDir(planeNormal);
+        Handle(Geom_Plane) plane = new Geom_Plane(gp_Ax3(Vector3::toPnt(planeOrigin), normal));
+        gp_Vec n(normal);
+        gp_Vec direction = n * thickness1;
+        gp_Vec direction1 = n * (-thickness2);
+        BRepFeat_MakeLinearForm form(
+            base, TopoDS::Wire(profile), plane, direction, direction1, fuse ? 1 : 0, true);
+        form.Perform();
+        if (!form.IsDone()) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to create rib" };
+        }
+        return ShapeResult { form.Shape(), true, "" };
     }
 
     static ShapeResult revolve(const TopoDS_Shape& profile, const Ax1& axis, double rad)
@@ -798,6 +826,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("pyramid", &ShapeFactory::pyramid)
         .class_function("sweep", &ShapeFactory::sweep)
         .class_function("thread", &ShapeFactory::thread)
+        .class_function("rib", &ShapeFactory::rib)
         .class_function("revolve", &ShapeFactory::revolve)
         .class_function("prism", &ShapeFactory::prism)
         .class_function("pushPull", &ShapeFactory::pushPull)

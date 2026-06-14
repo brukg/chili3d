@@ -372,6 +372,27 @@ export class ShapeFactory implements IShapeFactory {
             wasm.ShapeFactory.thread(normal, center, radius, pitch, height, profileRadius, leftHanded),
         ) as Result<ISolid>;
     }
+    rib(
+        base: IShape,
+        profile: IWire,
+        planeOrigin: XYZLike,
+        planeNormal: XYZLike,
+        thickness1: number,
+        thickness2: number,
+        fuse: boolean,
+    ): Result<IShape> {
+        return convertShapeResult(
+            wasm.ShapeFactory.rib(
+                ensureOccShape(base)[0],
+                ensureOccShape(profile)[0],
+                planeOrigin,
+                planeNormal,
+                thickness1,
+                thickness2,
+                fuse,
+            ),
+        );
+    }
     revolve(profile: IShape, axis: Line, angle: number): Result<IShape> {
         return convertShapeResult(
             wasm.ShapeFactory.revolve(

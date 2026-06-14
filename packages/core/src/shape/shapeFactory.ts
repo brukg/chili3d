@@ -47,6 +47,15 @@ export interface IShapeFactory {
         profileRadius: number,
         leftHanded: boolean,
     ): Result<ISolid>;
+    rib(
+        base: IShape,
+        profile: IWire,
+        planeOrigin: XYZLike,
+        planeNormal: XYZLike,
+        thickness1: number,
+        thickness2: number,
+        fuse: boolean,
+    ): Result<IShape>;
     revolve(profile: IShape, axis: Line, angle: number): Result<IShape>;
     booleanCommon(shape1: IShape[], shape2: IShape[]): Result<IShape>;
     booleanCut(shape1: IShape[], shape2: IShape[]): Result<IShape>;
