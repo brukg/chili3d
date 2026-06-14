@@ -34,6 +34,18 @@ export class JointGizmo implements IDisposable {
     private dragging = false;
     private readonly dom: HTMLElement;
 
+    /** True while the user is dragging either handle — the controller uses this to avoid rebuilding
+     * the gizmo in response to the property changes that the drag itself emits. */
+    get isDragging(): boolean {
+        return this.dragging;
+    }
+
+    /** Re-pose the actuation proxy after the value changed externally (e.g. the property panel). */
+    syncToValue(): void {
+        this.syncProxyToValue();
+        this.view.update();
+    }
+
     constructor(
         private readonly view: ThreeView,
         private readonly joint: JointNode,

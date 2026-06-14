@@ -1,7 +1,7 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
-import { type IDisposable, JointNode, PubSub } from "@chili3d/core";
+import { type IDisposable, JointNode, PubSub, XYZ } from "@chili3d/core";
 import { describe, expect, test } from "@rstest/core";
 import { JointGizmoController } from "../src/jointGizmoController";
 import type { ThreeView } from "../src/threeView";
@@ -58,6 +58,32 @@ describe("JointGizmoController", () => {
         const b = new JointNode({ document: doc, name: "b" });
         PubSub.default.pub("selectionChanged", doc, [a, b], []);
         expect(created.length).toBe(0);
+        controller.dispose();
+    });
+
+    test("rebuilds the gizmo when a structural joint property changes via the panel", () => {
+        const { controller, created } = setup();
+        const joint = new JointNode({ document: doc, name: "j" });
+        PubSub.default.pub("selectionChanged", doc, [joint], []);
+        expect(created.length).toBe(1);
+
+        joint.jointType = "prismatic"; // structural change → gizmo rebuilt
+        expect(created.length).toBe(2);
+        expect(created[0].disposed).toBe(true);
+
+        joint.axis = new XYZ({ x: 1, y: 0, z: 0 }); // also structural
+        expect(created.length).toBe(3);
+        controller.dispose();
+    });
+
+    test("stops tracking joint property changes after deselection", () => {
+        const { controller, created } = setup();
+        const joint = new JointNode({ document: doc, name: "j" });
+        PubSub.default.pub("selectionChanged", doc, [joint], []);
+        PubSub.default.pub("selectionChanged", doc, [], []);
+
+        joint.jointType = "prismatic"; // no longer selected → must not rebuild
+        expect(created.length).toBe(1);
         controller.dispose();
     });
 
