@@ -15,6 +15,7 @@ export default {
         "body.arc": "Arc",
         "body.bolean": "Boolean",
         "body.linkedBoolean": "Linked Boolean",
+        "body.linkedTransform": "Linked Transform",
         "feature.suppressed": "Suppressed",
         "linkedBoolean.type": "Operation",
         "body.box": "Box",
