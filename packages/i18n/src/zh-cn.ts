@@ -20,6 +20,7 @@ export default {
         "body.linkedRevolve": "关联旋转",
         "body.linkedArray": "关联阵列",
         "body.linkedCircularArray": "关联环形阵列",
+        "body.linkedMirror": "关联镜像",
         "linkedArray.count": "数量",
         "linkedExtrude.distance": "距离",
         "feature.suppressed": "抑制",

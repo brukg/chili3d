@@ -15,6 +15,7 @@ export const I18N_KEYS = [
     "body.linkedRevolve",
     "body.linkedArray",
     "body.linkedCircularArray",
+    "body.linkedMirror",
     "linkedArray.count",
     "linkedExtrude.distance",
     "feature.suppressed",
