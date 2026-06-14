@@ -5,7 +5,7 @@ import type { RibbonTabProfile } from "@chili3d/core";
 
 export const DefaultRibbon: RibbonTabProfile[] = [
     {
-        tabName: "ribbon.tab.model",
+        tabName: "ribbon.tab.sketch",
         groups: [
             {
                 groupName: "ribbon.group.draw",
@@ -20,6 +20,24 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         type: "split",
                         items: ["create.arc", "create.arc2point", "create.arc3point"],
                     },
+                ],
+                collapsedItems: ["create.point", "create.polygon", "create.bezier"],
+            },
+            {
+                groupName: "ribbon.group.workingPlane",
+                items: [
+                    "workingPlane.toggleDynamic",
+                    ["workingPlane.set", "workingPlane.alignToPlane", "workingPlane.fromSection"],
+                ],
+            },
+        ],
+    },
+    {
+        tabName: "ribbon.tab.create",
+        groups: [
+            {
+                groupName: "ribbon.group.solid",
+                items: [
                     {
                         type: "split",
                         items: [
@@ -33,41 +51,70 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     ["create.extrude", "create.linkedExtrude"],
                     ["create.loft", "create.sweep", "create.revol", "create.thread"],
                 ],
-                collapsedItems: ["create.point", "create.polygon", "create.bezier", "create.pipe"],
+                collapsedItems: ["create.pipe"],
             },
+            {
+                groupName: "ribbon.group.boolean",
+                items: [["boolean.common", "boolean.cut", "boolean.join"]],
+            },
+            {
+                groupName: "ribbon.group.converter",
+                items: ["convert.toWire", ["convert.toFace", "convert.toShell", "convert.toSolid"]],
+            },
+        ],
+    },
+    {
+        tabName: "ribbon.tab.modify",
+        groups: [
             {
                 groupName: "ribbon.group.modify",
                 items: [
                     ["modify.move", "modify.rotate", "modify.mirror"],
                     ["modify.array", "modify.trim", "modify.sew"],
                     ["modify.split", "modify.break", "modify.simplifyShape"],
-                    ["modify.fillet", "modify.variableFillet", "modify.draft"],
-                    ["modify.fillSurface", "modify.chamfer", "modify.hole"],
-                    ["modify.explode"],
-                    ["modify.createJoint", "modify.createLink", "modify.exportUrdf"],
+                    ["modify.fillet", "modify.variableFillet", "modify.chamfer"],
+                    ["modify.draft", "modify.hole", "modify.fillSurface"],
+                    ["modify.rib", "modify.pipeFeature", "modify.explode"],
                     ["modify.deleteNode", "modify.removeShapes", "modify.removeFeature"],
-                    ["modify.rib", "modify.pipeFeature"],
                 ],
                 collapsedItems: ["modify.brushAdd", "modify.brushRemove", "modify.brushClear"],
             },
+        ],
+    },
+    {
+        tabName: "ribbon.tab.parametric",
+        groups: [
             {
-                groupName: "ribbon.group.converter",
-                items: ["convert.toWire", ["convert.toFace", "convert.toShell", "convert.toSolid"]],
+                groupName: "ribbon.group.parametric",
+                items: ["parameter.manage"],
             },
             {
-                groupName: "ribbon.group.boolean",
+                groupName: "ribbon.group.linked",
                 items: [
-                    ["boolean.common", "boolean.cut", "boolean.join"],
                     ["modify.linkedCommon", "modify.linkedCut", "modify.linkedFuse"],
                     ["modify.linkedMove", "modify.linkedMirror", "modify.linkedRevolve"],
                     ["modify.linkedArray", "modify.linkedCircularArray", "modify.linkedPathArray"],
                 ],
             },
+        ],
+    },
+    {
+        tabName: "ribbon.tab.robot",
+        groups: [
             {
-                groupName: "ribbon.group.workingPlane",
+                groupName: "ribbon.group.robot",
+                items: [["modify.createJoint", "modify.createLink", "modify.exportUrdf"]],
+            },
+        ],
+    },
+    {
+        tabName: "ribbon.tab.tools",
+        groups: [
+            {
+                groupName: "ribbon.group.measure",
                 items: [
-                    "workingPlane.toggleDynamic",
-                    ["workingPlane.set", "workingPlane.alignToPlane", "workingPlane.fromSection"],
+                    ["measure.length", "measure.angle", "measure.select"],
+                    ["measure.properties", "measure.interference"],
                 ],
             },
             {
@@ -75,15 +122,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                 items: [
                     "convert.curveProjection",
                     "create.group",
-                    "parameter.manage",
                     ["create.section", "create.offset", "create.copyShape"],
-                ],
-            },
-            {
-                groupName: "ribbon.group.measure",
-                items: [
-                    ["measure.length", "measure.angle", "measure.select"],
-                    ["measure.properties", "measure.interference"],
                 ],
             },
             {
