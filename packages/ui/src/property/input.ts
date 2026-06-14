@@ -3,10 +3,13 @@
 
 import {
     Binding,
+    evaluateExpression,
     type IConverter,
     type IDocument,
     isPropertyChanged,
     Localize,
+    ParameterBindings,
+    ParameterStore,
     type Property,
     PubSub,
     Result,
@@ -29,6 +32,7 @@ import { PropertyBase } from "./propertyBase";
 
 class ArrayValueConverter implements IConverter {
     constructor(
+        readonly document: IDocument,
         readonly objects: any[],
         readonly property: Property,
         readonly converter?: IConverter,
@@ -49,6 +53,13 @@ class ArrayValueConverter implements IConverter {
     }
 
     private getDefaultValue() {
+        if (this.objects.length === 1) {
+            const expression = new ParameterBindings(this.document).get(
+                this.objects[0].id,
+                this.property.name,
+            );
+            if (expression !== undefined) return expression;
+        }
         const values = this.objects.map(this.getValueString.bind(this));
         const uniqueValues = new Set(values);
         return uniqueValues.size === 1 ? values[0] : "";
@@ -61,11 +72,11 @@ export class InputProperty extends PropertyBase {
     constructor(
         readonly document: IDocument,
         objects: any[],
-        readonly property: Property
+        readonly property: Property,
     ) {
         super(objects);
         this.converter = property.converter ?? this.getConverter();
-        const arrayConverter = new ArrayValueConverter(objects, property, this.converter);
+        const arrayConverter = new ArrayValueConverter(document, objects, property, this.converter);
         this.append(
             div(
                 { className: commonStyle.panel },
@@ -111,18 +122,48 @@ export class InputProperty extends PropertyBase {
     private readonly setValue = (input: HTMLInputElement) => {
         if (this.isReadOnly()) return;
 
+        const isNumeric = typeof this.objects[0][this.property.name] === "number";
         const newValue = this.converter?.convertBack?.(input.value);
+
         if (!newValue?.isOk) {
+            if (isNumeric && input.value.trim().length > 0) {
+                this.setExpression(input.value);
+                return;
+            }
             PubSub.default.pub("showToast", "error.default:{0}", newValue?.error);
             return;
         }
+
         Transaction.execute(this.document, "modify property", () => {
             this.objects.forEach((x) => {
                 x[this.property.name] = newValue.value;
+                if (isNumeric) {
+                    new ParameterBindings(this.document).remove(x.id, this.property.name);
+                }
             });
             this.document.visual.update();
         });
     };
+
+    private setExpression(expression: string) {
+        const scope = new ParameterStore(this.document).resolve();
+        if (!scope.isOk) {
+            PubSub.default.pub("showToast", "error.default:{0}", scope.error);
+            return;
+        }
+        const evaluated = evaluateExpression(expression, scope.value);
+        if (!evaluated.isOk) {
+            PubSub.default.pub("showToast", "error.default:{0}", evaluated.error);
+            return;
+        }
+        Transaction.execute(this.document, "modify property", () => {
+            this.objects.forEach((x) => {
+                x[this.property.name] = evaluated.value;
+                new ParameterBindings(this.document).set(x.id, this.property.name, expression);
+            });
+            this.document.visual.update();
+        });
+    }
 
     private getConverter(): IConverter | undefined {
         const name = this.objects[0][this.property.name].constructor.name;
