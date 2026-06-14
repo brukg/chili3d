@@ -20,6 +20,7 @@
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepFeat_MakeCylindricalHole.hxx>
 #include <BRepFeat_MakeLinearForm.hxx>
+#include <BRepFeat_MakePipe.hxx>
 #include <BRepFeat_MakePrism.hxx>
 #include <BRepFeat_Status.hxx>
 #include <BRepFilletAPI_MakeChamfer.hxx>
@@ -316,6 +317,24 @@ public:
             return ShapeResult { TopoDS_Shape(), false, "Failed to create rib" };
         }
         return ShapeResult { form.Shape(), true, "" };
+    }
+
+    // Pipe feature: a protrusion (fuse=true) or depression (fuse=false) on `base`, defined by the
+    // `profileFace` (a face lying on `sketchFace`, itself a face of `base`) swept along `spine`.
+    static ShapeResult pipeFeature(const TopoDS_Shape& base, const TopoDS_Shape& profileFace,
+        const TopoDS_Shape& sketchFace, const TopoDS_Shape& spine, bool fuse)
+    {
+        if (profileFace.ShapeType() != TopAbs_FACE || sketchFace.ShapeType() != TopAbs_FACE
+            || spine.ShapeType() != TopAbs_WIRE) {
+            return ShapeResult { TopoDS_Shape(), false, "Pipe feature needs profile face, sketch face and spine wire" };
+        }
+        BRepFeat_MakePipe pipe(base, TopoDS::Face(profileFace), TopoDS::Face(sketchFace),
+            TopoDS::Wire(spine), fuse ? 1 : 0, true);
+        pipe.Perform();
+        if (!pipe.IsDone()) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to create pipe feature" };
+        }
+        return ShapeResult { pipe.Shape(), true, "" };
     }
 
     static ShapeResult revolve(const TopoDS_Shape& profile, const Ax1& axis, double rad)
@@ -827,6 +846,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("sweep", &ShapeFactory::sweep)
         .class_function("thread", &ShapeFactory::thread)
         .class_function("rib", &ShapeFactory::rib)
+        .class_function("pipeFeature", &ShapeFactory::pipeFeature)
         .class_function("revolve", &ShapeFactory::revolve)
         .class_function("prism", &ShapeFactory::prism)
         .class_function("pushPull", &ShapeFactory::pushPull)

@@ -582,6 +582,7 @@ interface EmbindModule {
   };
   ShapeResult: {};
   ShapeFactory: {
+    pipeFeature(_0: TopoDS_Shape, _1: TopoDS_Shape, _2: TopoDS_Shape, _3: TopoDS_Shape, _4: boolean): ShapeResult;
     makeThickSolidBySimple(_0: TopoDS_Shape, _1: number): ShapeResult;
     fixShape(_0: TopoDS_Shape): ShapeResult;
     fixSmallFace(_0: TopoDS_Shape, _1: number): ShapeResult;

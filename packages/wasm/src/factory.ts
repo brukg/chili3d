@@ -393,6 +393,23 @@ export class ShapeFactory implements IShapeFactory {
             ),
         );
     }
+    pipeFeature(
+        base: IShape,
+        profileFace: IFace,
+        sketchFace: IFace,
+        spine: IWire,
+        fuse: boolean,
+    ): Result<IShape> {
+        return convertShapeResult(
+            wasm.ShapeFactory.pipeFeature(
+                ensureOccShape(base)[0],
+                ensureOccShape(profileFace)[0],
+                ensureOccShape(sketchFace)[0],
+                ensureOccShape(spine)[0],
+                fuse,
+            ),
+        );
+    }
     revolve(profile: IShape, axis: Line, angle: number): Result<IShape> {
         return convertShapeResult(
             wasm.ShapeFactory.revolve(

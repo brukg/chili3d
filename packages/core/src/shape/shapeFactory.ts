@@ -56,6 +56,13 @@ export interface IShapeFactory {
         thickness2: number,
         fuse: boolean,
     ): Result<IShape>;
+    pipeFeature(
+        base: IShape,
+        profileFace: IFace,
+        sketchFace: IFace,
+        spine: IWire,
+        fuse: boolean,
+    ): Result<IShape>;
     revolve(profile: IShape, axis: Line, angle: number): Result<IShape>;
     booleanCommon(shape1: IShape[], shape2: IShape[]): Result<IShape>;
     booleanCut(shape1: IShape[], shape2: IShape[]): Result<IShape>;
