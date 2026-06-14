@@ -8,11 +8,13 @@ import {
     type IDocument,
     type INode,
     type IShape,
+    LinkNode,
     PubSub,
     Result,
     ShapeNode,
     type VisualNode,
 } from "@chili3d/core";
+import { exportUrdf } from "./urdf/urdfExporter";
 
 export class DefaultDataExchange implements IDataExchange {
     importFormats(): string[] {
@@ -31,6 +33,7 @@ export class DefaultDataExchange implements IDataExchange {
             ".obj",
             ".gltf",
             ".glb",
+            ".urdf",
         ];
     }
 
@@ -111,6 +114,8 @@ export class DefaultDataExchange implements IDataExchange {
             shapeResult = await document.visual.meshExporter.exportToGltf(nodes, false);
         } else if (type === ".glb") {
             shapeResult = await document.visual.meshExporter.exportToGltf(nodes, true);
+        } else if (type === ".urdf") {
+            return await this.exportUrdfZip(nodes);
         } else {
             const shapes = this.getExportShapes(nodes);
             if (!shapes.length) return undefined;
@@ -136,6 +141,24 @@ export class DefaultDataExchange implements IDataExchange {
 
         !shapes.length && PubSub.default.pub("showToast", "error.export.noNodeCanBeExported");
         return shapes;
+    }
+
+    private async exportUrdfZip(nodes: VisualNode[]): Promise<BlobPart[] | undefined> {
+        const root = nodes.find((n) => n instanceof LinkNode) as LinkNode | undefined;
+        if (!root) {
+            PubSub.default.pub("showToast", "error.export.noNodeCanBeExported");
+            return undefined;
+        }
+        const converter = root.document.application.shapeFactory.converter;
+        const { urdf, meshes } = exportUrdf(root, root.name, converter);
+        const JSZip = (await import("jszip")).default;
+        const zip = new JSZip();
+        zip.file("robot.urdf", urdf);
+        for (const [name, bytes] of meshes) {
+            zip.file(`meshes/${name}`, bytes);
+        }
+        const blob = await zip.generateAsync({ type: "uint8array" });
+        return [blob as BlobPart];
     }
 
     private exportStl(doc: IDocument, shapes: IShape[], binary: boolean): Result<BlobPart> {
