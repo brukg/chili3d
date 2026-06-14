@@ -121,7 +121,7 @@ export class JointNode extends GroupNode {
     }
 
     @serialize()
-    @property("joint.value")
+    @property("joint.value", { type: "slider", min: "lowerLimit", max: "upperLimit", step: 1 })
     get value(): number {
         return this.getPrivateValue("value", 0);
     }

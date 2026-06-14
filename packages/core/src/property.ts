@@ -4,7 +4,7 @@
 import type { IConverter } from "./foundation";
 import type { I18nKeys } from "./i18n";
 
-export type PropertyType = "color" | "materialId" | "select";
+export type PropertyType = "color" | "materialId" | "select" | "slider";
 
 export interface Property {
     name: string;
@@ -15,6 +15,11 @@ export interface Property {
     type?: PropertyType;
     /** For `type: "select"` — the allowed values shown as a dropdown. */
     options?: readonly string[];
+    /** For `type: "slider"` — the bounds and step. A number is a literal bound; a string names a
+     * sibling property to read the bound from (e.g. a joint value bounded by "lowerLimit"). */
+    min?: number | string;
+    max?: number | string;
+    step?: number;
     dependencies?: {
         property: string | number | symbol;
         value: any;

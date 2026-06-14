@@ -7,12 +7,17 @@ import { ColorProperty } from "./colorProperty";
 import { InputProperty } from "./input";
 import { MaterialProperty } from "./materialProperty";
 import { SelectProperty } from "./selectProperty";
+import { SliderProperty } from "./sliderProperty";
 
 export function basicPropertyControl(document: IDocument, objs: any[], prop: Property) {
     if (prop === undefined || objs.length === 0) return "";
 
     if (prop.type === "select") {
         return new SelectProperty(document, objs, prop);
+    }
+
+    if (prop.type === "slider") {
+        return new SliderProperty(document, objs, prop);
     }
 
     if (prop.type === "color") {
