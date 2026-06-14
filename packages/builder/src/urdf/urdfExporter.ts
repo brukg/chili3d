@@ -65,7 +65,15 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
                 : `    <limit lower="${num(angular ? MathUtils.degToRad(joint.lowerLimit) : joint.lowerLimit * MM_TO_M)}" ` +
                   `upper="${num(angular ? MathUtils.degToRad(joint.upperLimit) : joint.upperLimit * MM_TO_M)}" ` +
                   `effort="${eff}" velocity="${vel}"/>\n`;
-        return `${head}${axis}${limit}${dynamics}  </joint>`;
+        let mimic = "";
+        if (joint.mimicJoint) {
+            const master = joint.document.modelManager.findNode((n) => n.id === joint.mimicJoint);
+            if (master) {
+                const masterName = master.name.replace(/[^A-Za-z0-9_]/g, "_") || "node";
+                mimic = `    <mimic joint="${masterName}" multiplier="${num(joint.mimicMultiplier)}" offset="${num(joint.mimicOffset)}"/>\n`;
+            }
+        }
+        return `${head}${axis}${limit}${dynamics}${mimic}  </joint>`;
     };
 
     const walkLink = (link: LinkNode): string => {

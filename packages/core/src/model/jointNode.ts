@@ -1,6 +1,7 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
+import type { PropertyChangedHandler } from "../foundation";
 import { MathUtils, Matrix4, XYZ } from "../math";
 import { property } from "../property";
 import { serializable, serialize } from "../serialize";
@@ -135,12 +136,80 @@ export class JointNode extends GroupNode {
         this.setProperty("value", clamped, (_p, _old) => this.updateTransform());
     }
 
+    /**
+     * Mimic: this joint follows another joint's value as `master.value * multiplier + offset`
+     * (URDF `<mimic>`). Used for coupled mechanisms — grippers, parallel linkages, gears. Empty =
+     * not mimicking.
+     */
+    @serialize()
+    @property("joint.mimicJoint")
+    get mimicJoint(): string {
+        return this.getPrivateValue("mimicJoint", "");
+    }
+    set mimicJoint(value: string) {
+        this.setProperty("mimicJoint", value, (_p, _old) => this.subscribeMimic());
+    }
+
+    @serialize()
+    @property("joint.mimicMultiplier")
+    get mimicMultiplier(): number {
+        return this.getPrivateValue("mimicMultiplier", 1);
+    }
+    set mimicMultiplier(value: number) {
+        this.setProperty("mimicMultiplier", value, (_p, _old) => this.applyMimic());
+    }
+
+    @serialize()
+    @property("joint.mimicOffset")
+    get mimicOffset(): number {
+        return this.getPrivateValue("mimicOffset", 0);
+    }
+    set mimicOffset(value: number) {
+        this.setProperty("mimicOffset", value, (_p, _old) => this.applyMimic());
+    }
+
+    private masterSubscription?: { master: JointNode; handler: PropertyChangedHandler<any, any> };
+
+    /** (Re)subscribe to the mimicked joint's value so this joint follows it. Public for the rebuild
+     * service to re-wire after a document load (the serializer bypasses the constructor). */
+    subscribeMimic(): void {
+        if (this.masterSubscription) {
+            this.masterSubscription.master.removePropertyChanged(this.masterSubscription.handler);
+            this.masterSubscription = undefined;
+        }
+        if (!this.mimicJoint) return;
+        const master = this.document.modelManager.findNode(
+            (n) => n.id === this.mimicJoint && n instanceof JointNode,
+        ) as JointNode | undefined;
+        if (!master) return;
+        const handler: PropertyChangedHandler<any, any> = (property) => {
+            if (property === "value") this.applyMimic();
+        };
+        master.onPropertyChanged(handler);
+        this.masterSubscription = { master, handler };
+        this.applyMimic();
+    }
+
+    private applyMimic(): void {
+        const master = this.masterSubscription?.master;
+        if (master) this.value = master.value * this.mimicMultiplier + this.mimicOffset;
+    }
+
+    override disposeInternal(): void {
+        if (this.masterSubscription) {
+            this.masterSubscription.master.removePropertyChanged(this.masterSubscription.handler);
+            this.masterSubscription = undefined;
+        }
+        super.disposeInternal();
+    }
+
     constructor(options: JointNodeOptions) {
         super(options);
         this.setPrivateValue("jointType", options.jointType ?? "revolute");
         this.setPrivateValue("axis", options.axis ?? XYZ.unitZ);
         this.setPrivateValue("pivot", options.pivot ?? XYZ.zero);
         this.updateTransform();
+        this.subscribeMimic();
     }
 
     // `transform` (inherited from GroupNode) is DERIVED state: the joint's parameters

@@ -69,6 +69,21 @@ describe("JointNode", () => {
         expect(offset.distanceTo(new XYZ({ x: 10, y: 10, z: 0 }))).toBeLessThan(1e-6);
     });
 
+    test("a mimic joint follows its master's value (value × multiplier + offset)", () => {
+        const master = new JointNode({ document: doc, name: "master", jointType: "revolute" });
+        const slave = new JointNode({ document: doc, name: "slave", jointType: "revolute" });
+        (doc as any).modelManager.rootNode.add(master, slave);
+
+        slave.mimicMultiplier = -2;
+        slave.mimicOffset = 5;
+        slave.mimicJoint = master.id; // start mimicking
+
+        master.value = 30; // slave follows: 30 × -2 + 5 = -55
+        expect(slave.value).toBe(-55);
+        master.value = 10; // 10 × -2 + 5 = -15
+        expect(slave.value).toBe(-15);
+    });
+
     test("setting the pivot does NOT move the part (identity at value 0)", () => {
         // This is the core guarantee: the rotation point only sets WHERE rotation happens; changing
         // it never translates the part. At value 0 the transform stays identity for any pivot.
