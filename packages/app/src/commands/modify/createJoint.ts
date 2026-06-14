@@ -7,7 +7,6 @@ import {
     GetOrSelectNodeStep,
     type IStep,
     JointNode,
-    Matrix4,
     Transaction,
     VisualNode,
 } from "@chili3d/core";
@@ -31,19 +30,11 @@ export class CreateJointCommand extends MultistepCommand {
             const node = nodes[0];
             const parent = node.parent ?? this.document.modelManager.rootNode;
 
-            // Pivot the joint at the node's centre (in the parent frame) so it rotates the
-            // part in place rather than swinging it around the world origin. Compensate the
-            // node's transform so it stays put at value 0: child' = origin⁻¹ · child.
+            // Default the rotation point to the part's centre. The part is NOT moved or
+            // compensated — the joint transform is identity at value 0, so wrapping it changes
+            // nothing visually; the user can then move the rotation point or actuate the joint.
             const center = BoundingBox.center(node.boundingBox());
-            const origin = Matrix4.fromTranslation(center.x, center.y, center.z);
-            const inverseOrigin = origin.invert();
-
-            const joint = new JointNode({ document: this.document, name: "Joint", origin });
-            if (inverseOrigin) {
-                // child' = T(-center)·child (standard); Matrix4.multiply is reversed, so this
-                // is node.transform.multiply(inverseOrigin). Keeps the part put at value 0.
-                node.transform = node.transform.multiply(inverseOrigin);
-            }
+            const joint = new JointNode({ document: this.document, name: "Joint", pivot: center });
             parent.insertBefore(node, joint);
             parent.move(node, joint);
             this.document.visual.update();

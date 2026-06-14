@@ -59,7 +59,7 @@ export function importUrdf(
             name,
             jointType: type,
             axis: parseVec(el.querySelector("axis")?.getAttribute("xyz"), 0, 0, 1),
-            origin: parseOrigin(el.querySelector("origin")),
+            pivot: parsePivot(el.querySelector("origin")),
         });
         const angular = type === "revolute" || type === "continuous";
         const limit = el.querySelector("limit");
@@ -85,17 +85,13 @@ function parseVec(s: string | null | undefined, dx: number, dy: number, dz: numb
     return new XYZ({ x: p[0] ?? dx, y: p[1] ?? dy, z: p[2] ?? dz });
 }
 
-function parseOrigin(el: Element | null): Matrix4 {
+// The joint pivot is the URDF origin's location (m → mm). The pivot model carries no frame
+// rotation, so rpy is ignored on import.
+function parsePivot(el: Element | null): XYZ {
     const xyz = (el?.getAttribute("xyz") ?? "0 0 0").trim().split(/\s+/).map(Number);
-    const rpy = (el?.getAttribute("rpy") ?? "0 0 0").trim().split(/\s+/).map(Number);
-    const t = Matrix4.fromTranslation(
-        (xyz[0] ?? 0) * M_TO_MM,
-        (xyz[1] ?? 0) * M_TO_MM,
-        (xyz[2] ?? 0) * M_TO_MM,
-    );
-    const [roll, pitch, yaw] = [rpy[0] ?? 0, rpy[1] ?? 0, rpy[2] ?? 0];
-    if (roll === 0 && pitch === 0 && yaw === 0) return t;
-    // URDF rpy = "roll pitch yaw" (fixed-axis Rz·Ry·Rx). Matrix4.multiply applies `this` first,
-    // so rpyToMatrix(...).multiply(t) = t·R (standard) — translate the rotated frame.
-    return rpyToMatrix(roll, pitch, yaw).multiply(t);
+    return new XYZ({
+        x: (xyz[0] ?? 0) * M_TO_MM,
+        y: (xyz[1] ?? 0) * M_TO_MM,
+        z: (xyz[2] ?? 0) * M_TO_MM,
+    });
 }

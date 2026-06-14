@@ -1,7 +1,7 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
-import { type IDisposable, type JointNode, type Matrix4 } from "@chili3d/core";
+import type { IDisposable, JointNode, Matrix4 } from "@chili3d/core";
 import { Object3D, Quaternion, Vector3 } from "three";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 import { dofToValue, valueToDof } from "./jointGizmoMath";
@@ -75,30 +75,27 @@ export class JointGizmo implements IDisposable {
         }
     };
 
-    // Rest world frame = parentWorld · origin, where parentWorld = jointWorld · jointLocal⁻¹
-    // and jointLocal = origin · dof (so jointWorld · jointLocal⁻¹ · origin = parentWorld · origin).
-    // JointNode extends GroupNode (not VisualNode), so it has no worldTransform(); read it
-    // from the joint's visual object, exactly as VisualNode.worldTransform() does internally.
+    // The joint's parent world transform = jointWorld · jointLocal⁻¹ (it removes the actuation, so
+    // it is the same at any value). JointNode extends GroupNode (not VisualNode), so it has no
+    // worldTransform(); read it from the joint's visual object as VisualNode.worldTransform() does.
     private jointWorldTransform(): Matrix4 | undefined {
         return this.view.content.getVisual(this.joint)?.worldTransform();
     }
 
     private buildRestFrame() {
         const jointWorld = this.jointWorldTransform();
-        const inverseLocal = this.joint.transform.invert(); // (origin · dof(value))⁻¹
+        const inverseLocal = this.joint.transform.invert(); // dof(value)⁻¹
         if (!jointWorld || !inverseLocal) return;
         // Matrix4.multiply applies `this` first, so `b.multiply(a)` yields a·b (standard product).
-        // parentWorld = jointWorld · jointLocal⁻¹ ; restWorld = parentWorld · origin.
         const parentWorld = inverseLocal.multiply(jointWorld);
-        const restWorld = this.joint.origin.multiply(parentWorld);
-
-        const pos = new Vector3();
-        const quat = new Quaternion();
-        const scale = new Vector3();
-        ThreeHelper.fromMatrix(restWorld).decompose(pos, quat, scale);
-        const axis = new Vector3(this.joint.axis.x, this.joint.axis.y, this.joint.axis.z).normalize();
-        this.frame.position.copy(pos);
-        this.frame.quaternion.copy(quat.multiply(new Quaternion().setFromUnitVectors(UNIT_Z, axis)));
+        // Place the gizmo at the rotation point (pivot) in world space, oriented so its local Z
+        // aligns with the joint axis. The pivot is the centre of rotation, so the gizmo sits there
+        // regardless of the current value.
+        const pivotWorld = parentWorld.ofPoint(this.joint.pivot);
+        const axisWorld = parentWorld.ofVector(this.joint.axis);
+        this.frame.position.set(pivotWorld.x, pivotWorld.y, pivotWorld.z);
+        const axis = new Vector3(axisWorld.x, axisWorld.y, axisWorld.z).normalize();
+        this.frame.quaternion.copy(new Quaternion().setFromUnitVectors(UNIT_Z, axis));
         this.frame.updateMatrixWorld(true);
     }
 
@@ -106,7 +103,11 @@ export class JointGizmo implements IDisposable {
         const pos = new Vector3();
         const quat = new Quaternion();
         const scale = new Vector3();
-        ThreeHelper.fromMatrix(valueToDof(this.joint.jointType, this.joint.value)).decompose(pos, quat, scale);
+        ThreeHelper.fromMatrix(valueToDof(this.joint.jointType, this.joint.value)).decompose(
+            pos,
+            quat,
+            scale,
+        );
         this.proxy.position.copy(pos);
         this.proxy.quaternion.copy(quat);
         this.proxy.updateMatrixWorld(true);

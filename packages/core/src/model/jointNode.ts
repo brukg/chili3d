@@ -14,32 +14,24 @@ const JOINT_TYPES: JointType[] = ["revolute", "continuous", "prismatic", "fixed"
 export interface JointNodeOptions extends FolderNodeOptions {
     jointType?: JointType;
     axis?: XYZ;
-    origin?: Matrix4;
+    pivot?: XYZ;
 }
 
 @serializable()
 export class JointNode extends GroupNode {
+    /**
+     * The point the joint rotates about (for prismatic joints, an unused reference point), in the
+     * joint's own coordinate space. It is the CENTRE OF ROTATION, not a placement: at value 0 the
+     * transform is identity, so setting the pivot changes only where rotation happens — it never
+     * moves the part.
+     */
     @serialize()
-    get origin(): Matrix4 {
-        return this.getPrivateValue("origin", Matrix4.identity());
-    }
-    set origin(value: Matrix4) {
-        this.setProperty("origin", value, (_p, _old) => this.updateTransform(), {
-            equals: (l, r) => l.equals(r),
-        });
-    }
-
-    /** The rotation/pivot point — the origin frame's location, editable in the property panel. */
     @property("joint.pivot")
     get pivot(): XYZ {
-        return this.origin.translationPart();
+        return this.getPrivateValue("pivot", XYZ.zero);
     }
     set pivot(value: XYZ) {
-        const array = [...this.origin.toArray()];
-        array[12] = value.x;
-        array[13] = value.y;
-        array[14] = value.z;
-        this.origin = Matrix4.fromArray(array);
+        this.setProperty("pivot", value, (_p, _old) => this.updateTransform());
     }
 
     @serialize()
@@ -101,7 +93,7 @@ export class JointNode extends GroupNode {
         super(options);
         this.setPrivateValue("jointType", options.jointType ?? "revolute");
         this.setPrivateValue("axis", options.axis ?? XYZ.unitZ);
-        this.setPrivateValue("origin", options.origin ?? Matrix4.identity());
+        this.setPrivateValue("pivot", options.pivot ?? XYZ.zero);
         this.updateTransform();
     }
 
@@ -114,18 +106,17 @@ export class JointNode extends GroupNode {
     // serializer restores fields via setPrivateValue, which does not re-run setters).
     // Invariant: never assign `transform` directly on a JointNode — actuate via `value`.
     private updateTransform() {
-        // Matrix4.multiply applies `this` first, then the argument, so `dof.multiply(origin)`
-        // yields origin∘dof — the DOF is applied in the joint frame, then the joint frame is
-        // placed by `origin`. (origin.multiply(dof) would rotate about the world origin and
-        // then translate, swinging the part around (0,0,0) for a non-identity origin.)
-        this.transform = this.dofMatrix().multiply(this.origin);
+        // The transform is the actuation alone: a rotation about the axis-through-pivot (revolute)
+        // or a translation along the axis (prismatic). At value 0 it is identity — the part does
+        // not move, and changing the pivot only changes the centre of rotation.
+        this.transform = this.dofMatrix();
     }
 
     private dofMatrix(): Matrix4 {
         switch (this.jointType) {
             case "revolute":
             case "continuous":
-                return Matrix4.fromAxisRad(XYZ.zero, this.axis, MathUtils.degToRad(this.value));
+                return Matrix4.fromAxisRad(this.pivot, this.axis, MathUtils.degToRad(this.value));
             case "prismatic":
                 return Matrix4.fromTranslation(
                     this.axis.x * this.value,

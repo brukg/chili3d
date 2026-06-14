@@ -11,7 +11,6 @@ import {
     ShapeNode,
     type VisualNode,
 } from "@chili3d/core";
-import { matrixToRpy } from "./urdfMath";
 
 const MM_TO_M = 0.001;
 
@@ -38,10 +37,11 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
     const num = (v: number): string => (Math.abs(v) < 1e-9 ? "0" : `${+v.toFixed(4)}`);
 
     const jointXml = (joint: JointNode, parent: string, child: string): string => {
-        const t = joint.origin.translationPart();
-        const e = matrixToRpy(joint.origin);
+        // The joint's pivot is its location in the parent frame; the axis carries direction, so rpy
+        // stays zero (the in-app joint model has no separate frame rotation).
+        const t = joint.pivot;
         const xyz = `${num(t.x * MM_TO_M)} ${num(t.y * MM_TO_M)} ${num(t.z * MM_TO_M)}`;
-        const rpy = `${num(e.roll)} ${num(e.pitch)} ${num(e.yaw)}`;
+        const rpy = "0 0 0";
         const a = joint.axis;
         const head =
             `  <joint name="${sanitize(joint.name)}" type="${joint.jointType}">\n` +

@@ -3,7 +3,7 @@
 
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { EditableShapeNode, type INode, JointNode, LinkNode, Matrix4, Plane } from "@chili3d/core";
+import { EditableShapeNode, type INode, JointNode, LinkNode, Plane, XYZ } from "@chili3d/core";
 import { initWasm, ShapeFactory } from "@chili3d/wasm";
 import { describe, expect, test } from "@rstest/core";
 import { TestDocument } from "../../core/test/testDocument";
@@ -48,7 +48,7 @@ describe("importUrdf (round-trip)", () => {
             document: doc,
             name: "j1",
             jointType: "revolute",
-            origin: Matrix4.fromTranslation(100, 0, 0),
+            pivot: new XYZ({ x: 100, y: 0, z: 0 }),
         });
         joint.lowerLimit = -90;
         joint.upperLimit = 90;
@@ -70,7 +70,7 @@ describe("importUrdf (round-trip)", () => {
         expect(j!.axis.z).toBeCloseTo(1, 6);
         expect(j!.lowerLimit).toBeCloseTo(-90, 1); // rad -> deg
         expect(j!.upperLimit).toBeCloseTo(90, 1);
-        expect(j!.origin.translationPart().x).toBeCloseTo(100, 1); // m -> mm
+        expect(j!.pivot.x).toBeCloseTo(100, 1); // m -> mm
 
         const c = firstChildOfType(j!, LinkNode);
         expect(c).toBeDefined();
@@ -78,7 +78,7 @@ describe("importUrdf (round-trip)", () => {
         expect(hasGeometry(c!)).toBe(true);
     });
 
-    test("a rotated joint origin round-trips (translation mm + rotation rad)", () => {
+    test("the joint pivot point round-trips through URDF (mm)", () => {
         const doc = new TestDocument() as any;
         // No geometry, so the converter is never invoked — a stub keeps this kernel-free.
         const stub = {
@@ -89,9 +89,12 @@ describe("importUrdf (round-trip)", () => {
 
         const base = new LinkNode({ document: doc, name: "base_link" });
         const child = new LinkNode({ document: doc, name: "child_link" });
-        // origin = T(100,20,5) · R(fromEuler(0.3,0.2,0.1)) — a generic rotated + translated frame.
-        const origin = Matrix4.fromEuler(0.3, 0.2, 0.1).multiply(Matrix4.fromTranslation(100, 20, 5));
-        const joint = new JointNode({ document: doc, name: "j1", jointType: "revolute", origin });
+        const joint = new JointNode({
+            document: doc,
+            name: "j1",
+            jointType: "revolute",
+            pivot: new XYZ({ x: 100, y: 20, z: 5 }),
+        });
         joint.add(child);
         base.add(joint);
 
@@ -99,11 +102,9 @@ describe("importUrdf (round-trip)", () => {
         const base2 = importUrdf(urdf, meshes, new TestDocument() as any, stub);
 
         const j = firstChildOfType(base2!, JointNode)!;
-        const before = origin.toArray();
-        const after = j.origin.toArray();
-        for (let i = 0; i < 16; i++) {
-            expect(after[i]).toBeCloseTo(before[i], 3);
-        }
+        expect(j.pivot.x).toBeCloseTo(100, 3);
+        expect(j.pivot.y).toBeCloseTo(20, 3);
+        expect(j.pivot.z).toBeCloseTo(5, 3);
     });
 
     test("parses a hand-written minimal URDF (fixed joint, no meshes)", () => {
@@ -129,8 +130,8 @@ describe("importUrdf (round-trip)", () => {
 
         const j = firstChildOfType(base!, JointNode)!;
         expect(j.jointType).toBe("fixed");
-        expect(j.origin.translationPart().x).toBeCloseTo(50, 3); // 0.05 m -> 50 mm
-        expect(j.origin.translationPart().z).toBeCloseTo(100, 3);
+        expect(j.pivot.x).toBeCloseTo(50, 3); // 0.05 m -> 50 mm
+        expect(j.pivot.z).toBeCloseTo(100, 3);
 
         const tool = firstChildOfType(j, LinkNode)!;
         expect(tool.name).toBe("tool");

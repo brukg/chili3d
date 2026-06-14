@@ -49,35 +49,34 @@ describe("JointNode", () => {
         expect(joint.value).toBe(720);
     });
 
-    test("revolute rotates about the origin's location, not the world origin", () => {
-        // origin places the joint frame at (10,0,0); a point AT that frame origin lies on the
-        // rotation axis and must stay fixed under rotation. The buggy multiply order made it
-        // rotate about (0,0,0) and swing the point to (0,10,0).
+    test("revolute rotates about the pivot point, not the world origin", () => {
+        // The pivot (10,0,0) is the rotation centre: a point AT the pivot stays fixed, and a point
+        // offset from it swings around it (the buggy model would swing about (0,0,0)).
         const joint = new JointNode({
             document: doc,
             name: "j",
             jointType: "revolute",
-            origin: Matrix4.fromTranslation(10, 0, 0),
+            pivot: new XYZ({ x: 10, y: 0, z: 0 }),
         });
         joint.lowerLimit = -180;
         joint.upperLimit = 180;
         joint.value = 90;
-        const p = joint.transform.ofPoint(XYZ.zero);
-        expect(p.distanceTo(new XYZ({ x: 10, y: 0, z: 0 }))).toBeLessThan(1e-6);
+        // the pivot point is on the axis → unmoved
+        const onAxis = joint.transform.ofPoint(new XYZ({ x: 10, y: 0, z: 0 }));
+        expect(onAxis.distanceTo(new XYZ({ x: 10, y: 0, z: 0 }))).toBeLessThan(1e-6);
+        // (20,0,0) is 10mm along +X from the pivot → 90° about +Z → (10,10,0)
+        const offset = joint.transform.ofPoint(new XYZ({ x: 20, y: 0, z: 0 }));
+        expect(offset.distanceTo(new XYZ({ x: 10, y: 10, z: 0 }))).toBeLessThan(1e-6);
     });
 
-    test("origin composes outside the DOF", () => {
-        const joint = new JointNode({
-            document: doc,
-            name: "j",
-            jointType: "prismatic",
-            axis: XYZ.unitX,
-            origin: Matrix4.fromTranslation(0, 0, 5),
-        });
-        joint.lowerLimit = -100;
-        joint.upperLimit = 100;
-        joint.value = 10;
-        const p = joint.transform.ofPoint(XYZ.zero);
-        expect(p.distanceTo(new XYZ({ x: 10, y: 0, z: 5 }))).toBeLessThan(1e-6);
+    test("setting the pivot does NOT move the part (identity at value 0)", () => {
+        // This is the core guarantee: the rotation point only sets WHERE rotation happens; changing
+        // it never translates the part. At value 0 the transform stays identity for any pivot.
+        const joint = new JointNode({ document: doc, name: "j", jointType: "revolute" });
+        expect(joint.transform.equals(Matrix4.identity())).toBe(true);
+        joint.pivot = new XYZ({ x: 50, y: 60, z: 70 });
+        expect(joint.transform.equals(Matrix4.identity())).toBe(true);
+        const p = joint.transform.ofPoint(new XYZ({ x: 1, y: 2, z: 3 }));
+        expect(p.distanceTo(new XYZ({ x: 1, y: 2, z: 3 }))).toBeLessThan(1e-6);
     });
 });

@@ -3,7 +3,7 @@
 
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { EditableShapeNode, JointNode, LinkNode, Matrix4, Plane } from "@chili3d/core";
+import { EditableShapeNode, JointNode, LinkNode, Plane, XYZ } from "@chili3d/core";
 import { initWasm, ShapeFactory } from "@chili3d/wasm";
 import { describe, expect, test } from "@rstest/core";
 import { TestDocument } from "../../core/test/testDocument";
@@ -31,7 +31,7 @@ describe("exportUrdf", () => {
             document: doc,
             name: "j1",
             jointType: "revolute",
-            origin: Matrix4.fromTranslation(100, 0, 0),
+            pivot: new XYZ({ x: 100, y: 0, z: 0 }),
         });
         joint.lowerLimit = -90;
         joint.upperLimit = 90;
