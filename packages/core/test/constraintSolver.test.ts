@@ -3,6 +3,7 @@
 
 import { describe, expect, test } from "@rstest/core";
 import {
+    analyzeConstraints,
     angle,
     coincident,
     distance,
@@ -154,6 +155,45 @@ describe("solveConstraints", () => {
         const w = { x: p2.x - p1.x, y: p2.y - p1.y };
         const measured = Math.atan2(u.x * w.y - u.y * w.x, u.x * w.x + u.y * w.y);
         expect(Math.abs(measured)).toBeCloseTo(Math.PI / 4, 4); // 45°
+    });
+
+    test("analyzeConstraints reports degrees of freedom and constraint status", () => {
+        const square = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+        ];
+        const squareCons = [
+            fixed(0, 0, 0),
+            horizontal(0, 1),
+            distance(0, 1, 10),
+            vertical(0, 3),
+            distance(0, 3, 10),
+            horizontal(3, 2),
+            vertical(1, 2),
+        ];
+        // 8 variables, 8 independent constraints → fully constrained, 0 DoF.
+        const full = analyzeConstraints(square, squareCons);
+        expect(full.variables).toBe(8);
+        expect(full.degreesOfFreedom).toBe(0);
+        expect(full.status).toBe("fully-constrained");
+
+        // Just one distance between two points → 4 vars, 1 constraint → 3 DoF.
+        const under = analyzeConstraints(
+            [
+                { x: 0, y: 0 },
+                { x: 5, y: 0 },
+            ],
+            [distance(0, 1, 5)],
+        );
+        expect(under.degreesOfFreedom).toBe(3);
+        expect(under.status).toBe("under-constrained");
+
+        // The square plus a redundant duplicate distance → over-constrained.
+        const over = analyzeConstraints(square, [...squareCons, distance(0, 1, 10)]);
+        expect(over.redundant).toBeGreaterThan(0);
+        expect(over.status).toBe("over-constrained");
     });
 
     test("under-constrained system still converges (free DoF stay near start)", () => {

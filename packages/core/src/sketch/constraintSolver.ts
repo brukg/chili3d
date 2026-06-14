@@ -191,6 +191,63 @@ function solveLinear(A: number[][], b: number[]): number[] | undefined {
     return M.map((row, i) => row[n] / row[i]);
 }
 
+// The rank of a matrix via Gaussian elimination with partial pivoting (count of pivot rows).
+function matrixRank(matrix: number[][]): number {
+    const rows = matrix.map((r) => [...r]);
+    const m = rows.length;
+    const n = rows[0]?.length ?? 0;
+    const eps = 1e-7;
+    let rank = 0;
+    for (let col = 0; col < n && rank < m; col++) {
+        let pivot = -1;
+        let best = eps;
+        for (let r = rank; r < m; r++) {
+            if (Math.abs(rows[r][col]) > best) {
+                best = Math.abs(rows[r][col]);
+                pivot = r;
+            }
+        }
+        if (pivot === -1) continue;
+        [rows[rank], rows[pivot]] = [rows[pivot], rows[rank]];
+        for (let r = 0; r < m; r++) {
+            if (r === rank) continue;
+            const factor = rows[r][col] / rows[rank][col];
+            for (let c = col; c < n; c++) rows[r][c] -= factor * rows[rank][c];
+        }
+        rank++;
+    }
+    return rank;
+}
+
+export interface DofAnalysis {
+    variables: number;
+    rank: number;
+    /** Remaining free degrees of freedom (variables − independent constraints). */
+    degreesOfFreedom: number;
+    /** Constraint equations beyond the independent set (redundant / conflicting). */
+    redundant: number;
+    status: "under-constrained" | "fully-constrained" | "over-constrained";
+}
+
+/**
+ * Report whether a sketch is under-, fully-, or over-constrained by comparing the constraint
+ * Jacobian's rank against the variable count — the standard sketcher feedback that tells the user
+ * how many degrees of freedom remain.
+ */
+export function analyzeConstraints(initial: Point2d[], constraints: Constraint[]): DofAnalysis {
+    const vars: number[] = [];
+    for (const p of initial) vars.push(p.x, p.y);
+    const r0 = allResiduals(constraints, vars);
+    const J = jacobian(constraints, vars, r0);
+    const rank = J.length === 0 ? 0 : matrixRank(J);
+    const variables = vars.length;
+    const degreesOfFreedom = variables - rank;
+    const redundant = r0.length - rank;
+    const status =
+        degreesOfFreedom > 0 ? "under-constrained" : redundant > 0 ? "over-constrained" : "fully-constrained";
+    return { variables, rank, degreesOfFreedom, redundant, status };
+}
+
 /**
  * Solve the constraint system, starting from `initial` point positions. Returns the solved points
  * and whether the residual converged below `tolerance`.
