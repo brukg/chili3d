@@ -6,6 +6,7 @@ export * from "./break";
 export * from "./brush";
 export * from "./chamfer";
 export * from "./createJoint";
+export * from "./createLink";
 export * from "./draft";
 export * from "./explode";
 export * from "./fillet";
