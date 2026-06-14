@@ -18,6 +18,8 @@ export default {
         "body.linkedTransform": "Linked Transform",
         "body.linkedExtrude": "Linked Extrude",
         "body.linkedRevolve": "Linked Revolve",
+        "body.linkedArray": "Linked Array",
+        "linkedArray.count": "Count",
         "linkedExtrude.distance": "Distance",
         "feature.suppressed": "Suppressed",
         "linkedBoolean.type": "Operation",

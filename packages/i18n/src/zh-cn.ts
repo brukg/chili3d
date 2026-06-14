@@ -18,6 +18,8 @@ export default {
         "body.linkedTransform": "关联变换",
         "body.linkedExtrude": "关联拉伸",
         "body.linkedRevolve": "关联旋转",
+        "body.linkedArray": "关联阵列",
+        "linkedArray.count": "数量",
         "linkedExtrude.distance": "距离",
         "feature.suppressed": "抑制",
         "linkedBoolean.type": "操作",

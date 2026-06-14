@@ -8,6 +8,7 @@ export * from "./cylinder";
 export * from "./ellipse";
 export * from "./extrude";
 export * from "./line";
+export * from "./linkedArray";
 export * from "./linkedBoolean";
 export * from "./linkedExtrude";
 export * from "./linkedRevolve";

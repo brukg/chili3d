@@ -13,6 +13,8 @@ export const I18N_KEYS = [
     "body.linkedTransform",
     "body.linkedExtrude",
     "body.linkedRevolve",
+    "body.linkedArray",
+    "linkedArray.count",
     "linkedExtrude.distance",
     "feature.suppressed",
     "linkedBoolean.type",
