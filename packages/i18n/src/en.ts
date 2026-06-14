@@ -40,6 +40,7 @@ export default {
         "body.rect": "Rectangle",
         "body.revol": "Revolve",
         "body.rib": "Rib",
+        "body.sketch": "Sketch",
         "body.sphere": "Sphere",
         "body.sweep": "Sweep",
         "body.thread": "Thread",

@@ -40,6 +40,7 @@ export default {
         "body.rect": "矩形",
         "body.revol": "旋转",
         "body.rib": "筋",
+        "body.sketch": "草图",
         "body.sphere": "球体",
         "body.sweep": "扫略",
         "body.thread": "螺纹",
