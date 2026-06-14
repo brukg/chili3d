@@ -15,10 +15,11 @@ import {
     type VisualNode,
 } from "@chili3d/core";
 import { exportUrdf } from "./urdf/urdfExporter";
+import { importUrdf } from "./urdf/urdfImporter";
 
 export class DefaultDataExchange implements IDataExchange {
     importFormats(): string[] {
-        return [".step", ".stp", ".iges", ".igs", ".brep", ".stl"];
+        return [".step", ".stp", ".iges", ".igs", ".brep", ".stl", ".urdf"];
     }
 
     exportFormats(): string[] {
@@ -55,6 +56,8 @@ export class DefaultDataExchange implements IDataExchange {
             importResult = await this.importStep(document, file);
         } else if (this.extensionIs(fileName, ".iges", ".igs")) {
             importResult = await this.importIges(document, file);
+        } else if (this.extensionIs(fileName, ".urdf")) {
+            importResult = await this.importUrdfZip(document, file);
         }
 
         this.handleImportResult(document, fileName, importResult);
@@ -97,6 +100,29 @@ export class DefaultDataExchange implements IDataExchange {
     private async importStep(document: IDocument, file: File) {
         const content = new Uint8Array(await file.arrayBuffer());
         return shapeFactory.converter.convertFromSTEP(document, content);
+    }
+
+    private async importUrdfZip(document: IDocument, file: File): Promise<Result<INode>> {
+        const JSZip = (await import("jszip")).default;
+        const zip = await JSZip.loadAsync(await file.arrayBuffer());
+
+        const urdfEntry = zip.file(/\.urdf$/i)[0] ?? zip.file("robot.urdf");
+        if (!urdfEntry) {
+            return Result.err("error.import.unsupportedFileType");
+        }
+        const urdf = await urdfEntry.async("string");
+
+        const meshes = new Map<string, Uint8Array>();
+        for (const entry of zip.file(/meshes\//i)) {
+            const name = entry.name.split("/").pop();
+            if (name) meshes.set(name, await entry.async("uint8array"));
+        }
+
+        const base = importUrdf(urdf, meshes, document, shapeFactory.converter);
+        if (!base) {
+            return Result.err("error.import.unsupportedFileType");
+        }
+        return Result.ok(base);
     }
 
     async export(type: string, nodes: VisualNode[]): Promise<BlobPart[] | undefined> {
