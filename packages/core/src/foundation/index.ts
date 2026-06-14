@@ -10,6 +10,7 @@ export * from "./deepObserver";
 export * from "./disposable";
 export * from "./dto";
 export * from "./equalityComparer";
+export * from "./expression";
 export * from "./gc";
 export * from "./history";
 export * from "./id";
