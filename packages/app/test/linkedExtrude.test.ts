@@ -4,6 +4,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import {
+    EditableShapeNode,
     type IApplication,
     type ISolid,
     Plane,
@@ -37,9 +38,59 @@ function solidVolume(node: any): number {
 }
 
 describe("LinkedExtrudeNode (C4 → C1 parametric chain)", () => {
+    let factory: ShapeFactory;
     beforeAll(async () => {
         await initWasm({ wasmBinary: WASM_BINARY });
-        setCurrentApplication({ shapeFactory: new ShapeFactory() } as unknown as IApplication);
+        factory = new ShapeFactory();
+        setCurrentApplication({ shapeFactory: factory } as unknown as IApplication);
+    });
+
+    const square = (): XYZ[] =>
+        [
+            [0, 0],
+            [10, 0],
+            [10, 10],
+            [0, 10],
+            [0, 0],
+        ].map(([x, y]) => new XYZ({ x, y, z: 0 }));
+
+    test("extrudes a FACE profile to a solid (regression: no TopoDS_Wire binding crash)", () => {
+        const doc = new TestDocument() as any;
+        const faceShape = factory.face([factory.polygon(square()).value]).value;
+        const faceNode = new EditableShapeNode({ document: doc, name: "face", shape: faceShape });
+        doc.modelManager.rootNode.add(faceNode);
+
+        const extrude = new LinkedExtrudeNode({
+            document: doc,
+            profileId: faceNode.id,
+            direction: new XYZ({ x: 0, y: 0, z: 1 }),
+            distance: 5,
+        });
+        doc.modelManager.rootNode.add(extrude);
+
+        expect(extrude.shape.isOk).toBe(true);
+        expect(solidVolume(extrude)).toBeCloseTo(500, 0); // 10 × 10 × 5
+    });
+
+    test("a non-extrudable profile (a solid) fails gracefully instead of crashing", () => {
+        const doc = new TestDocument() as any;
+        const boxNode = new EditableShapeNode({
+            document: doc,
+            name: "box",
+            shape: factory.box(Plane.XY, 10, 10, 10).value,
+        });
+        doc.modelManager.rootNode.add(boxNode);
+
+        const extrude = new LinkedExtrudeNode({
+            document: doc,
+            profileId: boxNode.id,
+            direction: new XYZ({ x: 0, y: 0, z: 1 }),
+            distance: 5,
+        });
+        doc.modelManager.rootNode.add(extrude);
+
+        // The OCC binding used to throw here; it must now be a clean error Result.
+        expect(extrude.shape.isOk).toBe(false);
     });
 
     test("a constrained sketch extrudes to a solid that rebuilds when a constraint changes", () => {
