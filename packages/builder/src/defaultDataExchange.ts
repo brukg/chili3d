@@ -14,6 +14,7 @@ import {
     ShapeNode,
     type VisualNode,
 } from "@chili3d/core";
+import { exportThreeMf } from "./threemf/threeMfExporter";
 import { exportUrdf } from "./urdf/urdfExporter";
 import { importUrdf } from "./urdf/urdfImporter";
 
@@ -29,6 +30,7 @@ export class DefaultDataExchange implements IDataExchange {
             ".brep",
             ".stl",
             ".stl binary",
+            ".3mf",
             ".ply",
             ".ply binary",
             ".obj",
@@ -142,6 +144,8 @@ export class DefaultDataExchange implements IDataExchange {
             shapeResult = await document.visual.meshExporter.exportToGltf(nodes, true);
         } else if (type === ".urdf") {
             return await this.exportUrdfZip(nodes);
+        } else if (type === ".3mf") {
+            return await this.exportThreeMfFile(nodes);
         } else {
             const shapes = this.getExportShapes(nodes);
             if (!shapes.length) return undefined;
@@ -185,6 +189,18 @@ export class DefaultDataExchange implements IDataExchange {
         }
         const blob = await zip.generateAsync({ type: "uint8array" });
         return [blob as BlobPart];
+    }
+
+    private async exportThreeMfFile(nodes: VisualNode[]): Promise<BlobPart[] | undefined> {
+        const shapes = this.getExportShapes(nodes);
+        if (!shapes.length) return undefined;
+        const converter = nodes[0].document.application.shapeFactory.converter;
+        const result = await exportThreeMf(shapes, converter);
+        if (!result.isOk) {
+            PubSub.default.pub("showToast", "error.export.noNodeCanBeExported");
+            return undefined;
+        }
+        return [result.value as BlobPart];
     }
 
     private exportStl(doc: IDocument, shapes: IShape[], binary: boolean): Result<BlobPart> {
