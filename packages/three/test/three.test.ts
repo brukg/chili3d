@@ -1,7 +1,16 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
-import { type IVisualGeometry, Material, type ShapeNode, ShapeTypes, XY, XYZ } from "@chili3d/core";
+import {
+    GroupNode,
+    type IVisualGeometry,
+    Material,
+    Matrix4,
+    type ShapeNode,
+    ShapeTypes,
+    XY,
+    XYZ,
+} from "@chili3d/core";
 import { TestDocument } from "./testDocument";
 import { TestNode } from "./testEdge";
 import { TestView } from "./testView";
@@ -40,5 +49,31 @@ describe("three test", () => {
 
         context.removeNode([model]);
         expect(view.detectShapes(ShapeTypes.shape, mouse.x, mouse.y).length).toEqual(0);
+    });
+
+    test("nests a child visual under its group even when built bottom-up (URDF import order)", () => {
+        const context = doc.visual.context;
+        const group = new GroupNode({ document: doc, name: "g" });
+        const child = new TestNode(doc, XYZ.zero, new XYZ({ x: 50, y: 0, z: 0 }));
+
+        // Bottom-up: the child's visual is created while the group still has no visual...
+        context.addNode([child]);
+        // ...then the group's visual is created. The child must be adopted under it, not stranded.
+        group.add(child);
+        context.addNode([group]);
+
+        const childVisual = context.getVisual(child) as any;
+        const groupVisual = context.getVisual(group) as any;
+        expect(groupVisual).toBeTruthy();
+        expect(childVisual.parent).toBe(groupVisual);
+
+        // A transform on the group must now propagate to the child's world matrix.
+        groupVisual.transform = Matrix4.fromTranslation(0, 0, 100);
+        groupVisual.updateMatrixWorld(true);
+        const t = childVisual.matrixWorld.elements;
+        expect([t[12], t[13], t[14]]).toEqual([0, 0, 100]);
+
+        context.removeNode([child]);
+        context.removeNode([group]);
     });
 });
