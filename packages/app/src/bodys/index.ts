@@ -10,6 +10,7 @@ export * from "./extrude";
 export * from "./line";
 export * from "./linkedBoolean";
 export * from "./linkedExtrude";
+export * from "./linkedRevolve";
 export * from "./linkedTransform";
 export * from "./pipe";
 export * from "./pipeFeature";

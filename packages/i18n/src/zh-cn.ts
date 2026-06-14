@@ -17,6 +17,7 @@ export default {
         "body.linkedBoolean": "关联布尔",
         "body.linkedTransform": "关联变换",
         "body.linkedExtrude": "关联拉伸",
+        "body.linkedRevolve": "关联旋转",
         "linkedExtrude.distance": "距离",
         "feature.suppressed": "抑制",
         "linkedBoolean.type": "操作",

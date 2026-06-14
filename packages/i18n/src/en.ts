@@ -17,6 +17,7 @@ export default {
         "body.linkedBoolean": "Linked Boolean",
         "body.linkedTransform": "Linked Transform",
         "body.linkedExtrude": "Linked Extrude",
+        "body.linkedRevolve": "Linked Revolve",
         "linkedExtrude.distance": "Distance",
         "feature.suppressed": "Suppressed",
         "linkedBoolean.type": "Operation",
