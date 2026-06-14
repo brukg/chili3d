@@ -121,6 +121,7 @@ export default {
         "command.modify.brushClear": "清除画笔",
         "command.modify.brushRemove": "删除画笔",
         "command.modify.chamfer": "倒角",
+        "command.modify.setJointPivot": "设置旋转点",
         "command.modify.createJoint": "创建关节",
         "command.modify.exportUrdf": "导出 URDF",
         "error.export.needLinkNode":
@@ -304,6 +305,8 @@ export default {
         "prompt.select.neutralFace": "选择中性面",
         "prompt.select.path": "请选择路径",
         "prompt.select.section": "请选择截面",
+        "prompt.pickRotationPoint": "在零件上拾取旋转点（零件不会移动）",
+        "prompt.select.joint": "请先选择一个关节",
         "prompt.select.shape": "选择形状",
         "prompt.select.solids": "请选择实体",
         "prompt.select.vertexes": "请选择点",

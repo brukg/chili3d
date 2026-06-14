@@ -1,7 +1,7 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
-import { type IDisposable, type JointNode, type Matrix4, XYZ } from "@chili3d/core";
+import type { IDisposable, JointNode, Matrix4 } from "@chili3d/core";
 import { Object3D, Quaternion, Vector3 } from "three";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 import { dofToValue, valueToDof } from "./jointGizmoMath";
@@ -13,7 +13,7 @@ const UNIT_Z = new Vector3(0, 0, 1);
 /**
  * A 3D drag handle for actuating a single JointNode. Built on Three.js TransformControls,
  * constrained to the joint's one DOF (rotate-about-axis for revolute/continuous, translate-
- * along-axis for prismatic, hidden for fixed).
+ * along-axis for prismatic, hidden for fixed). The arc sits at the joint's rotation centre (pivot).
  *
  * Frame layout (separates world placement from the canonical-Z DOF that jointGizmoMath reads):
  *   - `frame`  — placed at the joint REST world frame (value 0), oriented so its local Z
@@ -25,12 +25,6 @@ export class JointGizmo implements IDisposable {
     private readonly frame = new Object3D();
     private readonly proxy = new Object3D();
     private readonly controls: TransformControls;
-    // Second handle: world-aligned translate arrows at the rotation centre, driving joint.pivot.
-    private readonly pivotProxy = new Object3D();
-    private pivotControls?: TransformControls;
-    // The joint's parent world frame (invariant to actuation and pivot). Maps joint-local ⇄ world,
-    // so a pivot dragged in world space converts back to the joint's own coordinates.
-    private parentWorld?: Matrix4;
     private dragging = false;
     private readonly dom: HTMLElement;
 
@@ -60,9 +54,6 @@ export class JointGizmo implements IDisposable {
             this.controls.showZ = false;
         } else {
             this.controls.setMode("rotate");
-            // Enlarge the rotation ring so it sits well outside the compact pivot-translate handles;
-            // overlapping them at the same radius let one drag grab both (rotating + moving at once).
-            this.controls.size = 1.6;
         }
 
         this.view.content.scene.add(this.controls.getHelper());
@@ -75,47 +66,13 @@ export class JointGizmo implements IDisposable {
         // disposes this gizmo before the drag can start. Registered AFTER TransformControls'
         // own canvas listener so `axis` is already updated when this runs.
         this.dom.addEventListener("pointerdown", this.stopWhenOverGizmo);
-        this.setupPivotControls();
         this.view.update();
-    }
-
-    // A draggable centre-of-rotation handle. Only rotational joints have a meaningful pivot, so the
-    // arrows are shown for revolute/continuous; prismatic translates along its axis and fixed has no
-    // DOF, so neither exposes a pivot.
-    private setupPivotControls() {
-        if (this.joint.jointType !== "revolute" && this.joint.jointType !== "continuous") return;
-        this.pivotProxy.position.copy(this.frame.position);
-        this.pivotProxy.updateMatrixWorld(true);
-        this.view.content.scene.add(this.pivotProxy);
-
-        const controls = new TransformControls(this.view.camera, this.dom);
-        controls.setMode("translate");
-        controls.setSpace("world");
-        controls.size = 0.85; // compact, so it stays inside the enlarged rotation ring
-        controls.attach(this.pivotProxy);
-        controls.addEventListener("objectChange", this.onPivotChange);
-        controls.addEventListener("dragging-changed", this.onDraggingChanged);
-        this.view.content.scene.add(controls.getHelper());
-        this.pivotControls = controls;
     }
 
     private readonly stopWhenOverGizmo = (event: Event) => {
-        if (this.controls.axis || this.pivotControls?.axis) {
+        if (this.controls.axis) {
             event.stopPropagation();
         }
-    };
-
-    // Dragging the pivot handle: convert its world position into the joint's local space and store it
-    // as the new centre of rotation, then re-anchor the rotation arc so it follows the centre.
-    private readonly onPivotChange = () => {
-        if (!this.dragging || !this.parentWorld) return;
-        const toLocal = this.parentWorld.invert();
-        if (!toLocal) return;
-        const p = this.pivotProxy.position;
-        this.joint.pivot = toLocal.ofPoint(new XYZ({ x: p.x, y: p.y, z: p.z }));
-        this.frame.position.copy(p);
-        this.frame.updateMatrixWorld(true);
-        this.view.update();
     };
 
     // The joint's parent world transform = jointWorld · jointLocal⁻¹ (it removes the actuation, so
@@ -131,7 +88,6 @@ export class JointGizmo implements IDisposable {
         if (!jointWorld || !inverseLocal) return;
         // Matrix4.multiply applies `this` first, so `b.multiply(a)` yields a·b (standard product).
         const parentWorld = inverseLocal.multiply(jointWorld);
-        this.parentWorld = parentWorld;
         // Place the gizmo at the rotation point (pivot) in world space, oriented so its local Z
         // aligns with the joint axis. The pivot is the centre of rotation, so the gizmo sits there
         // regardless of the current value.
@@ -159,12 +115,6 @@ export class JointGizmo implements IDisposable {
 
     private readonly onDraggingChanged = (event: { value: unknown }) => {
         this.dragging = event.value === true;
-        // While one handle is actively dragging, disable the other so a single gesture can't grab
-        // both (rotating the joint and moving its centre at the same time).
-        if (this.pivotControls && this.joint.jointType !== "fixed") {
-            this.controls.enabled = !this.pivotControls.dragging;
-            this.pivotControls.enabled = !this.controls.dragging;
-        }
         // Suspend chili3d's own pointer handlers while dragging the gizmo so the camera
         // doesn't orbit and selection doesn't change mid-drag.
         const visual = this.view.document.visual;
@@ -188,14 +138,6 @@ export class JointGizmo implements IDisposable {
         this.controls.detach();
         this.view.content.scene.remove(this.controls.getHelper());
         this.controls.dispose();
-        if (this.pivotControls) {
-            this.pivotControls.removeEventListener("objectChange", this.onPivotChange);
-            this.pivotControls.removeEventListener("dragging-changed", this.onDraggingChanged);
-            this.pivotControls.detach();
-            this.view.content.scene.remove(this.pivotControls.getHelper());
-            this.pivotControls.dispose();
-        }
-        this.view.content.scene.remove(this.pivotProxy);
         this.view.content.scene.remove(this.frame);
         // Restore handlers in case disposal happens mid-drag.
         const visual = this.view.document.visual;
