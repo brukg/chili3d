@@ -1,7 +1,13 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
-import { Application, CommandService, HotkeyService, ShowPropertyEventHandler } from "@chili3d/app";
+import {
+    Application,
+    CommandService,
+    HotkeyService,
+    ParameterService,
+    ShowPropertyEventHandler,
+} from "@chili3d/app";
 import {
     Config,
     Constants,
@@ -168,6 +174,6 @@ export class AppBuilder {
     }
 
     protected getServices(): IService[] {
-        return [new CommandService(), new HotkeyService()];
+        return [new CommandService(), new HotkeyService(), new ParameterService()];
     }
 }
