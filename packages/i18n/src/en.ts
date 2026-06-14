@@ -121,7 +121,6 @@ export default {
         "command.modify.brushClear": "Brush Clear",
         "command.modify.brushRemove": "Brush Remove",
         "command.modify.chamfer": "Chamfer",
-        "command.modify.setJointPivot": "Set Rotation Point",
         "command.modify.createJoint": "Create Joint",
         "command.modify.exportUrdf": "Export URDF",
         "error.export.needLinkNode":
@@ -306,8 +305,6 @@ export default {
         "prompt.select.neutralFace": "Select the neutral plane face",
         "prompt.select.path": "Please select path",
         "prompt.select.section": "Please select section",
-        "prompt.pickRotationPoint": "Pick the rotation point on the part (it will not move)",
-        "prompt.select.joint": "Please select a joint first",
         "prompt.select.shape": "Please select shape",
         "prompt.select.solids": "Please select solids",
         "prompt.select.vertexes": "Please select vertexes",
