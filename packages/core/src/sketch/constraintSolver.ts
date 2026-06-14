@@ -53,6 +53,56 @@ export function vertical(a: number, b: number): Constraint {
     return { residuals: (v) => [v[px(a)] - v[px(b)]] };
 }
 
+/** Segment a→b is parallel to segment c→d (their direction cross-product is zero). */
+export function parallel(a: number, b: number, c: number, d: number): Constraint {
+    return {
+        residuals: (v) => {
+            const ux = v[px(b)] - v[px(a)];
+            const uy = v[py(b)] - v[py(a)];
+            const wx = v[px(d)] - v[px(c)];
+            const wy = v[py(d)] - v[py(c)];
+            return [ux * wy - uy * wx];
+        },
+    };
+}
+
+/** Segment a→b is perpendicular to segment c→d (their direction dot-product is zero). */
+export function perpendicular(a: number, b: number, c: number, d: number): Constraint {
+    return {
+        residuals: (v) => {
+            const ux = v[px(b)] - v[px(a)];
+            const uy = v[py(b)] - v[py(a)];
+            const wx = v[px(d)] - v[px(c)];
+            const wy = v[py(d)] - v[py(c)];
+            return [ux * wx + uy * wy];
+        },
+    };
+}
+
+/** Segments a→b and c→d have equal length. */
+export function equalLength(a: number, b: number, c: number, d: number): Constraint {
+    return {
+        residuals: (v) => {
+            const l1 = Math.hypot(v[px(b)] - v[px(a)], v[py(b)] - v[py(a)]);
+            const l2 = Math.hypot(v[px(d)] - v[px(c)], v[py(d)] - v[py(c)]);
+            return [l1 - l2];
+        },
+    };
+}
+
+/** Point p lies on the line through a and b (p is collinear with a→b). */
+export function pointOnLine(p: number, a: number, b: number): Constraint {
+    return {
+        residuals: (v) => {
+            const ux = v[px(b)] - v[px(a)];
+            const uy = v[py(b)] - v[py(a)];
+            const wx = v[px(p)] - v[px(a)];
+            const wy = v[py(p)] - v[py(a)];
+            return [ux * wy - uy * wx];
+        },
+    };
+}
+
 export interface SolveOptions {
     maxIterations?: number;
     tolerance?: number;

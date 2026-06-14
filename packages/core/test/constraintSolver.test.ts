@@ -5,8 +5,12 @@ import { describe, expect, test } from "@rstest/core";
 import {
     coincident,
     distance,
+    equalLength,
     fixed,
     horizontal,
+    parallel,
+    perpendicular,
+    pointOnLine,
     solveConstraints,
     vertical,
 } from "../src/sketch/constraintSolver";
@@ -69,6 +73,54 @@ describe("solveConstraints", () => {
         expect(result.converged).toBe(true);
         expect(result.points[1].x).toBeCloseTo(2, 6);
         expect(result.points[1].y).toBeCloseTo(3, 6);
+    });
+
+    test("perpendicular makes two segments meet at a right angle", () => {
+        // p0-p1 fixed horizontal; p2 must make p1-p2 perpendicular to p0-p1.
+        const result = solveConstraints(
+            [
+                { x: 0, y: 0 },
+                { x: 10, y: 0 },
+                { x: 12, y: 7 }, // start with a non-right angle
+            ],
+            [fixed(0, 0, 0), fixed(1, 10, 0), perpendicular(0, 1, 1, 2)],
+        );
+        expect(result.converged).toBe(true);
+        const [p0, p1, p2] = result.points;
+        const u = { x: p1.x - p0.x, y: p1.y - p0.y };
+        const w = { x: p2.x - p1.x, y: p2.y - p1.y };
+        expect(u.x * w.x + u.y * w.y).toBeCloseTo(0, 5); // dot ≈ 0
+    });
+
+    test("parallel + equalLength shapes a parallelogram-ish constraint", () => {
+        const result = solveConstraints(
+            [
+                { x: 0, y: 0 },
+                { x: 10, y: 0 },
+                { x: 1, y: 5 },
+                { x: 12, y: 6 },
+            ],
+            [fixed(0, 0, 0), fixed(1, 10, 0), parallel(0, 1, 2, 3), equalLength(0, 1, 2, 3)],
+        );
+        expect(result.converged).toBe(true);
+        const [p0, p1, p2, p3] = result.points;
+        const cross = (p1.x - p0.x) * (p3.y - p2.y) - (p1.y - p0.y) * (p3.x - p2.x);
+        expect(cross).toBeCloseTo(0, 4); // parallel
+        expect(Math.hypot(p3.x - p2.x, p3.y - p2.y)).toBeCloseTo(10, 4); // equal length
+    });
+
+    test("pointOnLine pulls a point onto a line", () => {
+        const result = solveConstraints(
+            [
+                { x: 0, y: 0 },
+                { x: 10, y: 10 },
+                { x: 5, y: 1 }, // off the y=x line
+            ],
+            [fixed(0, 0, 0), fixed(1, 10, 10), pointOnLine(2, 0, 1)],
+        );
+        expect(result.converged).toBe(true);
+        const p2 = result.points[2];
+        expect(p2.x).toBeCloseTo(p2.y, 4); // on the line y = x
     });
 
     test("under-constrained system still converges (free DoF stay near start)", () => {

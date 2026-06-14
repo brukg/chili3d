@@ -1,7 +1,18 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
-import { type Constraint, coincident, distance, fixed, horizontal, vertical } from "./constraintSolver";
+import {
+    type Constraint,
+    coincident,
+    distance,
+    equalLength,
+    fixed,
+    horizontal,
+    parallel,
+    perpendicular,
+    pointOnLine,
+    vertical,
+} from "./constraintSolver";
 
 /**
  * A serializable, plain-data description of a sketch constraint. The live {@link Constraint}
@@ -13,7 +24,11 @@ export type SketchConstraint =
     | { type: "coincident"; a: number; b: number }
     | { type: "distance"; a: number; b: number; d: number }
     | { type: "horizontal"; a: number; b: number }
-    | { type: "vertical"; a: number; b: number };
+    | { type: "vertical"; a: number; b: number }
+    | { type: "parallel"; a: number; b: number; c: number; d: number }
+    | { type: "perpendicular"; a: number; b: number; c: number; d: number }
+    | { type: "equalLength"; a: number; b: number; c: number; d: number }
+    | { type: "pointOnLine"; point: number; a: number; b: number };
 
 /** Map a serializable {@link SketchConstraint} descriptor to a live solver {@link Constraint}. */
 export function toConstraint(c: SketchConstraint): Constraint {
@@ -28,5 +43,13 @@ export function toConstraint(c: SketchConstraint): Constraint {
             return horizontal(c.a, c.b);
         case "vertical":
             return vertical(c.a, c.b);
+        case "parallel":
+            return parallel(c.a, c.b, c.c, c.d);
+        case "perpendicular":
+            return perpendicular(c.a, c.b, c.c, c.d);
+        case "equalLength":
+            return equalLength(c.a, c.b, c.c, c.d);
+        case "pointOnLine":
+            return pointOnLine(c.point, c.a, c.b);
     }
 }
