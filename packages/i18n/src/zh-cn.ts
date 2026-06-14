@@ -121,6 +121,9 @@ export default {
         "command.modify.brushRemove": "删除画笔",
         "command.modify.chamfer": "倒角",
         "command.modify.createJoint": "创建关节",
+        "command.modify.exportUrdf": "导出 URDF",
+        "error.export.needLinkNode":
+            "URDF 导出需要 Link 节点 — 先用“创建连杆”定义机器人基座，再用“创建关节”连接连杆。",
         "command.modify.createLink": "创建连杆",
         "command.modify.draft": "拔模",
         "command.modify.deleteNode": "删除",

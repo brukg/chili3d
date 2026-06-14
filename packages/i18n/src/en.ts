@@ -121,6 +121,9 @@ export default {
         "command.modify.brushRemove": "Brush Remove",
         "command.modify.chamfer": "Chamfer",
         "command.modify.createJoint": "Create Joint",
+        "command.modify.exportUrdf": "Export URDF",
+        "error.export.needLinkNode":
+            "URDF export needs a Link node — use Create Link to define the robot base, then Create Joint between links.",
         "command.modify.createLink": "Create Link",
         "command.modify.draft": "Draft",
         "command.modify.deleteNode": "Delete Node",

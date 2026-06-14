@@ -180,7 +180,8 @@ export class DefaultDataExchange implements IDataExchange {
     private async exportUrdfZip(nodes: VisualNode[]): Promise<BlobPart[] | undefined> {
         const root = nodes.find((n) => n instanceof LinkNode) as LinkNode | undefined;
         if (!root) {
-            PubSub.default.pub("showToast", "error.export.noNodeCanBeExported");
+            // URDF needs the robot organised as a Link/Joint tree — guide the user rather than fail silently.
+            PubSub.default.pub("showToast", "error.export.needLinkNode");
             return undefined;
         }
         const converter = root.document.application.shapeFactory.converter;

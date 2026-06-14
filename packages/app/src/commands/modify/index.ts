@@ -9,6 +9,7 @@ export * from "./createJoint";
 export * from "./createLink";
 export * from "./draft";
 export * from "./explode";
+export * from "./exportUrdf";
 export * from "./fillet";
 export * from "./fillSurface";
 export * from "./hole";
