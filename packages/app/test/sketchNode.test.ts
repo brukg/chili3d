@@ -56,7 +56,10 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
     });
 
     test("the solved corner distances confirm a 10x10 square (C4 proof)", () => {
-        const live = solveConstraints(points, constraints.map(toConstraint));
+        const live = solveConstraints(
+            points,
+            constraints.map((c) => toConstraint(c)),
+        );
         expect(live.converged).toBe(true);
         const d = (a: number, b: number) =>
             Math.hypot(live.points[a].x - live.points[b].x, live.points[a].y - live.points[b].y);

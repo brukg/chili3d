@@ -6,8 +6,10 @@ import {
     type IDocument,
     type IShape,
     ParameterShapeNode,
+    ParameterStore,
     type Plane,
     type Point2d,
+    PubSub,
     Result,
     type SketchConstraint,
     serializable,
@@ -55,10 +57,28 @@ export class SketchNode extends ParameterShapeNode {
         this.setPrivateValue("plane", options.plane);
         this.setPrivateValue("points", options.points);
         this.setPrivateValue("constraints", options.constraints);
+        // Expression-valued dimensions reference named parameters; re-solve when they change.
+        PubSub.default.sub("parametersChanged", this.onParametersChanged);
+    }
+
+    private readonly onParametersChanged = (document: IDocument) => {
+        if (document === this.document) {
+            this.setShape(this.generateShape());
+        }
+    };
+
+    override disposeInternal(): void {
+        PubSub.default.remove("parametersChanged", this.onParametersChanged);
+        super.disposeInternal();
     }
 
     generateShape(): Result<IShape> {
-        const solved = solveConstraints(this.points, this.constraints.map(toConstraint));
+        const scope = new ParameterStore(this.document).resolve();
+        const parameters = scope.isOk ? scope.value : {};
+        const solved = solveConstraints(
+            this.points,
+            this.constraints.map((c) => toConstraint(c, parameters)),
+        );
         if (!solved.converged) {
             return Result.err("Sketch is over-constrained or did not converge");
         }
