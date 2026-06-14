@@ -101,7 +101,11 @@ export class JointNode extends GroupNode {
     // serializer restores fields via setPrivateValue, which does not re-run setters).
     // Invariant: never assign `transform` directly on a JointNode — actuate via `value`.
     private updateTransform() {
-        this.transform = this.origin.multiply(this.dofMatrix());
+        // Matrix4.multiply applies `this` first, then the argument, so `dof.multiply(origin)`
+        // yields origin∘dof — the DOF is applied in the joint frame, then the joint frame is
+        // placed by `origin`. (origin.multiply(dof) would rotate about the world origin and
+        // then translate, swinging the part around (0,0,0) for a non-identity origin.)
+        this.transform = this.dofMatrix().multiply(this.origin);
     }
 
     private dofMatrix(): Matrix4 {

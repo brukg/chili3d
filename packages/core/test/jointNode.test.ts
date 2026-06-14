@@ -49,6 +49,23 @@ describe("JointNode", () => {
         expect(joint.value).toBe(720);
     });
 
+    test("revolute rotates about the origin's location, not the world origin", () => {
+        // origin places the joint frame at (10,0,0); a point AT that frame origin lies on the
+        // rotation axis and must stay fixed under rotation. The buggy multiply order made it
+        // rotate about (0,0,0) and swing the point to (0,10,0).
+        const joint = new JointNode({
+            document: doc,
+            name: "j",
+            jointType: "revolute",
+            origin: Matrix4.fromTranslation(10, 0, 0),
+        });
+        joint.lowerLimit = -180;
+        joint.upperLimit = 180;
+        joint.value = 90;
+        const p = joint.transform.ofPoint(XYZ.zero);
+        expect(p.distanceTo(new XYZ({ x: 10, y: 0, z: 0 }))).toBeLessThan(1e-6);
+    });
+
     test("origin composes outside the DOF", () => {
         const joint = new JointNode({
             document: doc,

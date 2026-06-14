@@ -40,7 +40,9 @@ export class CreateJointCommand extends MultistepCommand {
 
             const joint = new JointNode({ document: this.document, name: "Joint", origin });
             if (inverseOrigin) {
-                node.transform = inverseOrigin.multiply(node.transform);
+                // child' = T(-center)·child (standard); Matrix4.multiply is reversed, so this
+                // is node.transform.multiply(inverseOrigin). Keeps the part put at value 0.
+                node.transform = node.transform.multiply(inverseOrigin);
             }
             parent.insertBefore(node, joint);
             parent.move(node, joint);
