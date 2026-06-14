@@ -54,7 +54,10 @@ export const DefaultRibbon: RibbonTabProfile[] = [
             },
             {
                 groupName: "ribbon.group.boolean",
-                items: [["boolean.common", "boolean.cut", "boolean.join"]],
+                items: [
+                    ["boolean.common", "boolean.cut", "boolean.join"],
+                    ["modify.linkedCommon", "modify.linkedCut", "modify.linkedFuse"],
+                ],
             },
             {
                 groupName: "ribbon.group.workingPlane",

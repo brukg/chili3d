@@ -4,3 +4,4 @@
 export * from "./commandService";
 export * from "./hotkeyService";
 export * from "./parameterService";
+export * from "./rebuildService";

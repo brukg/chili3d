@@ -12,6 +12,7 @@ export * from "./explode";
 export * from "./fillet";
 export * from "./fillSurface";
 export * from "./hole";
+export * from "./linkedBoolean";
 export * from "./mirror";
 export * from "./move";
 export * from "./pipeFeature";

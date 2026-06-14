@@ -6,6 +6,7 @@ import {
     CommandService,
     HotkeyService,
     ParameterService,
+    RebuildService,
     ShowPropertyEventHandler,
 } from "@chili3d/app";
 import {
@@ -174,6 +175,6 @@ export class AppBuilder {
     }
 
     protected getServices(): IService[] {
-        return [new CommandService(), new HotkeyService(), new ParameterService()];
+        return [new CommandService(), new HotkeyService(), new ParameterService(), new RebuildService()];
     }
 }
