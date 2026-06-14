@@ -377,6 +377,25 @@ export class ThreeVisualContext implements IVisualContext {
             parent.add(visualObject);
             this._visualNodeMap.set(visualObject, node);
             this._NodeVisualMap.set(node, visualObject);
+            this.adoptOrphanedChildren(node, visualObject);
+        }
+    }
+
+    // A child's visual can be created before its parent's exists — e.g. geometry added to a Link that
+    // is not yet in the displayed tree (the URDF importer builds links bottom-up). Such a visual lands
+    // in the flat container and would never inherit ancestor transforms, so a joint actuating above it
+    // moves nothing on screen. When a group's visual is finally created, pull its already-existing
+    // child visuals under it so the scene graph mirrors the model hierarchy regardless of build order.
+    private adoptOrphanedChildren(node: INode, visual: IVisualObject & Object3D) {
+        if (!(visual instanceof Group) || !NodeUtils.isLinkedListNode(node)) return;
+        let child = node.firstChild;
+        while (child) {
+            const childVisual = this._NodeVisualMap.get(child);
+            if (childVisual && childVisual.parent !== visual) {
+                childVisual.parent?.remove(childVisual);
+                visual.add(childVisual);
+            }
+            child = child.nextSibling;
         }
     }
 

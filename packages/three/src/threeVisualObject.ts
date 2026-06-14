@@ -72,6 +72,9 @@ export abstract class ThreeVisualObject extends Object3D implements IVisualObjec
     }
     set transform(value: Matrix4) {
         this.matrix.fromArray(value.toArray());
+        // We write `matrix` directly, which three does not detect — flag the world matrix so the next
+        // render recomputes it and (crucially) force-propagates to descendants in the scene graph.
+        this.matrixWorldNeedsUpdate = true;
     }
 
     private _node: VisualNode;
@@ -282,6 +285,9 @@ export class GroupVisualObject extends Group implements IVisualObject {
     }
     set transform(value: Matrix4) {
         this.matrix.fromArray(value.toArray());
+        // We write `matrix` directly, which three does not detect — flag the world matrix so the next
+        // render recomputes it and (crucially) force-propagates to descendants in the scene graph.
+        this.matrixWorldNeedsUpdate = true;
     }
 
     worldTransform(): Matrix4 {
