@@ -11,6 +11,7 @@ import {
     Matrix4,
     XYZ,
 } from "@chili3d/core";
+import { rpyToMatrix } from "./urdfMath";
 
 const M_TO_MM = 1000;
 
@@ -92,8 +93,9 @@ function parseOrigin(el: Element | null): Matrix4 {
         (xyz[1] ?? 0) * M_TO_MM,
         (xyz[2] ?? 0) * M_TO_MM,
     );
-    const [r, p, y] = [rpy[0] ?? 0, rpy[1] ?? 0, rpy[2] ?? 0];
-    if (r === 0 && p === 0 && y === 0) return t;
-    // rpy = roll(X) pitch(Y) yaw(Z); Matrix4.multiply applies `this` first, so rot.multiply(t) = t·rot (standard).
-    return Matrix4.fromEuler(r, p, y).multiply(t);
+    const [roll, pitch, yaw] = [rpy[0] ?? 0, rpy[1] ?? 0, rpy[2] ?? 0];
+    if (roll === 0 && pitch === 0 && yaw === 0) return t;
+    // URDF rpy = "roll pitch yaw" (fixed-axis Rz·Ry·Rx). Matrix4.multiply applies `this` first,
+    // so rpyToMatrix(...).multiply(t) = t·R (standard) — translate the rotated frame.
+    return rpyToMatrix(roll, pitch, yaw).multiply(t);
 }

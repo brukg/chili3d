@@ -11,6 +11,7 @@ import {
     ShapeNode,
     type VisualNode,
 } from "@chili3d/core";
+import { matrixToRpy } from "./urdfMath";
 
 const MM_TO_M = 0.001;
 
@@ -38,9 +39,9 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
 
     const jointXml = (joint: JointNode, parent: string, child: string): string => {
         const t = joint.origin.translationPart();
-        const e = joint.origin.getEulerAngles();
+        const e = matrixToRpy(joint.origin);
         const xyz = `${num(t.x * MM_TO_M)} ${num(t.y * MM_TO_M)} ${num(t.z * MM_TO_M)}`;
-        const rpy = `${num(e.pitch)} ${num(e.yaw)} ${num(e.roll)}`;
+        const rpy = `${num(e.roll)} ${num(e.pitch)} ${num(e.yaw)}`;
         const a = joint.axis;
         const head =
             `  <joint name="${sanitize(joint.name)}" type="${joint.jointType}">\n` +
