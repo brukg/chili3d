@@ -14,6 +14,8 @@ export default {
         "axis.z": "Z 轴",
         "body.arc": "圆弧",
         "body.bolean": "布尔",
+        "body.linkedBoolean": "关联布尔",
+        "linkedBoolean.type": "操作",
         "body.box": "立方体",
         "body.circle": "圆形",
         "body.cone": "圆锥",

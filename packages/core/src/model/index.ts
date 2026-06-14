@@ -10,5 +10,6 @@ export * from "./jointNode";
 export * from "./linkNode";
 export * from "./meshNode";
 export * from "./node";
+export * from "./referenceShapeNode";
 export * from "./shapeNode";
 export * from "./visualNode";

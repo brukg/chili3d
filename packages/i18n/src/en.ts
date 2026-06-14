@@ -14,6 +14,8 @@ export default {
         "axis.z": "Z Axis",
         "body.arc": "Arc",
         "body.bolean": "Boolean",
+        "body.linkedBoolean": "Linked Boolean",
+        "linkedBoolean.type": "Operation",
         "body.box": "Box",
         "body.circle": "Circle",
         "body.cone": "Cone",

@@ -9,6 +9,8 @@ export const I18N_KEYS = [
     "axis.z",
     "body.arc",
     "body.bolean",
+    "body.linkedBoolean",
+    "linkedBoolean.type",
     "body.box",
     "body.circle",
     "body.cone",
