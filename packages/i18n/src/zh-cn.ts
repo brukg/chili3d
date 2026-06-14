@@ -16,6 +16,8 @@ export default {
         "body.bolean": "布尔",
         "body.linkedBoolean": "关联布尔",
         "body.linkedTransform": "关联变换",
+        "body.linkedExtrude": "关联拉伸",
+        "linkedExtrude.distance": "距离",
         "feature.suppressed": "抑制",
         "linkedBoolean.type": "操作",
         "body.box": "立方体",

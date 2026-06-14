@@ -38,10 +38,16 @@ export class SketchNode extends ParameterShapeNode {
     get points(): Point2d[] {
         return this.getPrivateValue("points");
     }
+    set points(value: Point2d[]) {
+        this.setPropertyEmitShapeChanged("points", value);
+    }
 
     @serialize()
     get constraints(): SketchConstraint[] {
         return this.getPrivateValue("constraints");
+    }
+    set constraints(value: SketchConstraint[]) {
+        this.setPropertyEmitShapeChanged("constraints", value);
     }
 
     constructor(options: SketchNodeOptions) {
@@ -61,6 +67,8 @@ export class SketchNode extends ParameterShapeNode {
         const points3d = solved.points.map((p) =>
             plane.origin.add(plane.xvec.multiply(p.x)).add(plane.yvec.multiply(p.y)),
         );
+        // Close the loop — `polygon` does not auto-close, and an open profile yields a wrong face.
+        if (points3d.length > 2) points3d.push(points3d[0]);
         return shapeFactory.polygon(points3d);
     }
 }
