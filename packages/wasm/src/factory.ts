@@ -359,6 +359,19 @@ export class ShapeFactory implements IShapeFactory {
             wasm.ShapeFactory.sweep(ensureOccShape(profile), ensureOccShape(path)[0], true, isRound),
         );
     }
+    thread(
+        normal: XYZLike,
+        center: XYZLike,
+        radius: number,
+        pitch: number,
+        height: number,
+        profileRadius: number,
+        leftHanded: boolean,
+    ): Result<ISolid> {
+        return convertShapeResult(
+            wasm.ShapeFactory.thread(normal, center, radius, pitch, height, profileRadius, leftHanded),
+        ) as Result<ISolid>;
+    }
     revolve(profile: IShape, axis: Line, angle: number): Result<IShape> {
         return convertShapeResult(
             wasm.ShapeFactory.revolve(

@@ -23,9 +23,9 @@
 #include <BRepFeat_Status.hxx>
 #include <BRepFilletAPI_MakeChamfer.hxx>
 #include <BRepFilletAPI_MakeFillet.hxx>
+#include <BRepLib.hxx>
 #include <BRepOffsetAPI_DraftAngle.hxx>
 #include <BRepOffsetAPI_MakeFilling.hxx>
-#include <GeomAbs_Shape.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
 #include <BRepOffsetAPI_MakePipeShell.hxx>
 #include <BRepOffsetAPI_MakeThickSolid.hxx>
@@ -37,7 +37,11 @@
 #include <BRepPrimAPI_MakeRevol.hxx>
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <BRepProj_Projection.hxx>
+#include <BRep_Tool.hxx>
+#include <Geom2d_Line.hxx>
+#include <GeomAbs_Shape.hxx>
 #include <Geom_BezierCurve.hxx>
+#include <Geom_CylindricalSurface.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <ShapeAnalysis_WireOrder.hxx>
 #include <ShapeFix_FixSmallFace.hxx>
@@ -46,7 +50,9 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
+#include <cmath>
 #include <gp_Ax2.hxx>
+#include <gp_Ax3.hxx>
 #include <gp_Circ.hxx>
 
 using namespace emscripten;
@@ -227,6 +233,60 @@ public:
         if (!pipe.IsDone()) {
             return ShapeResult { TopoDS_Shape(), false, "Failed to sweep profile" };
         }
+        return ShapeResult { pipe.Shape(), true, "" };
+    }
+
+    // Helical thread / coil: sweep a circular profile (radius `profileRadius`) along a helix
+    // of the given cylinder `radius`, `pitch` (axial advance per turn) and total `height`,
+    // placed at `center` with its axis along `normal`.
+    static ShapeResult thread(const Vector3& normal, const Vector3& center, double radius, double pitch,
+        double height, double profileRadius, bool leftHanded)
+    {
+        if (radius <= 0 || pitch <= 0 || height <= 0 || profileRadius <= 0) {
+            return ShapeResult { TopoDS_Shape(), false, "Invalid thread parameters" };
+        }
+
+        // The helix is a straight line in the (u = angle, v = height) parameter space of a
+        // cylindrical surface. gp_Dir2d normalises its direction, so the parameter is advanced
+        // by uSpan * |dir| to cover the full angular span.
+        Handle(Geom_CylindricalSurface) cyl
+            = new Geom_CylindricalSurface(gp_Ax3(Vector3::toPnt(center), Vector3::toDir(normal)), radius);
+        double slope = pitch / (2.0 * M_PI);
+        double turns = height / pitch;
+        double uSpan = 2.0 * M_PI * turns;
+        gp_Dir2d dir(leftHanded ? -1.0 : 1.0, slope);
+        Handle(Geom2d_Line) line2d = new Geom2d_Line(gp_Pnt2d(0.0, 0.0), dir);
+        double paramLength = uSpan * std::sqrt(1.0 + slope * slope);
+
+        TopoDS_Edge helixEdge = BRepBuilderAPI_MakeEdge(line2d, cyl, 0.0, paramLength).Edge();
+        BRepLib::BuildCurves3d(helixEdge);
+        TopoDS_Wire path = BRepBuilderAPI_MakeWire(helixEdge).Wire();
+
+        // Circular profile at the helix start, perpendicular to the tangent read from the 3D
+        // curve (so it is correct for either handedness).
+        double f, l;
+        Handle(Geom_Curve) c3d = BRep_Tool::Curve(helixEdge, f, l);
+        if (c3d.IsNull()) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to build helix curve" };
+        }
+        gp_Pnt startPnt;
+        gp_Vec startTan;
+        c3d->D1(f, startPnt, startTan);
+        if (startTan.Magnitude() < Precision::Confusion()) {
+            return ShapeResult { TopoDS_Shape(), false, "Degenerate helix tangent" };
+        }
+        gp_Ax2 profileAx(startPnt, gp_Dir(startTan));
+        TopoDS_Edge profileEdge = BRepBuilderAPI_MakeEdge(gp_Circ(profileAx, profileRadius)).Edge();
+        TopoDS_Wire profileWire = BRepBuilderAPI_MakeWire(profileEdge).Wire();
+
+        BRepOffsetAPI_MakePipeShell pipe(path);
+        pipe.SetMode(Standard_True); // Frenet frame along the helix
+        pipe.Add(profileWire);
+        pipe.Build();
+        if (!pipe.IsDone()) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to sweep thread profile" };
+        }
+        pipe.MakeSolid();
         return ShapeResult { pipe.Shape(), true, "" };
     }
 
@@ -737,6 +797,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("cylinder", &ShapeFactory::cylinder)
         .class_function("pyramid", &ShapeFactory::pyramid)
         .class_function("sweep", &ShapeFactory::sweep)
+        .class_function("thread", &ShapeFactory::thread)
         .class_function("revolve", &ShapeFactory::revolve)
         .class_function("prism", &ShapeFactory::prism)
         .class_function("pushPull", &ShapeFactory::pushPull)

@@ -38,6 +38,15 @@ export interface IShapeFactory {
     pushPull(shape: IShape, face: IShape, vec: XYZ): Result<IShape>;
     fuse(bottom: IShape, top: IShape): Result<IShape>;
     sweep(profile: IShape[], path: IWire, isRoundCorner: boolean): Result<IShape>;
+    thread(
+        normal: XYZLike,
+        center: XYZLike,
+        radius: number,
+        pitch: number,
+        height: number,
+        profileRadius: number,
+        leftHanded: boolean,
+    ): Result<ISolid>;
     revolve(profile: IShape, axis: Line, angle: number): Result<IShape>;
     booleanCommon(shape1: IShape[], shape2: IShape[]): Result<IShape>;
     booleanCut(shape1: IShape[], shape2: IShape[]): Result<IShape>;
