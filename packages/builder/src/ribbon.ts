@@ -44,6 +44,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     ["modify.fillSurface", "modify.chamfer", "modify.hole"],
                     ["modify.explode", "modify.createJoint", "modify.createLink"],
                     ["modify.deleteNode", "modify.removeShapes", "modify.removeFeature"],
+                    ["modify.rib"],
                 ],
                 collapsedItems: ["modify.brushAdd", "modify.brushRemove", "modify.brushClear"],
             },

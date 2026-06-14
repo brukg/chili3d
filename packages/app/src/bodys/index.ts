@@ -15,6 +15,7 @@ export * from "./pyramid";
 export * from "./rect";
 export * from "./regularPolygon";
 export * from "./revolve";
+export * from "./rib";
 export * from "./sphere";
 export * from "./sweep";
 export * from "./thread";

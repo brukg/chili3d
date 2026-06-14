@@ -16,6 +16,7 @@ export * from "./mirror";
 export * from "./move";
 export * from "./removeFeature";
 export * from "./removeSubShapes";
+export * from "./rib";
 export * from "./rotate";
 export * from "./sew";
 export * from "./simplify";
