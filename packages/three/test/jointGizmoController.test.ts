@@ -3,8 +3,8 @@
 
 import { type IDisposable, JointNode, PubSub } from "@chili3d/core";
 import { describe, expect, test } from "@rstest/core";
-import type { ThreeView } from "../src/threeView";
 import { JointGizmoController } from "../src/jointGizmoController";
+import type { ThreeView } from "../src/threeView";
 import { TestDocument } from "./testDocument";
 
 describe("JointGizmoController", () => {
