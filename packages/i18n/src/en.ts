@@ -125,6 +125,7 @@ export default {
         "command.modify.exportUrdf": "Export URDF",
         "error.export.needLinkNode":
             "URDF export needs a Link node — use Create Link to define the robot base, then Create Joint between links.",
+        "warn.export.invalidRobot": "Robot tree has issues (exported anyway): {0}",
         "command.modify.createLink": "Create Link",
         "command.modify.draft": "Draft",
         "command.modify.deleteNode": "Delete Node",

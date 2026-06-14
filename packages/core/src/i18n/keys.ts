@@ -202,6 +202,7 @@ export const I18N_KEYS = [
     "error.default:{0}",
     "error.export.noNodeCanBeExported",
     "error.export.needLinkNode",
+    "warn.export.invalidRobot",
     "error.import.unsupportedFileType:{0}",
     "error.input.cannotInputANumber",
     "error.input.invalidNumber",

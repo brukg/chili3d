@@ -18,6 +18,7 @@ import { exportDxf } from "./dxf/dxfExporter";
 import { exportThreeMf } from "./threemf/threeMfExporter";
 import { exportUrdf } from "./urdf/urdfExporter";
 import { importUrdf } from "./urdf/urdfImporter";
+import { validateRobotTree } from "./urdf/urdfValidate";
 
 export class DefaultDataExchange implements IDataExchange {
     importFormats(): string[] {
@@ -186,6 +187,12 @@ export class DefaultDataExchange implements IDataExchange {
             // URDF needs the robot organised as a Link/Joint tree — guide the user rather than fail silently.
             PubSub.default.pub("showToast", "error.export.needLinkNode");
             return undefined;
+        }
+        // Warn (but still export) on a malformed kinematic tree so the user isn't handed a silently
+        // broken URDF — a joint with no child link, duplicate names, a dangling mimic, etc.
+        const issues = validateRobotTree(root);
+        if (issues.length > 0) {
+            PubSub.default.pub("showToast", "warn.export.invalidRobot", issues.join("; "));
         }
         const converter = root.document.application.shapeFactory.converter;
         const { urdf, meshes } = exportUrdf(root, root.name, converter);
