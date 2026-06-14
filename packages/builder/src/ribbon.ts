@@ -58,7 +58,8 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                 items: [
                     ["boolean.common", "boolean.cut", "boolean.join"],
                     ["modify.linkedCommon", "modify.linkedCut", "modify.linkedFuse"],
-                    ["modify.linkedMove"],
+                    ["modify.linkedMove", "modify.linkedMirror", "modify.linkedRevolve"],
+                    ["modify.linkedArray", "modify.linkedCircularArray", "modify.linkedPathArray"],
                 ],
             },
             {
