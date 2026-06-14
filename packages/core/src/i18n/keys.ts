@@ -10,6 +10,7 @@ export const I18N_KEYS = [
     "body.arc",
     "body.bolean",
     "body.linkedBoolean",
+    "feature.suppressed",
     "linkedBoolean.type",
     "body.box",
     "body.circle",

@@ -81,4 +81,37 @@ describe("ReferenceShapeNode / LinkedBooleanNode (C1 rebuild)", () => {
         const after = totalVolume(second);
         expect(after).toBeGreaterThan(before);
     });
+
+    test("suppressing a feature excludes it and rebuilds dependents (C2)", () => {
+        const doc = new TestDocument() as any;
+        const boxA = new BoxNode({ document: doc, plane: Plane.XY, dx: 20, dy: 20, dz: 20 });
+        const boxB = new BoxNode({ document: doc, plane: Plane.XY, dx: 18, dy: 18, dz: 18 });
+        const boxC = new BoxNode({ document: doc, plane: Plane.XY, dx: 10, dy: 10, dz: 10 });
+        const boxD = new BoxNode({ document: doc, plane: Plane.XY, dx: 5, dy: 5, dz: 5 });
+        doc.modelManager.rootNode.add(boxA, boxB, boxC, boxD);
+
+        const inner = new LinkedBooleanNode({
+            document: doc,
+            inputIds: [boxA.id, boxB.id],
+            booleanType: "fuse",
+        });
+        doc.modelManager.rootNode.add(inner);
+        const outer = new LinkedBooleanNode({
+            document: doc,
+            inputIds: [inner.id, boxC.id, boxD.id],
+            booleanType: "fuse",
+        });
+        doc.modelManager.rootNode.add(outer);
+
+        const before = totalVolume(outer); // inner(20³) ∪ C ∪ D ≈ 8000
+        expect(before).toBeGreaterThan(7000);
+
+        inner.suppressed = true; // outer rebuilds excluding inner -> just C ∪ D
+        const after = totalVolume(outer);
+        expect(after).toBeLessThan(before); // lost the suppressed feature's contribution
+        expect(after).toBeGreaterThan(0); // still valid (C ∪ D)
+
+        inner.suppressed = false; // un-suppress restores it
+        expect(totalVolume(outer)).toBeGreaterThan(after);
+    });
 });

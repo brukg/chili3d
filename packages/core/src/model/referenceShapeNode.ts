@@ -2,6 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 import type { PropertyChangedHandler } from "../foundation";
+import { property } from "../property";
 import { serialize } from "../serialize";
 import type { IShape } from "../shape";
 import { ParameterShapeNode, type ParameterShapeNodeOptions, ShapeNode } from "./shapeNode";
@@ -25,17 +26,39 @@ export abstract class ReferenceShapeNode extends ParameterShapeNode {
         return this.getPrivateValue("inputIds", []);
     }
 
+    /**
+     * When suppressed, the feature contributes nothing: `generateShape` returns an error, so the
+     * node shows no geometry and is skipped by any dependent's `resolveInputShapes` — the
+     * editable-timeline "suppress" operation (Tier C / C2), riding the C1 rebuild engine.
+     */
+    @serialize()
+    @property("feature.suppressed")
+    get suppressed(): boolean {
+        return this.getPrivateValue("suppressed", false);
+    }
+    set suppressed(value: boolean) {
+        // A suppressed feature keeps its own last shape but is EXCLUDED from dependents; re-emit a
+        // "shape" change so subscribed dependents rebuild (and skip this node via resolveInputShapes).
+        if (this.setProperty("suppressed", value)) {
+            this.emitPropertyChanged("shape", this._shape);
+        }
+    }
+
     constructor(options: ReferenceShapeNodeOptions) {
         super(options);
         this.setPrivateValue("inputIds", options.inputIds);
         this.subscribeInputs();
     }
 
-    /** The current world-placed shapes of the referenced input nodes (missing inputs are skipped). */
+    /**
+     * The current world-placed shapes of the referenced input nodes. Inputs that are missing,
+     * shapeless, or suppressed are skipped.
+     */
     protected resolveInputShapes(): IShape[] {
         const shapes: IShape[] = [];
         for (const id of this.inputIds) {
             const node = this.document.modelManager.findNode((n) => n.id === id);
+            if (node instanceof ReferenceShapeNode && node.suppressed) continue;
             if (node instanceof ShapeNode && node.shape.isOk) {
                 shapes.push(node.shape.value.transformedMul(node.transform));
             }
