@@ -46,6 +46,7 @@ export function importUrdf(
     }
 
     const childNames = new Set<string>();
+    const joints = new Map<string, JointNode>(); // by URDF joint name, for mimic resolution
     for (const el of direct("joint")) {
         const name = el.getAttribute("name") ?? "joint";
         const type = (el.getAttribute("type") ?? "fixed") as JointType;
@@ -68,9 +69,31 @@ export function importUrdf(
             const hi = Number(limit.getAttribute("upper") ?? "0");
             joint.lowerLimit = angular ? MathUtils.radToDeg(lo) : lo * M_TO_MM;
             joint.upperLimit = angular ? MathUtils.radToDeg(hi) : hi * M_TO_MM;
+            const effort = limit.getAttribute("effort");
+            const velocity = limit.getAttribute("velocity");
+            if (effort !== null) joint.maxEffort = Number(effort);
+            if (velocity !== null) joint.maxVelocity = Number(velocity);
+        }
+        const dynamics = el.querySelector("dynamics");
+        if (dynamics) {
+            joint.damping = Number(dynamics.getAttribute("damping") ?? "0");
+            joint.friction = Number(dynamics.getAttribute("friction") ?? "0");
         }
         joint.add(child);
         parent.add(joint);
+        joints.set(name, joint);
+    }
+
+    // Second pass: resolve <mimic> now that every joint exists. URDF references the master by joint
+    // name; the model stores the master's id (subscribeMimic wires the live link after the tree mounts).
+    for (const el of direct("joint")) {
+        const mimic = el.querySelector("mimic");
+        const joint = joints.get(el.getAttribute("name") ?? "");
+        const master = joints.get(mimic?.getAttribute("joint") ?? "");
+        if (!joint || !master) continue;
+        joint.mimicMultiplier = Number(mimic?.getAttribute("multiplier") ?? "1");
+        joint.mimicOffset = Number(mimic?.getAttribute("offset") ?? "0");
+        joint.mimicJoint = master.id;
     }
 
     for (const [name, link] of links) {

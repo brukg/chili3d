@@ -107,6 +107,54 @@ describe("importUrdf (round-trip)", () => {
         expect(j.pivot.z).toBeCloseTo(5, 3);
     });
 
+    test("dynamics, effort/velocity and mimic round-trip through URDF", () => {
+        const doc = new TestDocument() as any;
+        const stub = {
+            convertToSTL: () => {
+                throw new Error("convertToSTL should not be called for geometry-less links");
+            },
+        } as any;
+
+        const base = new LinkNode({ document: doc, name: "base_link" });
+        const link1 = new LinkNode({ document: doc, name: "link1" });
+        const link2 = new LinkNode({ document: doc, name: "link2" });
+        const j1 = new JointNode({ document: doc, name: "j1", jointType: "revolute" });
+        j1.damping = 0.5;
+        j1.friction = 0.2;
+        j1.maxEffort = 33;
+        j1.maxVelocity = 7;
+        j1.add(link1);
+        base.add(j1);
+        const j2 = new JointNode({ document: doc, name: "j2", jointType: "revolute" });
+        j2.mimicMultiplier = 2;
+        j2.add(link2);
+        link1.add(j2);
+        // Mount the tree so export can resolve the mimic master (looked up by id) by name.
+        doc.modelManager.rootNode.add(base);
+        j2.mimicJoint = j1.id;
+
+        const { urdf, meshes } = exportUrdf(base, "robot", stub);
+        expect(urdf).toContain("<dynamics");
+        expect(urdf).toContain("<mimic");
+
+        const doc2 = new TestDocument() as any;
+        const base2 = importUrdf(urdf, meshes, doc2, stub)!;
+        doc2.modelManager.rootNode.add(base2);
+        doc2.modelManager.reinitializeSubtree(base2); // mount → re-wire the mimic
+
+        const j1b = firstChildOfType(base2, JointNode)!;
+        expect(j1b.damping).toBeCloseTo(0.5, 4);
+        expect(j1b.friction).toBeCloseTo(0.2, 4);
+        expect(j1b.maxEffort).toBeCloseTo(33, 4);
+        expect(j1b.maxVelocity).toBeCloseTo(7, 4);
+
+        const link1b = firstChildOfType(j1b, LinkNode)!;
+        const j2b = firstChildOfType(link1b, JointNode)!;
+        expect(j2b.mimicMultiplier).toBeCloseTo(2, 4);
+        j1b.value = 10; // mimic re-wired on import: slave follows master (10 × 2)
+        expect(j2b.value).toBeCloseTo(20, 4);
+    });
+
     test("parses a hand-written minimal URDF (fixed joint, no meshes)", () => {
         const doc = new TestDocument() as any;
         const stub = {

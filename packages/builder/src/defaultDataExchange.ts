@@ -80,6 +80,9 @@ export class DefaultDataExchange implements IDataExchange {
         const node = nodeResult.value;
         node.name = name;
         document.modelManager.addNode(node);
+        // Now the imported subtree is live in the model, re-wire any cross-node references it carries
+        // (e.g. a URDF <mimic> referencing another joint) — they could not resolve while detached.
+        document.modelManager.reinitializeSubtree(node);
         document.visual.update();
     }
 
