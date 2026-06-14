@@ -13,6 +13,7 @@ export * from "./fillet";
 export * from "./fillSurface";
 export * from "./hole";
 export * from "./linkedBoolean";
+export * from "./linkedMove";
 export * from "./mirror";
 export * from "./move";
 export * from "./pipeFeature";

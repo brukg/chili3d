@@ -16,6 +16,7 @@ export * from "./ellipse";
 export * from "./extrude";
 export * from "./group";
 export * from "./line";
+export * from "./linkedExtrude";
 export * from "./loft";
 export * from "./offset";
 export * from "./pipe";

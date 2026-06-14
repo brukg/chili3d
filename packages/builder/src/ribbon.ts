@@ -29,7 +29,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                             "create.pyramid",
                         ],
                     },
-                    "create.extrude",
+                    ["create.extrude", "create.linkedExtrude"],
                     ["create.loft", "create.sweep", "create.revol", "create.thread"],
                 ],
                 collapsedItems: ["create.point", "create.polygon", "create.bezier", "create.pipe"],
@@ -57,6 +57,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                 items: [
                     ["boolean.common", "boolean.cut", "boolean.join"],
                     ["modify.linkedCommon", "modify.linkedCut", "modify.linkedFuse"],
+                    ["modify.linkedMove"],
                 ],
             },
             {
