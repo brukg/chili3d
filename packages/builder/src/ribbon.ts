@@ -30,7 +30,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         ],
                     },
                     "create.extrude",
-                    ["create.loft", "create.sweep", "create.revol"],
+                    ["create.loft", "create.sweep", "create.revol", "create.thread"],
                 ],
                 collapsedItems: ["create.point", "create.polygon", "create.bezier", "create.pipe"],
             },
