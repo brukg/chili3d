@@ -24,6 +24,7 @@ export * from "./selectionFilter";
 export * from "./serialize";
 export * from "./service";
 export * from "./shape";
+export * from "./sketch";
 export * from "./snap";
 export * from "./snapType";
 export * from "./step";
