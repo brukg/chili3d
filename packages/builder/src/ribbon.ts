@@ -70,6 +70,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                 groupName: "ribbon.group.modify",
                 items: [
                     ["modify.move", "modify.rotate", "modify.mirror"],
+                    ["modify.scale"],
                     ["modify.array", "modify.trim", "modify.sew"],
                     ["modify.split", "modify.break", "modify.simplifyShape"],
                     ["modify.fillet", "modify.variableFillet", "modify.chamfer"],

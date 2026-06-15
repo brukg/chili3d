@@ -28,6 +28,7 @@ export * from "./removeFeature";
 export * from "./removeSubShapes";
 export * from "./rib";
 export * from "./rotate";
+export * from "./scale";
 export * from "./sew";
 export * from "./shell";
 export * from "./simplify";
