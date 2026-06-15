@@ -3,7 +3,7 @@
 
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { type ISolid, Plane } from "@chili3d/core";
+import { type ISolid, Matrix4, Plane, XYZ } from "@chili3d/core";
 import { initWasm, ShapeFactory } from "@chili3d/wasm";
 import { describe, expect, test } from "@rstest/core";
 
@@ -26,5 +26,26 @@ describe("Solid.massProperties (measure)", () => {
         expect(m.momentOfInertia.x).toBeGreaterThan(0);
         expect(m.momentOfInertia.y).toBeGreaterThan(0);
         expect(m.momentOfInertia.z).toBeGreaterThan(0);
+        // An axis-aligned box is symmetric → all products of inertia vanish.
+        expect(m.productOfInertia.x).toBeCloseTo(0, 6);
+        expect(m.productOfInertia.y).toBeCloseTo(0, 6);
+        expect(m.productOfInertia.z).toBeCloseTo(0, 6);
+    });
+
+    test("a box rotated 45° about Z has the analytically-correct product of inertia", async () => {
+        await initWasm({ wasmBinary: WASM_BINARY });
+        const factory = new ShapeFactory();
+        const rot = Matrix4.fromAxisRad(XYZ.zero, XYZ.unitZ, Math.PI / 4);
+        const box = factory.box(Plane.XY, 10, 20, 30).value.transformedMul(rot);
+
+        const m = (box as ISolid).massProperties();
+        // Unit density (mass = volume = 6000). Principal diagonal Ixx0 = V/12·(b²+c²), etc.
+        const V = 6000;
+        const ixx0 = (V / 12) * (20 ** 2 + 30 ** 2);
+        const iyy0 = (V / 12) * (10 ** 2 + 30 ** 2);
+        // Rotating about Z by θ: Ixy = (Ixx0 − Iyy0)·sinθ·cosθ; Ixz, Iyz stay zero.
+        expect(m.productOfInertia.x).toBeCloseTo((ixx0 - iyy0) * 0.5, 1);
+        expect(m.productOfInertia.y).toBeCloseTo(0, 4);
+        expect(m.productOfInertia.z).toBeCloseTo(0, 4);
     });
 });

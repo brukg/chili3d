@@ -509,6 +509,7 @@ struct MassProperties {
     double area;
     Vector3 centerOfMass;
     Vector3 momentOfInertia; // diagonal of the inertia matrix (Ixx, Iyy, Izz)
+    Vector3 productOfInertia; // off-diagonal of the inertia matrix (Ixy, Ixz, Iyz)
 };
 
 class Solid {
@@ -533,6 +534,7 @@ public:
             sprops.Mass(),
             Vector3 { com.X(), com.Y(), com.Z() },
             Vector3 { inertia(1, 1), inertia(2, 2), inertia(3, 3) },
+            Vector3 { inertia(1, 2), inertia(1, 3), inertia(2, 3) },
         };
     }
 };
@@ -590,7 +592,8 @@ EMSCRIPTEN_BINDINGS(Shape)
         .field("volume", &MassProperties::volume)
         .field("area", &MassProperties::area)
         .field("centerOfMass", &MassProperties::centerOfMass)
-        .field("momentOfInertia", &MassProperties::momentOfInertia);
+        .field("momentOfInertia", &MassProperties::momentOfInertia)
+        .field("productOfInertia", &MassProperties::productOfInertia);
 
     class_<Solid>("Solid")
         .class_function("volume", &Solid::volume)

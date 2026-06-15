@@ -243,6 +243,7 @@ export default {
         "line.type.xline": "构造线",
         "link.mass": "质量",
         "link.collision": "碰撞",
+        "link.overrideInertia": "覆盖惯性",
         "material.bumpMap": "凹凸贴图",
         "material.emissive": "自发光",
         "material.emissiveMap": "自发光贴图",

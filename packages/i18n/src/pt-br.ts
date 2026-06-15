@@ -90,6 +90,7 @@ export default {
         "joint.value": "Valor",
         "link.mass": "Massa",
         "link.collision": "Colisão",
+        "link.overrideInertia": "Substituir inércia",
         "prompt.pickHoleLocation": "Selecione a posição do furo",
         "prompt.select.neutralFace": "Selecione a face do plano neutro",
     },

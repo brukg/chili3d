@@ -243,6 +243,7 @@ export default {
         "line.type.xline": "XLine",
         "link.mass": "Mass",
         "link.collision": "Collision",
+        "link.overrideInertia": "Override inertia",
         "material.bumpMap": "BumpMap",
         "material.emissive": "Emissive",
         "material.emissiveMap": "Emissive Map",

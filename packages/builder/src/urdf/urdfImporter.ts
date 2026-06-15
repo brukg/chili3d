@@ -38,6 +38,7 @@ export function importUrdf(
         const link = new LinkNode({ document, name });
         const massEl = el.querySelector("inertial mass");
         if (massEl) link.mass = Number(massEl.getAttribute("value") ?? "1");
+        importInertia(el, link);
 
         const material = linkMaterial(el, document, materialsByName);
         const visualFiles = new Set<string>();
@@ -147,6 +148,24 @@ function parseOrientation(el: Element | null): XYZ {
         y: MathUtils.radToDeg(rpy[1] ?? 0),
         z: MathUtils.radToDeg(rpy[2] ?? 0),
     });
+}
+
+// Preserve an explicit <inertial> (full tensor + COM) so a hand-authored URDF inertia survives a
+// round-trip; without an <inertia> element the link keeps the default geometry-computed inertia.
+function importInertia(linkEl: Element, link: LinkNode): void {
+    const inertia = linkEl.querySelector("inertial inertia");
+    if (!inertia) return;
+    const n = (attr: string) => Number(inertia.getAttribute(attr) ?? "0");
+    const origin = linkEl.querySelector("inertial origin");
+    const xyz = (origin?.getAttribute("xyz") ?? "0 0 0").trim().split(/\s+/).map(Number);
+    link.inertialCenter = new XYZ({
+        x: (xyz[0] ?? 0) * M_TO_MM,
+        y: (xyz[1] ?? 0) * M_TO_MM,
+        z: (xyz[2] ?? 0) * M_TO_MM,
+    });
+    link.momentOfInertia = new XYZ({ x: n("ixx"), y: n("iyy"), z: n("izz") });
+    link.productOfInertia = new XYZ({ x: n("ixy"), y: n("ixz"), z: n("iyz") });
+    link.overrideInertia = true;
 }
 
 // A visual/collision <origin> as an app transform: rotate by rpy, then translate (m → mm). rpyToMatrix

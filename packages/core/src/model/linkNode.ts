@@ -1,6 +1,7 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
+import { XYZ } from "../math";
 import { property } from "../property";
 import { serializable, serialize } from "../serialize";
 import { GroupNode } from "./groupNode";
@@ -38,5 +39,47 @@ export class LinkNode extends GroupNode {
     set collisionGeometry(value: CollisionGeometry) {
         if (!COLLISION_GEOMETRIES.includes(value)) return;
         this.setProperty("collisionGeometry", value);
+    }
+
+    /**
+     * When true, the link exports the stored {@link inertialCenter}/{@link momentOfInertia}/
+     * {@link productOfInertia} instead of computing the tensor from the geometry. Set automatically on
+     * import of a URDF that specifies an explicit `<inertial>` so hand-authored values survive the
+     * round-trip; clear it to fall back to the (geometry-exact) computed inertia.
+     */
+    @serialize()
+    @property("link.overrideInertia")
+    get overrideInertia(): boolean {
+        return this.getPrivateValue("overrideInertia", false);
+    }
+    set overrideInertia(value: boolean) {
+        this.setProperty("overrideInertia", value);
+    }
+
+    /** Centre of mass for the inertia override, in millimetres (the URDF `<inertial>` origin). */
+    @serialize()
+    get inertialCenter(): XYZ {
+        return this.getPrivateValue("inertialCenter", XYZ.zero);
+    }
+    set inertialCenter(value: XYZ) {
+        this.setProperty("inertialCenter", value);
+    }
+
+    /** Diagonal inertia (Ixx, Iyy, Izz) for the override, in SI kg·m² (URDF units). */
+    @serialize()
+    get momentOfInertia(): XYZ {
+        return this.getPrivateValue("momentOfInertia", XYZ.zero);
+    }
+    set momentOfInertia(value: XYZ) {
+        this.setProperty("momentOfInertia", value);
+    }
+
+    /** Products of inertia (Ixy, Ixz, Iyz) for the override, in SI kg·m² (URDF units). */
+    @serialize()
+    get productOfInertia(): XYZ {
+        return this.getPrivateValue("productOfInertia", XYZ.zero);
+    }
+    set productOfInertia(value: XYZ) {
+        this.setProperty("productOfInertia", value);
     }
 }

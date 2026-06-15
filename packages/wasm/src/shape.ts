@@ -634,6 +634,11 @@ export class OccSolid extends OccShape implements ISolid {
                 y: m.momentOfInertia.y,
                 z: m.momentOfInertia.z,
             }),
+            productOfInertia: new XYZ({
+                x: m.productOfInertia.x,
+                y: m.productOfInertia.y,
+                z: m.productOfInertia.z,
+            }),
         };
     }
 }

@@ -517,7 +517,8 @@ export type MassProperties = {
   volume: number,
   area: number,
   centerOfMass: Vector3,
-  momentOfInertia: Vector3
+  momentOfInertia: Vector3,
+  productOfInertia: Vector3
 };
 
 export type BoundingBox = {

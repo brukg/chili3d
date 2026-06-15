@@ -268,6 +268,42 @@ describe("importUrdf (round-trip)", () => {
         expect(geometries).toBe(2); // both visuals imported
     });
 
+    test("an explicit <inertial> tensor is imported and re-exported verbatim (override)", () => {
+        const doc = new TestDocument() as any;
+        const stub = {
+            convertFromSTL: () => {
+                throw new Error("no mesh present");
+            },
+        } as any;
+        const urdf = `<?xml version="1.0"?>
+<robot name="r">
+  <link name="base_link">
+    <inertial>
+      <origin xyz="0.01 0.02 0.03" rpy="0 0 0"/>
+      <mass value="2.5"/>
+      <inertia ixx="0.1" ixy="0.01" ixz="0.02" iyy="0.2" iyz="0.03" izz="0.3"/>
+    </inertial>
+  </link>
+</robot>`;
+        const base = importUrdf(urdf, new Map(), doc, stub)!;
+        expect(base.overrideInertia).toBe(true);
+        expect(base.mass).toBeCloseTo(2.5, 6);
+        expect(base.inertialCenter.x).toBeCloseTo(10, 3); // 0.01 m → 10 mm
+        expect(base.momentOfInertia.x).toBeCloseTo(0.1, 6);
+        expect(base.momentOfInertia.z).toBeCloseTo(0.3, 6);
+        expect(base.productOfInertia.x).toBeCloseTo(0.01, 6); // ixy
+        expect(base.productOfInertia.z).toBeCloseTo(0.03, 6); // iyz
+
+        // Re-export emits the stored tensor verbatim rather than recomputing.
+        const { urdf: out } = exportUrdf(base, "r", stub);
+        expect(out).toContain('<origin xyz="0.01 0.02 0.03"');
+        expect(out).toContain('<mass value="2.5"/>');
+        expect(out).toMatch(/ixx="0\.1"/);
+        expect(out).toMatch(/ixy="0\.01"/);
+        expect(out).toMatch(/iyz="0\.03"/);
+        expect(out).toMatch(/izz="0\.3"/);
+    });
+
     test("parses a hand-written minimal URDF (fixed joint, no meshes)", () => {
         const doc = new TestDocument() as any;
         const stub = {

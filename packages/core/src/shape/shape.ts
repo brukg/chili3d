@@ -106,6 +106,8 @@ export interface MassProperties {
     centerOfMass: XYZ;
     /** Diagonal of the inertia matrix about the centre of mass: (Ixx, Iyy, Izz). */
     momentOfInertia: XYZ;
+    /** Off-diagonal products of the inertia matrix about the centre of mass: (Ixy, Ixz, Iyz). */
+    productOfInertia: XYZ;
 }
 
 export interface ISolid extends IShape {

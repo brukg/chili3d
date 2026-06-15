@@ -18,8 +18,7 @@ import {
     ShapeNode,
     ShapeTypes,
 } from "@chili3d/core";
-import { meshInertiaTensor } from "./meshInertia";
-import { convexHullSTL, verticesFromBinarySTL } from "./stlMesh";
+import { convexHullSTL } from "./stlMesh";
 
 const MM_TO_M = 0.001;
 
@@ -100,10 +99,14 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
                 const box = boundingBoxOf(shapes);
                 const material = materialXml(link, linkName);
                 const collision = collisionXml(link, box, meshTag, linkName, stl.value, meshes);
-                const inertial = inertialXml(shapes, box, link.mass, stl.value);
+                const inertial = link.overrideInertia
+                    ? overrideInertialXml(link)
+                    : inertialXml(shapes, box, link.mass);
                 body = `<visual>${meshTag}${material}</visual>${collision}${inertial}`;
             }
         }
+        // A link with an explicit inertia override but no geometry still carries its <inertial>.
+        if (body === "" && link.overrideInertia) body = overrideInertialXml(link);
         links.push(`  <link name="${linkName}">${body}</link>`);
 
         for (const joint of childJoints(link)) {
@@ -295,17 +298,11 @@ function colorToRgb(color: number | string): [number, number, number] {
 }
 
 // Real inertial properties from the link's solids: true volume-weighted centre of mass and the full
-// inertia tensor about that COM. The diagonal comes from OCCT's GProp (exact, parallel-axis-combined
-// across solids); the off-diagonal products of inertia come from integrating the link's triangle mesh
-// (the OCCT binding exposes only the diagonal), exact for the polyhedral mesh that is exported. Emits
-// the `<origin>` so the COM is not assumed at the link frame, and falls back to a box approximation
-// when the link has no solids (e.g. surface-only geometry).
-function inertialXml(
-    shapes: IShape[],
-    box: BoundingBox | undefined,
-    mass: number,
-    visualStl: Uint8Array,
-): string {
+// inertia tensor about that COM — both diagonal moments and off-diagonal products — straight from
+// OCCT's GProp (exact), parallel-axis-combined across multiple solids. Emits the `<origin>` so the COM
+// is not assumed at the link frame, and falls back to a box approximation when the link has no solids
+// (e.g. surface-only geometry).
+function inertialXml(shapes: IShape[], box: BoundingBox | undefined, mass: number): string {
     const mp = combinedMassProps(shapes);
     if (!mp) return boxInertialXml(box, mass);
 
@@ -315,12 +312,9 @@ function inertialXml(
     const ixx = Math.max(mp.ixx * k, floor);
     const iyy = Math.max(mp.iyy * k, floor);
     const izz = Math.max(mp.izz * k, floor);
-
-    // Off-diagonals from the mesh, about the same COM and scaled by the same density factor.
-    const tensor = meshInertiaTensor(verticesFromBinarySTL(visualStl), [mp.cx, mp.cy, mp.cz]);
-    const ixy = tensor.ixy * k;
-    const ixz = tensor.ixz * k;
-    const iyz = tensor.iyz * k;
+    const ixy = mp.ixy * k;
+    const ixz = mp.ixz * k;
+    const iyz = mp.iyz * k;
 
     const ox = num(mp.cx * MM_TO_M);
     const oy = num(mp.cy * MM_TO_M);
@@ -339,10 +333,13 @@ interface CombinedMass {
     cx: number;
     cy: number;
     cz: number;
-    // inertia tensor diagonal about the combined COM, unit density (mm^5).
+    // inertia tensor about the combined COM, unit density (mm^5): diagonal then products.
     ixx: number;
     iyy: number;
     izz: number;
+    ixy: number;
+    ixz: number;
+    iyz: number;
 }
 
 function combinedMassProps(shapes: IShape[]): CombinedMass | undefined {
@@ -371,16 +368,38 @@ function combinedMassProps(shapes: IShape[]): CombinedMass | undefined {
     let ixx = 0;
     let iyy = 0;
     let izz = 0;
+    let ixy = 0;
+    let ixz = 0;
+    let iyz = 0;
     for (const p of props) {
-        // parallel-axis shift from each solid's own COM to the combined COM (add m·d²).
+        // Parallel-axis shift from each solid's own COM to the combined COM. Diagonal moments gain
+        // m·d²; products (tensor convention Ixy = −∫xy) lose m·dx·dy.
         const dx = p.centerOfMass.x - cx;
         const dy = p.centerOfMass.y - cy;
         const dz = p.centerOfMass.z - cz;
         ixx += p.momentOfInertia.x + p.volume * (dy * dy + dz * dz);
         iyy += p.momentOfInertia.y + p.volume * (dx * dx + dz * dz);
         izz += p.momentOfInertia.z + p.volume * (dx * dx + dy * dy);
+        ixy += p.productOfInertia.x - p.volume * dx * dy;
+        ixz += p.productOfInertia.y - p.volume * dx * dz;
+        iyz += p.productOfInertia.z - p.volume * dy * dz;
     }
-    return { volume, cx, cy, cz, ixx, iyy, izz };
+    return { volume, cx, cy, cz, ixx, iyy, izz, ixy, ixz, iyz };
+}
+
+// The link's explicit inertia override (e.g. preserved from an imported URDF): emitted verbatim
+// rather than computed from geometry. Centre is millimetres → metres; moments/products are SI.
+function overrideInertialXml(link: LinkNode): string {
+    const c = link.inertialCenter;
+    const m = link.momentOfInertia;
+    const p = link.productOfInertia;
+    const f = (v: number) => (Math.abs(v) < 1e-12 ? "0" : `${+v.toFixed(8)}`);
+    return (
+        `<inertial><origin xyz="${num(c.x * MM_TO_M)} ${num(c.y * MM_TO_M)} ${num(c.z * MM_TO_M)}" rpy="0 0 0"/>` +
+        `<mass value="${link.mass}"/>` +
+        `<inertia ixx="${f(m.x)}" ixy="${f(p.x)}" ixz="${f(p.y)}" ` +
+        `iyy="${f(m.y)}" iyz="${f(p.z)}" izz="${f(m.z)}"/></inertial>`
+    );
 }
 
 // Fallback for links with no solids: treat the bounding box as a uniform box about its centre.
