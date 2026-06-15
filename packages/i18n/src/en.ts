@@ -136,6 +136,7 @@ export default {
         "command.modify.isolate": "Isolate",
         "command.modify.hideOthers": "Hide Others",
         "command.modify.showAll": "Show All",
+        "command.modify.shell": "Shell",
         "command.modify.explode": "Explode",
         "command.modify.fillet": "Fillet",
         "command.modify.fillSurface": "Fill Surface",

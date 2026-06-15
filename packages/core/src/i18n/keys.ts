@@ -128,6 +128,7 @@ export const I18N_KEYS = [
     "command.modify.isolate",
     "command.modify.hideOthers",
     "command.modify.showAll",
+    "command.modify.shell",
     "command.modify.explode",
     "command.modify.fillet",
     "command.modify.fillSurface",

@@ -28,6 +28,7 @@ export * from "./removeSubShapes";
 export * from "./rib";
 export * from "./rotate";
 export * from "./sew";
+export * from "./shell";
 export * from "./simplify";
 export * from "./split";
 export * from "./trim";

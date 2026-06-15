@@ -136,6 +136,7 @@ export default {
         "command.modify.isolate": "隔离",
         "command.modify.hideOthers": "隐藏其他",
         "command.modify.showAll": "显示全部",
+        "command.modify.shell": "抽壳",
         "command.modify.explode": "分解",
         "command.modify.fillet": "圆角",
         "command.modify.fillSurface": "填充曲面",
