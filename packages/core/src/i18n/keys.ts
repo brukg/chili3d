@@ -235,6 +235,7 @@ export const I18N_KEYS = [
     "line.type.line",
     "line.type.xline",
     "link.mass",
+    "link.collision",
     "material.bumpMap",
     "material.emissive",
     "material.emissiveMap",

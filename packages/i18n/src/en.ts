@@ -241,6 +241,7 @@ export default {
         "line.type.line": "Line",
         "line.type.xline": "XLine",
         "link.mass": "Mass",
+        "link.collision": "Collision",
         "material.bumpMap": "BumpMap",
         "material.emissive": "Emissive",
         "material.emissiveMap": "Emissive Map",

@@ -88,6 +88,7 @@ export default {
         "joint.upperLimit": "Limite Superior",
         "joint.value": "Valor",
         "link.mass": "Massa",
+        "link.collision": "Colisão",
         "prompt.pickHoleLocation": "Selecione a posição do furo",
         "prompt.select.neutralFace": "Selecione a face do plano neutro",
     },
