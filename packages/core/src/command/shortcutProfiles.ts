@@ -11,7 +11,12 @@ export const Chili3dShortcuts: ShortcutMap = {
     "edit.redo": ["ctrl+y", "ctrl+shift+z"],
     "modify.deleteNode": ["Delete", "Backspace"],
     "modify.cutNode": "ctrl+x",
+    "modify.copyNode": "ctrl+c",
     "modify.pasteNode": "ctrl+v",
+    "modify.duplicate": "ctrl+d",
+    "modify.isolate": "ctrl+i",
+    "modify.hideOthers": "alt+h",
+    "modify.showAll": "alt+shift+h",
     "special.last": [" ", "Enter"],
 
     // Sketching
