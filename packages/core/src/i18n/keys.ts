@@ -212,6 +212,7 @@ export const I18N_KEYS = [
     "home.recent",
     "home.welcome",
     "joint.axis",
+    "joint.orientation",
     "joint.pivot",
     "joint.lowerLimit",
     "joint.type",

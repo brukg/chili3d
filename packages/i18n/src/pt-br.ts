@@ -83,6 +83,7 @@ export default {
         "command.modify.rib": "Rib",
         "command.modify.variableFillet": "Filete Variável",
         "joint.axis": "Eixo",
+        "joint.orientation": "Orientação (rpy°)",
         "joint.lowerLimit": "Limite Inferior",
         "joint.type": "Tipo de Junta",
         "joint.upperLimit": "Limite Superior",

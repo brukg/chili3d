@@ -18,7 +18,8 @@ import {
     ShapeNode,
     ShapeTypes,
 } from "@chili3d/core";
-import { convexHullSTL } from "./stlMesh";
+import { meshInertiaTensor } from "./meshInertia";
+import { convexHullSTL, verticesFromBinarySTL } from "./stlMesh";
 
 const MM_TO_M = 0.001;
 
@@ -46,11 +47,12 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
     };
 
     const jointXml = (joint: JointNode, parent: string, child: string): string => {
-        // The joint's pivot is its location in the parent frame; the axis carries direction, so rpy
-        // stays zero (the in-app joint model has no separate frame rotation).
+        // The joint's pivot is its location in the parent frame; its orientation (stored as a URDF
+        // roll-pitch-yaw triple in degrees) is the rotation part of the `<origin>`.
         const t = joint.pivot;
         const xyz = `${num(t.x * MM_TO_M)} ${num(t.y * MM_TO_M)} ${num(t.z * MM_TO_M)}`;
-        const rpy = "0 0 0";
+        const o = joint.orientation;
+        const rpy = `${num(MathUtils.degToRad(o.x))} ${num(MathUtils.degToRad(o.y))} ${num(MathUtils.degToRad(o.z))}`;
         const a = joint.axis;
         const head =
             `  <joint name="${sanitize(joint.name)}" type="${joint.jointType}">\n` +
@@ -98,7 +100,8 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
                 const box = boundingBoxOf(shapes);
                 const material = materialXml(link, linkName);
                 const collision = collisionXml(link, box, meshTag, linkName, stl.value, meshes);
-                body = `<visual>${meshTag}${material}</visual>${collision}${inertialXml(shapes, box, link.mass)}`;
+                const inertial = inertialXml(shapes, box, link.mass, stl.value);
+                body = `<visual>${meshTag}${material}</visual>${collision}${inertial}`;
             }
         }
         links.push(`  <link name="${linkName}">${body}</link>`);
@@ -291,12 +294,18 @@ function colorToRgb(color: number | string): [number, number, number] {
     return [((value >> 16) & 0xff) / 255, ((value >> 8) & 0xff) / 255, (value & 0xff) / 255];
 }
 
-// Real inertial properties from the link's solids: true volume-weighted centre of mass and the
-// inertia tensor about that COM (OCCT's GProp returns each solid's inertia about its OWN COM, so we
-// parallel-axis-shift each to the combined COM, then scale unit-density values to the link mass). Far
-// more accurate than a bounding-box box, and emits the `<origin>` so the COM is not assumed at the
-// link frame. Falls back to a box approximation when the link has no solids (e.g. surface-only geom).
-function inertialXml(shapes: IShape[], box: BoundingBox | undefined, mass: number): string {
+// Real inertial properties from the link's solids: true volume-weighted centre of mass and the full
+// inertia tensor about that COM. The diagonal comes from OCCT's GProp (exact, parallel-axis-combined
+// across solids); the off-diagonal products of inertia come from integrating the link's triangle mesh
+// (the OCCT binding exposes only the diagonal), exact for the polyhedral mesh that is exported. Emits
+// the `<origin>` so the COM is not assumed at the link frame, and falls back to a box approximation
+// when the link has no solids (e.g. surface-only geometry).
+function inertialXml(
+    shapes: IShape[],
+    box: BoundingBox | undefined,
+    mass: number,
+    visualStl: Uint8Array,
+): string {
     const mp = combinedMassProps(shapes);
     if (!mp) return boxInertialXml(box, mass);
 
@@ -306,13 +315,22 @@ function inertialXml(shapes: IShape[], box: BoundingBox | undefined, mass: numbe
     const ixx = Math.max(mp.ixx * k, floor);
     const iyy = Math.max(mp.iyy * k, floor);
     const izz = Math.max(mp.izz * k, floor);
+
+    // Off-diagonals from the mesh, about the same COM and scaled by the same density factor.
+    const tensor = meshInertiaTensor(verticesFromBinarySTL(visualStl), [mp.cx, mp.cy, mp.cz]);
+    const ixy = tensor.ixy * k;
+    const ixz = tensor.ixz * k;
+    const iyz = tensor.iyz * k;
+
     const ox = num(mp.cx * MM_TO_M);
     const oy = num(mp.cy * MM_TO_M);
     const oz = num(mp.cz * MM_TO_M);
-    const f = (v: number) => `${+v.toFixed(8)}`;
+    // Snap numerically-negligible products (a symmetric link's are ~1e-16) to a clean "0".
+    const f = (v: number) => (Math.abs(v) < 1e-12 ? "0" : `${+v.toFixed(8)}`);
     return (
         `<inertial><origin xyz="${ox} ${oy} ${oz}" rpy="0 0 0"/><mass value="${mass}"/>` +
-        `<inertia ixx="${f(ixx)}" ixy="0" ixz="0" iyy="${f(iyy)}" iyz="0" izz="${f(izz)}"/></inertial>`
+        `<inertia ixx="${f(ixx)}" ixy="${f(ixy)}" ixz="${f(ixz)}" ` +
+        `iyy="${f(iyy)}" iyz="${f(iyz)}" izz="${f(izz)}"/></inertial>`
     );
 }
 

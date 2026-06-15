@@ -26,6 +26,7 @@ export interface JointNodeOptions extends FolderNodeOptions {
     jointType?: JointType;
     axis?: XYZ;
     pivot?: XYZ;
+    orientation?: XYZ;
 }
 
 @serializable()
@@ -64,6 +65,21 @@ export class JointNode extends GroupNode {
         const normalized = value.normalize();
         if (normalized === undefined) return;
         this.setProperty("axis", normalized, (_p, _old) => this.updateTransform());
+    }
+
+    /**
+     * Static orientation of the joint frame, as a URDF roll-pitch-yaw triple in DEGREES (x=roll,
+     * y=pitch, z=yaw), applied about the pivot. Identity by default, so it never moves an existing
+     * in-place model; it exists so a URDF `<origin rpy>` survives an import → export round-trip and so
+     * oriented joints can be authored. Maps to the rotation part of the joint's URDF `<origin>`.
+     */
+    @serialize()
+    @property("joint.orientation")
+    get orientation(): XYZ {
+        return this.getPrivateValue("orientation", XYZ.zero);
+    }
+    set orientation(value: XYZ) {
+        this.setProperty("orientation", value, (_p, _old) => this.updateTransform());
     }
 
     @serialize()
@@ -215,6 +231,7 @@ export class JointNode extends GroupNode {
         this.setPrivateValue("jointType", options.jointType ?? "revolute");
         this.setPrivateValue("axis", options.axis ?? XYZ.unitZ);
         this.setPrivateValue("pivot", options.pivot ?? XYZ.zero);
+        this.setPrivateValue("orientation", options.orientation ?? XYZ.zero);
         this.updateTransform();
         this.subscribeMimic();
     }
@@ -228,10 +245,24 @@ export class JointNode extends GroupNode {
     // serializer restores fields via setPrivateValue, which does not re-run setters).
     // Invariant: never assign `transform` directly on a JointNode — actuate via `value`.
     private updateTransform() {
-        // The transform is the actuation alone: a rotation about the axis-through-pivot (revolute)
-        // or a translation along the axis (prismatic). At value 0 it is identity — the part does
-        // not move, and changing the pivot only changes the centre of rotation.
-        this.transform = this.dofMatrix();
+        // The transform is the static frame orientation (about the pivot) composed with the actuation
+        // (a rotation about the axis-through-pivot for revolute, or a translation along the axis for
+        // prismatic). With the default zero orientation and value 0 it is identity — the part does not
+        // move, and changing the pivot only changes the centre of rotation.
+        this.transform = this.frameOrientation().multiply(this.dofMatrix());
+    }
+
+    // The static URDF `<origin>` rotation, applied about the pivot so a zero orientation is exactly
+    // identity (and never disturbs an in-place model). Built from single-axis rotations in URDF order
+    // — roll(X) then pitch(Y) then yaw(Z) — rather than Matrix4.fromEuler, whose Rx·Ry·Rz convention
+    // differs from URDF's Rz·Ry·Rx.
+    private frameOrientation(): Matrix4 {
+        const o = this.orientation;
+        if (o.x === 0 && o.y === 0 && o.z === 0) return Matrix4.identity();
+        const rx = Matrix4.fromAxisRad(this.pivot, XYZ.unitX, MathUtils.degToRad(o.x));
+        const ry = Matrix4.fromAxisRad(this.pivot, XYZ.unitY, MathUtils.degToRad(o.y));
+        const rz = Matrix4.fromAxisRad(this.pivot, XYZ.unitZ, MathUtils.degToRad(o.z));
+        return rx.multiply(ry).multiply(rz);
     }
 
     private dofMatrix(): Matrix4 {

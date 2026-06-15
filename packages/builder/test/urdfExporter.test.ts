@@ -3,7 +3,16 @@
 
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { EditableShapeNode, GroupNode, JointNode, LinkNode, Material, Plane, XYZ } from "@chili3d/core";
+import {
+    EditableShapeNode,
+    GroupNode,
+    JointNode,
+    LinkNode,
+    Material,
+    Matrix4,
+    Plane,
+    XYZ,
+} from "@chili3d/core";
 import { initWasm, ShapeFactory } from "@chili3d/wasm";
 import { describe, expect, test } from "@rstest/core";
 import { TestDocument } from "../../core/test/testDocument";
@@ -121,7 +130,41 @@ describe("exportUrdf", () => {
         expect(get("ixx")).toBeCloseTo((2 / 12) * (0.02 ** 2 + 0.03 ** 2), 8);
         expect(get("iyy")).toBeCloseTo((2 / 12) * (0.01 ** 2 + 0.03 ** 2), 8);
         expect(get("izz")).toBeCloseTo((2 / 12) * (0.01 ** 2 + 0.02 ** 2), 8);
+        // An axis-aligned box has zero products of inertia.
         expect(urdf).toContain('ixy="0"');
+    });
+
+    test("emits real off-diagonal products of inertia for a tilted solid", async () => {
+        await initWasm({ wasmBinary: WASM_BINARY });
+        const factory = new ShapeFactory();
+        const doc = new TestDocument() as any;
+
+        // A 10×20×30 box rotated 45° about Z develops a non-zero Ixy product of inertia.
+        const rot = Matrix4.fromAxisRad(XYZ.zero, XYZ.unitZ, Math.PI / 4);
+        const base = new LinkNode({ document: doc, name: "base_link" });
+        base.mass = 2;
+        base.add(
+            new EditableShapeNode({
+                document: doc,
+                name: "g",
+                shape: factory.box(Plane.XY, 10, 20, 30).value.transformedMul(rot),
+            }),
+        );
+
+        const { urdf } = exportUrdf(base, "robot", factory.converter);
+        const get = (axis: string) => {
+            const m = urdf.match(new RegExp(`${axis}="([0-9.eE-]+)"`));
+            return m ? Number(m[1]) : Number.NaN;
+        };
+
+        // Ixy = (Ixx0 − Iyy0)·sinθ·cosθ scaled to SI: unit-density mm⁵ × (mass/volume) × mm²→m².
+        const k = (2 / 6000) * 1e-6;
+        const expectedIxy = ((6000 / 12) * (20 ** 2 + 30 ** 2) - (6000 / 12) * (10 ** 2 + 30 ** 2)) * 0.5 * k;
+        expect(get("ixy")).toBeCloseTo(expectedIxy, 7);
+        expect(Math.abs(get("ixy"))).toBeGreaterThan(1e-6); // genuinely non-zero
+        // Z is the rotation axis → these products remain zero.
+        expect(get("ixz")).toBe(0);
+        expect(get("iyz")).toBe(0);
     });
 
     test("collision geometry: convex hull by default, box or exact mesh on request", async () => {

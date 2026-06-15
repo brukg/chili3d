@@ -69,6 +69,33 @@ describe("JointNode", () => {
         expect(offset.distanceTo(new XYZ({ x: 10, y: 10, z: 0 }))).toBeLessThan(1e-6);
     });
 
+    test("orientation is identity by default (never moves an existing in-place model)", () => {
+        const joint = new JointNode({
+            document: doc,
+            name: "j",
+            jointType: "revolute",
+            pivot: new XYZ({ x: 50, y: 0, z: 0 }),
+        });
+        // Default orientation (0,0,0) at value 0 → transform must be exactly identity.
+        expect(joint.transform.equals(Matrix4.identity())).toBe(true);
+    });
+
+    test("orientation applies a static rpy rotation about the pivot", () => {
+        const joint = new JointNode({
+            document: doc,
+            name: "j",
+            jointType: "fixed", // no actuation, so the transform is the orientation alone
+            pivot: new XYZ({ x: 10, y: 0, z: 0 }),
+            orientation: new XYZ({ x: 0, y: 0, z: 90 }), // 90° yaw about +Z, centred on the pivot
+        });
+        // The pivot point is the rotation centre → unmoved.
+        const onPivot = joint.transform.ofPoint(new XYZ({ x: 10, y: 0, z: 0 }));
+        expect(onPivot.distanceTo(new XYZ({ x: 10, y: 0, z: 0 }))).toBeLessThan(1e-6);
+        // (20,0,0) is 10mm +X from the pivot → 90° yaw → (10,10,0).
+        const offset = joint.transform.ofPoint(new XYZ({ x: 20, y: 0, z: 0 }));
+        expect(offset.distanceTo(new XYZ({ x: 10, y: 10, z: 0 }))).toBeLessThan(1e-6);
+    });
+
     test("a mimic joint follows its master's value (value × multiplier + offset)", () => {
         const master = new JointNode({ document: doc, name: "master", jointType: "revolute" });
         const slave = new JointNode({ document: doc, name: "slave", jointType: "revolute" });

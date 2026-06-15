@@ -223,6 +223,7 @@ export default {
         "items.tool.newFolder": "New Folder",
         "items.tool.unexpandAll": "Unexpand all",
         "joint.axis": "Axis",
+        "joint.orientation": "Orientation (rpy°)",
         "joint.pivot": "Rotation point",
         "joint.lowerLimit": "Lower Limit",
         "joint.type": "Joint Type",
