@@ -6,14 +6,14 @@ import { serializable, serialize } from "../serialize";
 import { GroupNode } from "./groupNode";
 
 /**
- * How the link's collision geometry is exported. `box` emits a single axis-aligned bounding box —
- * the cheap, planner-friendly default that every physics engine handles well. `mesh` reuses the full
- * visual mesh — exact, but slow and unstable in collision checking. Real robots almost always want a
- * simplified collider, so `box` is the default.
+ * How the link's collision geometry is exported. `convex` emits a convex hull of the link mesh — the
+ * tight-yet-cheap collider robotics planners and physics engines prefer, and the default. `box` emits
+ * a single axis-aligned bounding box — cheapest, but loose. `mesh` reuses the full visual mesh —
+ * exact, but slow and unstable in collision checking.
  */
-export type CollisionGeometry = "box" | "mesh";
+export type CollisionGeometry = "convex" | "box" | "mesh";
 
-const COLLISION_GEOMETRIES: readonly CollisionGeometry[] = ["box", "mesh"];
+const COLLISION_GEOMETRIES: readonly CollisionGeometry[] = ["convex", "box", "mesh"];
 
 /**
  * A named rigid body in a kinematic tree. Its direct geometry children are the link's
@@ -33,7 +33,7 @@ export class LinkNode extends GroupNode {
     @serialize()
     @property("link.collision", { type: "select", options: COLLISION_GEOMETRIES })
     get collisionGeometry(): CollisionGeometry {
-        return this.getPrivateValue("collisionGeometry", "box");
+        return this.getPrivateValue("collisionGeometry", "convex");
     }
     set collisionGeometry(value: CollisionGeometry) {
         if (!COLLISION_GEOMETRIES.includes(value)) return;

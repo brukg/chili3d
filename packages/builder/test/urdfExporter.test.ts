@@ -124,7 +124,7 @@ describe("exportUrdf", () => {
         expect(urdf).toContain('ixy="0"');
     });
 
-    test("defaults to a primitive box collider, and reuses the visual mesh on request", async () => {
+    test("collision geometry: convex hull by default, box or exact mesh on request", async () => {
         await initWasm({ wasmBinary: WASM_BINARY });
         const factory = new ShapeFactory();
         const doc = new TestDocument() as any;
@@ -134,18 +134,27 @@ describe("exportUrdf", () => {
             new EditableShapeNode({ document: doc, name: "g", shape: factory.box(Plane.XY, 10, 20, 30) }),
         );
 
-        // Default: collision is a cheap AABB box primitive, sized in metres and centred on the AABB.
+        // Default: a convex hull mesh, emitted as a separate collision STL distinct from the visual.
+        const convex = exportUrdf(base, "robot", factory.converter);
+        expect(convex.urdf).toContain('<collision><geometry><mesh filename="meshes/base_link_collision.stl"');
+        expect(convex.meshes.has("base_link_collision.stl")).toBe(true);
+        expect(convex.meshes.get("base_link_collision.stl")!.length).toBeGreaterThan(0);
+        expect(convex.urdf).not.toContain("<box size=");
+        // The visual still uses the full mesh.
+        expect(convex.urdf).toContain("<visual><geometry><mesh");
+
+        // Box: a cheap AABB primitive, sized in metres and centred on the AABB.
+        base.collisionGeometry = "box";
         const boxed = exportUrdf(base, "robot", factory.converter).urdf;
         expect(boxed).toContain('<collision><origin xyz="0.005 0.01 0.015"');
         expect(boxed).toContain('<box size="0.01 0.02 0.03"/>');
-        // The visual still uses the full mesh.
-        expect(boxed).toContain("<visual><geometry><mesh");
 
-        // Opt into exact mesh collision.
+        // Mesh: reuse the exact visual mesh, no separate collision file.
         base.collisionGeometry = "mesh";
-        const meshed = exportUrdf(base, "robot", factory.converter).urdf;
-        expect(meshed).not.toContain("<box size=");
-        expect(meshed).toMatch(/<collision><geometry><mesh/);
+        const meshed = exportUrdf(base, "robot", factory.converter);
+        expect(meshed.urdf).not.toContain("<box size=");
+        expect(meshed.urdf).toMatch(/<collision><geometry><mesh filename="meshes\/base_link.stl"/);
+        expect(meshed.meshes.has("base_link_collision.stl")).toBe(false);
     });
 
     test("exports the link's material colour into <visual>", async () => {

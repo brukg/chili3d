@@ -18,6 +18,7 @@ import {
     ShapeNode,
     ShapeTypes,
 } from "@chili3d/core";
+import { convexHullSTL } from "./stlMesh";
 
 const MM_TO_M = 0.001;
 
@@ -96,7 +97,7 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
                 const meshTag = `<geometry><mesh filename="meshes/${file}" scale="0.001 0.001 0.001"/></geometry>`;
                 const box = boundingBoxOf(shapes);
                 const material = materialXml(link, linkName);
-                const collision = collisionXml(link, box, meshTag);
+                const collision = collisionXml(link, box, meshTag, linkName, stl.value, meshes);
                 body = `<visual>${meshTag}${material}</visual>${collision}${inertialXml(shapes, box, link.mass)}`;
             }
         }
@@ -198,12 +199,33 @@ function boundingBoxOf(shapes: IShape[]): BoundingBox | undefined {
     return box;
 }
 
-// Collision geometry. Default (`box`) emits the link's axis-aligned bounding box as a primitive — the
-// cheap, stable collider every physics engine prefers — placed at the box centre. `mesh` reuses the
-// exact visual mesh (accurate but slow/unstable in collision checking). If there is no box to size a
-// primitive from, fall back to the mesh so collision is never silently absent.
-function collisionXml(link: LinkNode, box: BoundingBox | undefined, meshTag: string): string {
-    if (link.collisionGeometry === "mesh" || !box) return `<collision>${meshTag}</collision>`;
+// Collision geometry. `convex` (default) builds a convex hull of the visual mesh — the tight, stable,
+// planner-friendly collider robotics tooling expects. `box` emits the axis-aligned bounding box as a
+// primitive (cheapest, loosest). `mesh` reuses the exact visual mesh (accurate but slow/unstable).
+// Convex falls back to a box if the hull degenerates, and box falls back to the mesh if there is no
+// bounding box — so collision is never silently absent.
+function collisionXml(
+    link: LinkNode,
+    box: BoundingBox | undefined,
+    meshTag: string,
+    linkName: string,
+    visualStl: Uint8Array,
+    meshes: Map<string, Uint8Array>,
+): string {
+    if (link.collisionGeometry === "mesh") return `<collision>${meshTag}</collision>`;
+    if (link.collisionGeometry === "convex") {
+        const hull = convexHullSTL(visualStl);
+        if (hull) {
+            const file = `${linkName}_collision.stl`;
+            meshes.set(file, hull);
+            return (
+                `<collision><geometry>` +
+                `<mesh filename="meshes/${file}" scale="0.001 0.001 0.001"/></geometry></collision>`
+            );
+        }
+        // hull degenerated (e.g. near-coplanar geometry) → fall through to a box collider.
+    }
+    if (!box) return `<collision>${meshTag}</collision>`;
     // A zero-thickness collider is invalid in every physics engine; floor each dimension at 1 mm.
     const sx = num(Math.max((box.max.x - box.min.x) * MM_TO_M, 0.001));
     const sy = num(Math.max((box.max.y - box.min.y) * MM_TO_M, 0.001));
