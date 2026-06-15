@@ -46,6 +46,6 @@ export class FuseNode extends ParameterShapeNode {
     }
 
     override generateShape(): Result<IShape> {
-        throw new Error("Method not implemented.");
+        return shapeFactory.fuse(this.bottom, this.top);
     }
 }
