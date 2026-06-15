@@ -3,6 +3,7 @@
 
 export * from "./application";
 export * from "./boolean";
+export * from "./clipboard";
 export * from "./create";
 export * from "./createActCommand";
 export * from "./createCommand";
