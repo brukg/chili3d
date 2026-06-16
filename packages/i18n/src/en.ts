@@ -78,6 +78,7 @@ export default {
         "command.create.arc3point": "3-Point Arc",
         "command.create.bezier": "Bezier",
         "command.create.box": "Box",
+        "command.create.boundingBox": "Bounding Box",
         "command.create.circle": "Circle",
         "command.create.cone": "Cone",
         "command.create.copyShape": "Copy Shape",

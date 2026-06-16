@@ -78,6 +78,7 @@ export default {
         "command.create.arc3point": "三点圆弧",
         "command.create.bezier": "贝塞尔曲线",
         "command.create.box": "立方体",
+        "command.create.boundingBox": "包围盒",
         "command.create.circle": "圆形",
         "command.create.cone": "圆锥",
         "command.create.copyShape": "复制形状",

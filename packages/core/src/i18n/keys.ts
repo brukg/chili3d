@@ -73,6 +73,7 @@ export const I18N_KEYS = [
     "command.create.arc3point",
     "command.create.bezier",
     "command.create.box",
+    "command.create.boundingBox",
     "command.create.circle",
     "command.create.cone",
     "command.create.copyShape",
