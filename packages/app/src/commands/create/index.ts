@@ -31,6 +31,7 @@ export * from "./regularPolygon";
 export * from "./revolve";
 export * from "./section";
 export * from "./sketch";
+export * from "./sketchCenterRect";
 export * from "./sketchCircle";
 export * from "./sketchPolygon";
 export * from "./sketchRect";

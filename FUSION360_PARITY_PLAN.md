@@ -39,6 +39,9 @@ Items marked **[session]** were shipped in the current rollout.
   bulged semicircular end caps, bulges [0,1,0,1]). Headless test: area = L·2r + π·r².
   **Sketch Polygon tool (DONE):** inscribed regular N-gon as an editable SketchNode (N pinned corners
   on the radius circle; sides count is a property). Headless test: area = ½·N·r²·sin(2π/N).
+  **Sketch Center Rectangle (DONE):** centre + corner → centred constrained rectangle (same proven
+  fixed-4-corner pattern as Sketch Rectangle). The sketch toolbar now has line, 2-corner & centre
+  rectangle, circle, slot, polygon (+ existing arcs) and the full geometric/dimensional constraint set.
   _Next steps: a freehand Sketch Arc tool; tangent/concentric constraints (need the solver to see arc
   centres — larger)._
 - **CORRECTION — I/O is already comprehensive:** export covers STEP/IGES/BREP/STL/3MF/PLY/OBJ/GLTF/

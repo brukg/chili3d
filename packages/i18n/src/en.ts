@@ -102,6 +102,7 @@ export default {
         "command.create.revol": "Revolve",
         "command.create.section": "Section",
         "command.create.sketch": "Sketch",
+        "command.create.sketchCenterRect": "Sketch Center Rectangle",
         "command.create.sketchCircle": "Sketch Circle",
         "command.create.sketchPolygon": "Sketch Polygon",
         "command.create.sketchRect": "Sketch Rectangle",
