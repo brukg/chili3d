@@ -190,6 +190,8 @@ export default {
         "command.sketch.constrainEqual": "相等",
         "command.sketch.constrainFix": "固定",
         "command.sketch.dimension": "标注尺寸",
+        "command.sketch.dimensionX": "水平标注",
+        "command.sketch.dimensionY": "竖直标注",
         "command.special.last": "__上个命令__",
         "command.test.performance": "性能测试",
         "command.wechat.group": "微信群",

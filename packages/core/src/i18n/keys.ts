@@ -173,6 +173,8 @@ export const I18N_KEYS = [
     "command.sketch.constrainEqual",
     "command.sketch.constrainFix",
     "command.sketch.dimension",
+    "command.sketch.dimensionX",
+    "command.sketch.dimensionY",
     "command.special.last",
     "command.test.performance",
     "command.view.zoomFit",

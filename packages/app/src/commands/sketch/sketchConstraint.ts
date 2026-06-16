@@ -177,3 +177,20 @@ export class SketchDimensionCommand extends SketchConstraintCommand {
         return a === b ? undefined : { type: "distance", a, b, d: this.distance };
     }
 }
+
+// Horizontal dimension: the signed X distance from the first picked point to the second equals the
+// value — Fusion's horizontal dimension. Inherits the distance property and 2-vertex selection.
+@command({ key: "sketch.dimensionX", icon: "icon-dimension" })
+export class SketchDimensionXCommand extends SketchDimensionCommand {
+    protected override buildConstraint(_node: SketchNode, [a, b]: number[]): SketchConstraint | undefined {
+        return a === b ? undefined : { type: "distanceX", a, b, dx: this.distance };
+    }
+}
+
+// Vertical dimension: the signed Y distance from the first picked point to the second equals the value.
+@command({ key: "sketch.dimensionY", icon: "icon-dimension" })
+export class SketchDimensionYCommand extends SketchDimensionCommand {
+    protected override buildConstraint(_node: SketchNode, [a, b]: number[]): SketchConstraint | undefined {
+        return a === b ? undefined : { type: "distanceY", a, b, dy: this.distance };
+    }
+}

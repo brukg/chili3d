@@ -26,7 +26,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
             {
                 groupName: "ribbon.group.constraints",
                 items: [
-                    "sketch.dimension",
+                    ["sketch.dimension", "sketch.dimensionX", "sketch.dimensionY"],
                     {
                         type: "split",
                         items: [

@@ -190,6 +190,8 @@ export default {
         "command.sketch.constrainEqual": "Equal",
         "command.sketch.constrainFix": "Fix",
         "command.sketch.dimension": "Dimension",
+        "command.sketch.dimensionX": "Horizontal Dimension",
+        "command.sketch.dimensionY": "Vertical Dimension",
         "command.special.last": "__Last_COMMAND__",
         "command.test.performance": "Performance Test",
         "command.wechat.group": "Wechat",
