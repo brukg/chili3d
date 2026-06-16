@@ -325,6 +325,8 @@ export default {
         "option.command.repeat": "Repeat",
         "option.command.thickness": "Thickness",
         "option.command.distance": "Distance",
+        "option.command.counterboreRadius": "Counterbore Radius",
+        "option.command.counterboreDepth": "Counterbore Depth",
         "option.command.scale": "Scale",
         "parameter.add": "Add",
         "parameter.expression": "Expression",

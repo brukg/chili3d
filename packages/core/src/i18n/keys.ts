@@ -319,6 +319,8 @@ export const I18N_KEYS = [
     "option.command.repeat",
     "option.command.thickness",
     "option.command.distance",
+    "option.command.counterboreRadius",
+    "option.command.counterboreDepth",
     "option.command.scale",
     "parameter.add",
     "parameter.expression",

@@ -38,6 +38,25 @@ export class HoleCommand extends MultistepCommand {
         this.setProperty("depth", value);
     }
 
+    // Counterbore: a wider, shallow recess at the hole entry for a bolt head to sit flush. A radius
+    // larger than the bore and a positive depth turn the plain hole into a counterbored one; the
+    // defaults (0) leave a plain cylindrical hole, so existing behaviour is unchanged.
+    @property("option.command.counterboreRadius")
+    get counterboreRadius() {
+        return this.getPrivateValue("counterboreRadius", 0);
+    }
+    set counterboreRadius(value: number) {
+        this.setProperty("counterboreRadius", value);
+    }
+
+    @property("option.command.counterboreDepth")
+    get counterboreDepth() {
+        return this.getPrivateValue("counterboreDepth", 0);
+    }
+    set counterboreDepth(value: number) {
+        this.setProperty("counterboreDepth", value);
+    }
+
     protected override getSteps() {
         return [
             new SelectShapeStep(ShapeTypes.face, "prompt.select.faces", {
@@ -68,10 +87,32 @@ export class HoleCommand extends MultistepCommand {
                 PubSub.default.pub("displayError", holed.error);
                 return;
             }
+
+            let result: IShape = holed.value;
+            if (this.counterboreRadius > this.radius && this.counterboreDepth > 0) {
+                // Cut a wider, shallow cylinder at the entry. Start it a hair above the surface
+                // (along the outward normal) so the cut isn't coplanar with the face — coplanar
+                // tool faces make the boolean unreliable.
+                const eps = 0.01;
+                const cbCenter = location.add(normal.multiply(eps));
+                const cbCylinder = shapeFactory.cylinder(
+                    direction,
+                    cbCenter,
+                    this.counterboreRadius,
+                    this.counterboreDepth + eps,
+                );
+                if (cbCylinder.isOk) {
+                    const cut = shapeFactory.booleanCut([result], [cbCylinder.value]);
+                    if (cut.isOk) {
+                        result = cut.value;
+                    }
+                }
+            }
+
             const model = new EditableShapeNode({
                 document: this.document,
                 name: node.name,
-                shape: holed,
+                shape: result,
                 materialId: node.materialId,
             });
             (node.parent ?? this.document.modelManager.rootNode).add(model);

@@ -325,6 +325,8 @@ export default {
         "option.command.repeat": "重复",
         "option.command.thickness": "厚度",
         "option.command.distance": "距离",
+        "option.command.counterboreRadius": "沉头孔半径",
+        "option.command.counterboreDepth": "沉头孔深度",
         "option.command.scale": "缩放比例",
         "parameter.add": "添加",
         "parameter.expression": "表达式",
