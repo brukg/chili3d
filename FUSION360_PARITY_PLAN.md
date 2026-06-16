@@ -29,6 +29,7 @@ Items marked **[session]** were shipped in the current rollout.
 - **Batch 8 (started):** Center of Mass marker — drops a parametric point at a selected solid's
   world-space centroid (`ISolid.massProperties().centerOfMass`). Measure Bounding Box — reports the
   selection's overall dx×dy×dz. _Remaining: section analysis, draft/curvature/zebra analysis._
+- **Batch 11:** Toggle Perspective/Orthographic projection command (flips `cameraController.cameraType`).
 - **Batch 1 (arc support — step 1 DONE):** SketchNode now supports **arc segments** via an optional
   per-segment `bulges` field (DXF tan(θ/4) convention) — pure geometry-build params, NO solver/
   constraint change, fully backward compatible (empty bulges = the old polygon exactly). generateShape

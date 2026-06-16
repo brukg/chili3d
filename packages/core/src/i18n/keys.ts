@@ -204,6 +204,7 @@ export const I18N_KEYS = [
     "command.test.performance",
     "command.view.zoomFit",
     "command.view.toggleDisplayMode",
+    "command.view.toggleProjection",
     "command.view.top",
     "command.view.bottom",
     "command.view.front",

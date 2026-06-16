@@ -126,6 +126,7 @@ export default {
         "command.edit.undo": "撤销",
         "command.view.zoomFit": "缩放适应",
         "command.view.toggleDisplayMode": "显示模式",
+        "command.view.toggleProjection": "透视 / 正交",
         "command.view.top": "顶视图",
         "command.view.bottom": "底视图",
         "command.view.front": "前视图",

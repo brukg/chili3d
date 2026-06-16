@@ -195,7 +195,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                             "view.left",
                         ],
                     },
-                    ["view.zoomFit", "view.toggleDisplayMode"],
+                    ["view.zoomFit", "view.toggleDisplayMode", "view.toggleProjection"],
                 ],
             },
             {

@@ -126,6 +126,7 @@ export default {
         "command.edit.undo": "Undo",
         "command.view.zoomFit": "Zoom Fit",
         "command.view.toggleDisplayMode": "Display Mode",
+        "command.view.toggleProjection": "Perspective / Orthographic",
         "command.view.top": "Top",
         "command.view.bottom": "Bottom",
         "command.view.front": "Front",

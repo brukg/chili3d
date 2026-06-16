@@ -91,6 +91,18 @@ abstract class StandardViewCommand implements ICommand {
     }
 }
 
+// Toggle the camera between perspective and orthographic projection (Fusion's projection switch).
+@command({ key: "view.toggleProjection", icon: "icon-perspective" })
+export class ToggleProjection implements ICommand {
+    async execute(app: IApplication): Promise<void> {
+        const view = app.activeView;
+        if (!view) return;
+        const controller = view.cameraController;
+        controller.cameraType = controller.cameraType === "perspective" ? "orthographic" : "perspective";
+        view.update();
+    }
+}
+
 @command({ key: "view.top", icon: "icon-fitcontent" })
 export class ViewTop extends StandardViewCommand {
     protected readonly dir = new XYZ({ x: 0, y: 0, z: 1 });
