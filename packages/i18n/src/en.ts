@@ -144,6 +144,7 @@ export default {
         "command.modify.groupFolder": "Group",
         "command.modify.ungroup": "Ungroup",
         "command.modify.shell": "Shell",
+        "command.modify.thicken": "Thicken",
         "command.modify.pushPull": "Push/Pull",
         "command.modify.scale": "Scale",
         "command.modify.removeFillet": "Remove Fillet",

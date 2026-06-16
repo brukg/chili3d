@@ -134,6 +134,7 @@ export const I18N_KEYS = [
     "command.modify.groupFolder",
     "command.modify.ungroup",
     "command.modify.shell",
+    "command.modify.thicken",
     "command.modify.pushPull",
     "command.modify.scale",
     "command.modify.removeFillet",

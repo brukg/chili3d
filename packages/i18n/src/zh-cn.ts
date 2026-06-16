@@ -144,6 +144,7 @@ export default {
         "command.modify.groupFolder": "成组",
         "command.modify.ungroup": "取消成组",
         "command.modify.shell": "抽壳",
+        "command.modify.thicken": "加厚",
         "command.modify.pushPull": "推/拉",
         "command.modify.scale": "缩放",
         "command.modify.removeFillet": "移除圆角",
