@@ -327,6 +327,8 @@ export default {
         "option.command.distance": "Distance",
         "option.command.counterboreRadius": "Counterbore Radius",
         "option.command.counterboreDepth": "Counterbore Depth",
+        "option.command.countersinkRadius": "Countersink Radius",
+        "option.command.countersinkDepth": "Countersink Depth",
         "option.command.scale": "Scale",
         "parameter.add": "Add",
         "parameter.expression": "Expression",

@@ -21,11 +21,11 @@ Items marked **[session]** were shipped in the current rollout.
   plane, plane-along-path, construction axes, construction points._
 - **Batch 2 (progressing):** Thicken (open face/shell → solid via makeThickSolidBySimple);
   Ellipsoid primitive (completed a half-wired kernel binding); **Torus** primitive (new C++
-  `BRepPrimAPI_MakeTorus` kernel fn + WASM rebuild + TorusNode); **counterbore hole** option on the
-  Hole command (composes makeHole + booleanCut of a wider cylinder; defaults keep a plain hole).
-  _Remaining: countersink hole (cone variant — same pattern), replace-face, emboss, boundary-fill,
-  align. (split-body/split-face already covered by modify.split; coil/spring already covered by the
-  Thread primitive — it sweeps a circular profile along a helix.)_
+  `BRepPrimAPI_MakeTorus` kernel fn + WASM rebuild + TorusNode); **counterbore + countersink hole**
+  options on the Hole command (compose makeHole + booleanCut of a wider cylinder / a cone; defaults
+  keep a plain hole). The Hole command now covers all three Fusion hole types.
+  _Remaining: replace-face, emboss, boundary-fill, align. (split-body/split-face already covered by
+  modify.split; coil/spring already covered by the Thread primitive — helical sweep of a circle.)_
 - **Batch 8 (started):** Center of Mass marker — drops a parametric point at a selected solid's
   world-space centroid (`ISolid.massProperties().centerOfMass`). _Remaining: section analysis,
   draft/curvature/zebra analysis._

@@ -57,6 +57,25 @@ export class HoleCommand extends MultistepCommand {
         this.setProperty("counterboreDepth", value);
     }
 
+    // Countersink: a conical recess at the entry for a flat-head screw. A radius larger than the bore
+    // plus a positive depth cut a cone that is wide at the surface and narrows to the bore. Defaults
+    // (0) leave a plain hole.
+    @property("option.command.countersinkRadius")
+    get countersinkRadius() {
+        return this.getPrivateValue("countersinkRadius", 0);
+    }
+    set countersinkRadius(value: number) {
+        this.setProperty("countersinkRadius", value);
+    }
+
+    @property("option.command.countersinkDepth")
+    get countersinkDepth() {
+        return this.getPrivateValue("countersinkDepth", 0);
+    }
+    set countersinkDepth(value: number) {
+        this.setProperty("countersinkDepth", value);
+    }
+
     protected override getSteps() {
         return [
             new SelectShapeStep(ShapeTypes.face, "prompt.select.faces", {
@@ -103,6 +122,26 @@ export class HoleCommand extends MultistepCommand {
                 );
                 if (cbCylinder.isOk) {
                     const cut = shapeFactory.booleanCut([result], [cbCylinder.value]);
+                    if (cut.isOk) {
+                        result = cut.value;
+                    }
+                }
+            }
+
+            if (this.countersinkRadius > this.radius && this.countersinkDepth > 0) {
+                // Cone wide at the surface, narrowing to the bore at the countersink depth. Start it a
+                // hair above the surface (outward) so its base isn't coplanar with the face.
+                const eps = 0.01;
+                const csCenter = location.add(normal.multiply(eps));
+                const cone = shapeFactory.cone(
+                    direction,
+                    csCenter,
+                    this.countersinkRadius,
+                    this.radius,
+                    this.countersinkDepth + eps,
+                );
+                if (cone.isOk) {
+                    const cut = shapeFactory.booleanCut([result], [cone.value]);
                     if (cut.isOk) {
                         result = cut.value;
                     }
