@@ -55,6 +55,10 @@ Items marked **[session]** were shipped in the current rollout.
   **Concentric constraint (DONE):** new solver constraint making two diameter segments share a centre
   (equal midpoints) — concentric circles/arcs. Headless test: a diameter's centre moves to the origin.
   The solver now has 17 constraint functions (4 added this run: symmetric, midpoint, collinear, concentric).
+- **Batch 1 (parametric):** expression-driven dimensions — the Dimension / Horizontal / Vertical
+  dimension commands now take an optional expression (e.g. "width/2") evaluated against the document's
+  named parameters, instead of only a literal. Changing a parameter resizes the sketch — core Fusion
+  parametric behaviour. Headless test: a "w*2" dimension solves to 10 when w=5.
 - **Batch 2 (primitive):** Coil — a discoverable Coil command + parametric CoilNode (Fusion's Coil/
   spring). Same helical-sweep kernel as Thread but presented as a spring with loose-turn defaults;
   previously the only access to a helix was the Thread primitive.

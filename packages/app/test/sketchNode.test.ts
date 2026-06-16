@@ -262,6 +262,27 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         expect(p[3].y).toBeCloseTo(20, 5);
     });
 
+    test("an expression-valued dimension resolves against named parameters", () => {
+        // The dimension commands now emit a string expression (e.g. "w * 2") when one is entered;
+        // SketchNode evaluates it against the document parameters via toConstraint(scope).
+        const pts: Point2d[] = [
+            { x: 0, y: 0 },
+            { x: 7, y: 0 },
+        ];
+        const cons: SketchConstraint[] = [
+            { type: "fixed", point: 0, x: 0, y: 0 },
+            { type: "horizontal", a: 0, b: 1 },
+            { type: "distance", a: 0, b: 1, d: "w * 2" },
+        ];
+        const solved = solveConstraints(
+            pts,
+            cons.map((c) => toConstraint(c, { w: 5 })),
+        );
+        expect(solved.converged).toBe(true);
+        // w=5 → distance 0→1 should be 10.
+        expect(Math.hypot(solved.points[1].x - solved.points[0].x, solved.points[1].y)).toBeCloseTo(10, 6);
+    });
+
     test("a concentric constraint makes two diameter segments share a centre", () => {
         const doc = new TestDocument() as any;
         // Segment 0→1 is a diameter centred at (0,0); segment 2→3 is a diameter centred at (10,10)

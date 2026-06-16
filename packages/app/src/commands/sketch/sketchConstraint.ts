@@ -13,6 +13,7 @@ import {
     type ShapeType,
     ShapeTypes,
     type SketchConstraint,
+    type SketchDimension,
     Transaction,
     type VisualShapeData,
 } from "@chili3d/core";
@@ -191,17 +192,33 @@ export class SketchDimensionCommand extends SketchConstraintCommand {
         this.setProperty("distance", value);
     }
 
+    // Optional expression (e.g. "width / 2") evaluated against the document's named parameters. When
+    // set, it drives the dimension instead of the literal value — the heart of a parametric sketch.
+    @property("parameter.expression")
+    get expression() {
+        return this.getPrivateValue("expression", "");
+    }
+    set expression(value: string) {
+        this.setProperty("expression", value);
+    }
+
+    /** The dimension value the constraint should use: the expression if one was entered, else the
+     * literal number. A string is resolved against the document parameters when the sketch solves. */
+    protected dimValue(): SketchDimension {
+        return this.expression.trim().length > 0 ? this.expression : this.distance;
+    }
+
     protected buildConstraint(_node: SketchNode, [a, b]: number[]): SketchConstraint | undefined {
-        return a === b ? undefined : { type: "distance", a, b, d: this.distance };
+        return a === b ? undefined : { type: "distance", a, b, d: this.dimValue() };
     }
 }
 
 // Horizontal dimension: the signed X distance from the first picked point to the second equals the
-// value — Fusion's horizontal dimension. Inherits the distance property and 2-vertex selection.
+// value — Fusion's horizontal dimension. Inherits the distance/expression props and 2-vertex selection.
 @command({ key: "sketch.dimensionX", icon: "icon-dimension" })
 export class SketchDimensionXCommand extends SketchDimensionCommand {
     protected override buildConstraint(_node: SketchNode, [a, b]: number[]): SketchConstraint | undefined {
-        return a === b ? undefined : { type: "distanceX", a, b, dx: this.distance };
+        return a === b ? undefined : { type: "distanceX", a, b, dx: this.dimValue() };
     }
 }
 
@@ -209,7 +226,7 @@ export class SketchDimensionXCommand extends SketchDimensionCommand {
 @command({ key: "sketch.dimensionY", icon: "icon-dimension" })
 export class SketchDimensionYCommand extends SketchDimensionCommand {
     protected override buildConstraint(_node: SketchNode, [a, b]: number[]): SketchConstraint | undefined {
-        return a === b ? undefined : { type: "distanceY", a, b, dy: this.distance };
+        return a === b ? undefined : { type: "distanceY", a, b, dy: this.dimValue() };
     }
 }
 
