@@ -262,6 +262,33 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         expect(p[3].y).toBeCloseTo(20, 5);
     });
 
+    test("a collinear constraint puts a second segment onto the first's line", () => {
+        const doc = new TestDocument() as any;
+        // Segment 0→1 on the x-axis; segment 2→3 starts skew and is made collinear with it.
+        const node = new SketchNode({
+            document: doc,
+            plane: Plane.XY,
+            points: [
+                { x: 0, y: 0 },
+                { x: 10, y: 0 },
+                { x: 12, y: 3 }, // 2
+                { x: 20, y: -4 }, // 3
+            ],
+            constraints: [
+                { type: "fixed", point: 0, x: 0, y: 0 },
+                { type: "fixed", point: 1, x: 10, y: 0 },
+                // Keep their x positions so only y is free to move onto the line.
+                { type: "distanceX", a: 0, b: 2, dx: 12 },
+                { type: "distanceX", a: 0, b: 3, dx: 20 },
+                { type: "collinear", a: 0, b: 1, c: 2, d: 3 },
+            ],
+        });
+        const solved = node.solvedPoints();
+        // Both points 2 and 3 drop onto the x-axis (y ≈ 0).
+        expect(solved[2].y).toBeCloseTo(0, 5);
+        expect(solved[3].y).toBeCloseTo(0, 5);
+    });
+
     test("a midpoint constraint pins a point to the centre of a segment", () => {
         const doc = new TestDocument() as any;
         // Segment 0→1 from (0,0) to (10,4); point 2 starts off and is pinned to its midpoint (5,2).

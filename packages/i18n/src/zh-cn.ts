@@ -205,6 +205,7 @@ export default {
         "command.sketch.constrainParallel": "平行",
         "command.sketch.constrainPerpendicular": "垂直",
         "command.sketch.constrainEqual": "相等",
+        "command.sketch.constrainCollinear": "共线",
         "command.sketch.constrainPointOnLine": "点在线上",
         "command.sketch.constrainMidpoint": "中点",
         "command.sketch.constrainSymmetric": "对称",

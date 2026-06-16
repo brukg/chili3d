@@ -50,6 +50,9 @@ Items marked **[session]** were shipped in the current rollout.
   effectively Fusion-complete for 2D sketching.
   **Midpoint constraint (DONE):** new solver constraint pinning a point to a segment's midpoint
   (added `midpoint()` to the solver, like symmetric). Headless test: point pinned to (5,2).
+  **Collinear constraint (DONE):** new solver constraint putting two segments on the same line
+  (added `collinear()`). Headless test: a skew segment drops onto the first segment's line.
+  The solver now has 16 constraint functions (3 added this run: symmetric, midpoint, collinear).
   _CORRECTION: `modify.array` already does 3D rectangular (X×Y×Z) AND circular patterns — patterns
   are comprehensive, not a gap._
   _Next steps: a freehand Sketch Arc tool; tangent/concentric constraints (need the solver to see arc

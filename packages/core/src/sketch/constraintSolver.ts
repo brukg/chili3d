@@ -148,6 +148,20 @@ export function symmetric(p: number, q: number, a: number, b: number): Constrain
     };
 }
 
+/** Segments a→b and c→d lie on the same straight line (both c and d are collinear with a→b). */
+export function collinear(a: number, b: number, c: number, d: number): Constraint {
+    return {
+        residuals: (v) => {
+            const ux = v[px(b)] - v[px(a)];
+            const uy = v[py(b)] - v[py(a)];
+            // Cross product of a→b with a→c and a→d — both zero ⇒ c and d are on the line through a,b.
+            const cOnLine = ux * (v[py(c)] - v[py(a)]) - uy * (v[px(c)] - v[px(a)]);
+            const dOnLine = ux * (v[py(d)] - v[py(a)]) - uy * (v[px(d)] - v[px(a)]);
+            return [cOnLine, dOnLine];
+        },
+    };
+}
+
 /** Point p sits at the midpoint of the segment from a to b. */
 export function midpoint(p: number, a: number, b: number): Constraint {
     return {

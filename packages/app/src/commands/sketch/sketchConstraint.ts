@@ -160,6 +160,15 @@ export class SketchEqualCommand extends SketchConstraintCommand {
     }
 }
 
+@command({ key: "sketch.constrainCollinear", icon: "icon-line" })
+export class SketchCollinearCommand extends SketchConstraintCommand {
+    protected readonly subShapeType = ShapeTypes.edge;
+    protected readonly count = 2;
+    protected buildConstraint(_node: SketchNode, [a, b, c, d]: number[]): SketchConstraint | undefined {
+        return { type: "collinear", a, b, c, d };
+    }
+}
+
 @command({ key: "sketch.dimension", icon: "icon-dimension" })
 export class SketchDimensionCommand extends SketchConstraintCommand {
     protected readonly subShapeType = ShapeTypes.vertex;
