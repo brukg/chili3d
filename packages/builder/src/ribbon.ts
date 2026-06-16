@@ -51,7 +51,8 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                 items: [
                     "workingPlane.toggleDynamic",
                     ["workingPlane.set", "workingPlane.alignToPlane", "workingPlane.fromSection"],
-                    ["workingPlane.from3Points"],
+                    ["workingPlane.from3Points", "workingPlane.offset"],
+                    ["workingPlane.atAngle", "workingPlane.midPlane"],
                 ],
             },
         ],

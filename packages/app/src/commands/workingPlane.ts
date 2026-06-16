@@ -12,6 +12,7 @@ import {
     type IEdge,
     type IFace,
     type IStep,
+    type IVertex,
     Observable,
     Plane,
     PointOnCurveStep,
@@ -26,6 +27,22 @@ import {
 } from "@chili3d/core";
 import { div, RadioGroup } from "@chili3d/element";
 import { MultistepCommand } from "./multistepCommand";
+
+// A sensible plane X axis for a given normal: the world-Z×normal direction, falling back to world-X
+// when the normal is itself vertical. Shared by every construction-plane command below.
+function planeXVec(normal: XYZ): XYZ {
+    if (!normal.isParallelTo(XYZ.unitZ)) {
+        return XYZ.unitZ.cross(normal).normalize() ?? XYZ.unitX;
+    }
+    return XYZ.unitX;
+}
+
+// Direction of an edge, taken from its two endpoint vertices.
+function edgeDirection(edge: IEdge): XYZ | undefined {
+    const verts = edge.findSubShapes(ShapeTypes.vertex) as IVertex[];
+    if (verts.length < 2) return undefined;
+    return verts[1].point().sub(verts[0].point()).normalize();
+}
 
 export class WorkingPlaneViewModel extends Observable {
     @property("dialog.title.selectWorkingPlane")
@@ -179,4 +196,113 @@ export class FromSection extends MultistepCommand {
             },
         };
     };
+}
+
+// Offset construction plane: pick a face, the working plane becomes that face's plane translated
+// along its normal by `distance` — the standard way to sketch parallel to an existing face.
+@command({
+    key: "workingPlane.offset",
+    icon: "icon-setWorkingPlane",
+})
+export class OffsetPlane extends MultistepCommand {
+    @property("option.command.distance")
+    get distance() {
+        return this.getPrivateValue("distance", 10);
+    }
+    set distance(value: number) {
+        this.setProperty("distance", value);
+    }
+
+    protected override executeMainTask() {
+        const view = this.application.activeView;
+        if (!view) return;
+        const data = this.stepDatas[0].shapes[0];
+        const face = data.shape.transformedMul(data.transform) as IFace;
+        const [point, normal] = face.normal(0, 0);
+        face.dispose();
+        const origin = point.add(normal.multiply(this.distance));
+        view.workplane = new Plane({ origin, normal, xvec: planeXVec(normal) });
+    }
+
+    protected override getSteps(): IStep[] {
+        return [new SelectShapeStep(ShapeTypes.face, "prompt.select.faces")];
+    }
+}
+
+// Angled construction plane: pick a face and a straight edge (the hinge axis), then rotate the
+// face's plane about that edge by `angle` degrees — Fusion's "plane at angle".
+@command({
+    key: "workingPlane.atAngle",
+    icon: "icon-setWorkingPlane",
+})
+export class PlaneAtAngle extends MultistepCommand {
+    @property("common.angle")
+    get angle() {
+        return this.getPrivateValue("angle", 45);
+    }
+    set angle(value: number) {
+        this.setProperty("angle", value);
+    }
+
+    protected override executeMainTask() {
+        const view = this.application.activeView;
+        if (!view) return;
+        const faceData = this.stepDatas[0].shapes[0];
+        const face = faceData.shape.transformedMul(faceData.transform) as IFace;
+        const [point, normal] = face.normal(0, 0);
+        face.dispose();
+        const edgeData = this.stepDatas[1].shapes[0];
+        const edge = edgeData.shape.transformedMul(edgeData.transform) as IEdge;
+        const axis = edgeDirection(edge);
+        edge.dispose();
+        if (!axis) {
+            PubSub.default.pub("showToast", "toast.converter.error");
+            return;
+        }
+        const radians = (this.angle * Math.PI) / 180;
+        const rotatedNormal = normal.rotate(axis, radians);
+        const rotatedX = planeXVec(normal).rotate(axis, radians);
+        if (!rotatedNormal || !rotatedX) {
+            PubSub.default.pub("showToast", "toast.converter.error");
+            return;
+        }
+        view.workplane = new Plane({ origin: point, normal: rotatedNormal, xvec: rotatedX });
+    }
+
+    protected override getSteps(): IStep[] {
+        return [
+            new SelectShapeStep(ShapeTypes.face, "prompt.select.faces"),
+            new SelectShapeStep(ShapeTypes.edge, "prompt.select.edges"),
+        ];
+    }
+}
+
+// Mid construction plane: pick two faces, the working plane sits halfway between them with the
+// first face's orientation — the usual way to mirror or sketch on a part's symmetry plane.
+@command({
+    key: "workingPlane.midPlane",
+    icon: "icon-setWorkingPlane",
+})
+export class MidPlane extends MultistepCommand {
+    protected override executeMainTask() {
+        const view = this.application.activeView;
+        if (!view) return;
+        const data1 = this.stepDatas[0].shapes[0];
+        const data2 = this.stepDatas[1].shapes[0];
+        const face1 = data1.shape.transformedMul(data1.transform) as IFace;
+        const face2 = data2.shape.transformedMul(data2.transform) as IFace;
+        const [p1, normal] = face1.normal(0, 0);
+        const [p2] = face2.normal(0, 0);
+        face1.dispose();
+        face2.dispose();
+        const origin = p1.add(p2).multiply(0.5);
+        view.workplane = new Plane({ origin, normal, xvec: planeXVec(normal) });
+    }
+
+    protected override getSteps(): IStep[] {
+        return [
+            new SelectShapeStep(ShapeTypes.face, "prompt.select.faces"),
+            new SelectShapeStep(ShapeTypes.face, "prompt.select.faces"),
+        ];
+    }
 }
