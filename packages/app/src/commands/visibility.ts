@@ -106,6 +106,27 @@ export class HideOthers implements ICommand {
     }
 }
 
+// Hide the selected node(s) — the everyday complement to Show All.
+@command({
+    key: "modify.hideSelected",
+    icon: "icon-eye-slash",
+})
+export class HideSelected implements ICommand {
+    async execute(app: IApplication): Promise<void> {
+        const document = app.activeView?.document;
+        if (!document) return;
+        const selected = document.selection.getSelectedNodes();
+        if (selected.length === 0) {
+            PubSub.default.pub("showToast", "toast.select.noSelected");
+            return;
+        }
+        for (const node of selected) {
+            node.visible = false;
+        }
+        document.visual.update();
+    }
+}
+
 // Make every node in the document visible again — the counterpart to Isolate / Hide Others.
 @command({
     key: "modify.showAll",

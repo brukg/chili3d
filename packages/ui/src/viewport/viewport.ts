@@ -29,6 +29,7 @@ const SELECTION_CONTEXT_MENU: ContextMenuEntry[] = [
     "modify.deleteNode",
     SEPARATOR,
     "modify.isolate",
+    "modify.hideSelected",
     "modify.hideOthers",
     "modify.toggleLock",
 ];

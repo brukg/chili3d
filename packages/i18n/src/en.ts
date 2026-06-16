@@ -137,6 +137,7 @@ export default {
         "command.modify.duplicate": "Duplicate",
         "command.modify.isolate": "Isolate",
         "command.modify.hideOthers": "Hide Others",
+        "command.modify.hideSelected": "Hide",
         "command.modify.showAll": "Show All",
         "command.modify.toggleLock": "Lock / Unlock",
         "command.modify.groupFolder": "Group",

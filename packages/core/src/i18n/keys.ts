@@ -128,6 +128,7 @@ export const I18N_KEYS = [
     "command.modify.duplicate",
     "command.modify.isolate",
     "command.modify.hideOthers",
+    "command.modify.hideSelected",
     "command.modify.showAll",
     "command.modify.toggleLock",
     "command.modify.groupFolder",

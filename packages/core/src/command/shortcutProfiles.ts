@@ -18,6 +18,7 @@ export const Chili3dShortcuts: ShortcutMap = {
     "modify.duplicate": "ctrl+d",
     "modify.isolate": "ctrl+i",
     "modify.hideOthers": "alt+h",
+    "modify.hideSelected": "ctrl+h",
     "modify.showAll": "alt+shift+h",
     "modify.toggleLock": "ctrl+l",
     "modify.groupFolder": "ctrl+g",

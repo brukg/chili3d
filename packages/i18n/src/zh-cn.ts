@@ -137,6 +137,7 @@ export default {
         "command.modify.duplicate": "创建副本",
         "command.modify.isolate": "隔离",
         "command.modify.hideOthers": "隐藏其他",
+        "command.modify.hideSelected": "隐藏",
         "command.modify.showAll": "显示全部",
         "command.modify.toggleLock": "锁定 / 解锁",
         "command.modify.groupFolder": "成组",
