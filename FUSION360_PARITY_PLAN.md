@@ -35,8 +35,10 @@ Items marked **[session]** were shipped in the current rollout.
   builds a mixed line/arc wire. Headless test: a 2-point sketch bulged both sides = a circle (area πr²).
   **Sketch Circle tool (step 2 DONE):** centre + radius creates an editable SketchNode circle (two
   diameter points + bulges [1,1]) — a real sketch profile, not a static face.
-  _Next steps: Sketch Arc / Slot tools that emit bulges; tangent/concentric constraints (need the
-  solver to see arc centres — larger)._
+  **Sketch Slot tool (step 3 DONE):** centre line + radius → an editable slot (two straight sides +
+  bulged semicircular end caps, bulges [0,1,0,1]). Headless test: area = L·2r + π·r².
+  _Next steps: a freehand Sketch Arc tool; tangent/concentric constraints (need the solver to see arc
+  centres — larger)._
 - **Batch 1/3 (started):** Sketch Rectangle — two-corner rectangle created as a fully-constrained
   SketchNode (H/V edges + signed width/height dimensions), editable like a real sketch profile
   (vs the static create.rect face). Headless test: solves to an exact 30×20 rectangle.

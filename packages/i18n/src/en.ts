@@ -104,6 +104,7 @@ export default {
         "command.create.sketch": "Sketch",
         "command.create.sketchCircle": "Sketch Circle",
         "command.create.sketchRect": "Sketch Rectangle",
+        "command.create.sketchSlot": "Sketch Slot",
         "command.create.sphere": "Sphere",
         "command.create.sweep": "Sweep",
         "command.create.thickSolid": "Thick Solid",

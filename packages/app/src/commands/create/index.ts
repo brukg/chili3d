@@ -33,6 +33,7 @@ export * from "./section";
 export * from "./sketch";
 export * from "./sketchCircle";
 export * from "./sketchRect";
+export * from "./sketchSlot";
 export * from "./sphere";
 export * from "./sweep";
 export * from "./thickSolid";

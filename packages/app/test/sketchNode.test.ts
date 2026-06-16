@@ -116,6 +116,36 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         expect((face.value as IFace).area()).toBeCloseTo(Math.PI * 25, 1);
     });
 
+    test("a slot (two sides + bulged end caps) has area L·2r + π·r²", () => {
+        const doc = new TestDocument() as any;
+        // The construction the Sketch Slot command emits: length 20, radius 5.
+        const node = new SketchNode({
+            document: doc,
+            plane: Plane.XY,
+            points: [
+                { x: 0, y: 5 },
+                { x: 20, y: 5 },
+                { x: 20, y: -5 },
+                { x: 0, y: -5 },
+            ],
+            constraints: [
+                { type: "fixed", point: 0, x: 0, y: 5 },
+                { type: "fixed", point: 1, x: 20, y: 5 },
+                { type: "fixed", point: 2, x: 20, y: -5 },
+                { type: "fixed", point: 3, x: 0, y: -5 },
+            ],
+            bulges: [0, 1, 0, 1],
+        });
+        const shape = node.generateShape();
+        expect(shape.isOk).toBe(true);
+
+        const factory = new ShapeFactory();
+        const face = factory.face([shape.value as IWire]);
+        expect(face.isOk).toBe(true);
+        // central rectangle 20×10 + two semicircles (= one circle r=5): 200 + 25π ≈ 278.54 mm².
+        expect((face.value as IFace).area()).toBeCloseTo(200 + 25 * Math.PI, 1);
+    });
+
     test("nearestPointIndex maps a plane point to the closest sketch corner", () => {
         const doc = new TestDocument() as any;
         const node = new SketchNode({ document: doc, plane: Plane.XY, points, constraints });
