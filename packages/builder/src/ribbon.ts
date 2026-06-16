@@ -168,7 +168,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
             {
                 groupName: "ribbon.group.measure",
                 items: [
-                    ["measure.length", "measure.angle", "measure.select"],
+                    ["measure.length", "measure.angle", "measure.radius", "measure.select"],
                     [
                         "measure.properties",
                         "measure.centerOfMass",

@@ -25,5 +25,7 @@ describe("Edge centre (circular edge)", () => {
         expect(center!.x).toBeCloseTo(3, 6);
         expect(center!.y).toBeCloseTo(4, 6);
         expect(center!.z).toBeCloseTo(0, 6);
+        // The same circular curve also reports the radius (used by the Measure Radius command).
+        expect(CurveUtils.isCircle(basis) ? basis.radius : 0).toBeCloseTo(5, 6);
     });
 });
