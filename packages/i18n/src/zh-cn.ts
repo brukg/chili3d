@@ -124,6 +124,7 @@ export default {
         "command.file.export": "导出",
         "command.file.import": "导入",
         "command.measure.angle": "角度",
+        "command.measure.centerOfMass": "质心",
         "command.measure.interference": "干涉检查",
         "command.measure.length": "长度",
         "command.measure.properties": "属性",

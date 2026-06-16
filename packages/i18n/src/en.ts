@@ -124,6 +124,7 @@ export default {
         "command.file.export": "Export",
         "command.file.import": "Import",
         "command.measure.angle": "Angle",
+        "command.measure.centerOfMass": "Center of Mass",
         "command.measure.interference": "Interference",
         "command.measure.length": "Length",
         "command.measure.properties": "Properties",

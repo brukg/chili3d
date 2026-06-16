@@ -110,6 +110,7 @@ export const I18N_KEYS = [
     "command.file.export",
     "command.file.import",
     "command.measure.angle",
+    "command.measure.centerOfMass",
     "command.measure.interference",
     "command.measure.length",
     "command.measure.properties",
