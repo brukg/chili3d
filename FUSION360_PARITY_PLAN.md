@@ -52,6 +52,9 @@ Items marked **[session]** were shipped in the current rollout.
   (vs the static create.rect face). Headless test: solves to an exact 30×20 rectangle.
 - **Batch 3/reference (started):** Extract Edges / Extract Faces — combine a body's edges / faces
   into a reusable compound of reference geometry. Headless tests: a box yields exactly 12 edges / 6 faces.
+- **Batch 6 (modify):** Non-uniform Scale — resize selection by independent X/Y/Z factors about each
+  body's bbox centre (Fusion's non-uniform scale; uniform Scale already existed). Matrix test verifies
+  a corner maps by per-axis factors.
 - **Batch 6/11 (started):** Move to Origin — recentres the selection's combined world bbox at the
   origin (pure post-multiplied translation; pattern proven by a Matrix4 convention test). Create
   Bounding Box — an AABB box matching the selection's world extents (stock/extents utility).

@@ -48,6 +48,19 @@ describe("test Transform", () => {
         expect(recenter.ofPoint(localCenter).distanceTo(XYZ.zero)).toBeLessThan(1e-4);
     });
 
+    test("non-uniform scale about a centre maps corners by independent factors", () => {
+        // A 10×10×10 box-ish set of corners centred at (5,5,5), scaled ×3/×1/×0.5 about its centre.
+        const c = new XYZ({ x: 5, y: 5, z: 5 });
+        const scale = Matrix4.fromTranslation(-c.x, -c.y, -c.z)
+            .multiply(Matrix4.fromScale(3, 1, 0.5))
+            .multiply(Matrix4.fromTranslation(c.x, c.y, c.z));
+        // The centre is fixed; the far corner moves to centre ± half-extent×factor.
+        expect(scale.ofPoint(c).isEqualTo(c)).toBeTruthy();
+        const far = scale.ofPoint(new XYZ({ x: 10, y: 10, z: 10 }));
+        // x: 5 + 5·3 = 20, y: 5 + 5·1 = 10, z: 5 + 5·0.5 = 7.5
+        expect(far.isEqualTo(new XYZ({ x: 20, y: 10, z: 7.5 }))).toBeTruthy();
+    });
+
     test("test mirror", () => {
         let mirror = Matrix4.createMirrorWithPlane(
             new Plane({ origin: XYZ.zero, normal: XYZ.unitX, xvec: XYZ.unitY }),
