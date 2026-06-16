@@ -194,3 +194,23 @@ export class SketchDimensionYCommand extends SketchDimensionCommand {
         return a === b ? undefined : { type: "distanceY", a, b, dy: this.distance };
     }
 }
+
+// Angle dimension: constrain the angle between two picked sketch segments to a value in degrees —
+// Fusion's angular dimension. The solver works in radians, so the degree value is converted here.
+@command({ key: "sketch.dimensionAngle", icon: "icon-dimension" })
+export class SketchAngleCommand extends SketchConstraintCommand {
+    protected readonly subShapeType = ShapeTypes.edge;
+    protected readonly count = 2;
+
+    @property("common.angle")
+    get angle() {
+        return this.getPrivateValue("angle", 45);
+    }
+    set angle(value: number) {
+        this.setProperty("angle", value);
+    }
+
+    protected buildConstraint(_node: SketchNode, [a, b, c, d]: number[]): SketchConstraint | undefined {
+        return { type: "angle", a, b, c, d, radians: (this.angle * Math.PI) / 180 };
+    }
+}

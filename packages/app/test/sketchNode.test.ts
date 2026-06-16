@@ -98,6 +98,30 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         expect(node.nearestPointIndex(new XYZ({ x: 0.1, y: 9.9, z: 0 }))).toBe(3);
     });
 
+    test("an angle constraint solves a segment to the requested angle (90°)", () => {
+        const doc = new TestDocument() as any;
+        // Base segment 0→1 along +X; segment 0→2 starts skew and is constrained to 90° from it.
+        const node = new SketchNode({
+            document: doc,
+            plane: Plane.XY,
+            points: [
+                { x: 0, y: 0 }, // 0
+                { x: 10, y: 0 }, // 1
+                { x: 3, y: 4 }, // 2 (skew, will be rotated to +Y by the constraint)
+            ],
+            constraints: [
+                { type: "fixed", point: 0, x: 0, y: 0 },
+                { type: "fixed", point: 1, x: 10, y: 0 },
+                { type: "distance", a: 0, b: 2, d: 5 },
+                { type: "angle", a: 0, b: 1, c: 0, d: 2, radians: Math.PI / 2 },
+            ],
+        });
+        const solved = node.solvedPoints();
+        // Segment 0→2 is now perpendicular to 0→1 (the +X axis): its x-component collapses to ~0.
+        expect(solved[2].x).toBeCloseTo(0, 4);
+        expect(Math.abs(solved[2].y)).toBeCloseTo(5, 4);
+    });
+
     test("addConstraint re-solves: pinning a free corner fully constrains the sketch", () => {
         const doc = new TestDocument() as any;
         // A single fixed point leaves 6 DoF; adding constraints drives the sketch toward defined.

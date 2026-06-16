@@ -175,6 +175,7 @@ export const I18N_KEYS = [
     "command.sketch.dimension",
     "command.sketch.dimensionX",
     "command.sketch.dimensionY",
+    "command.sketch.dimensionAngle",
     "command.special.last",
     "command.test.performance",
     "command.view.zoomFit",
