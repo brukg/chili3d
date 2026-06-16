@@ -29,6 +29,8 @@ Items marked **[session]** were shipped in the current rollout.
 - **Batch 8 (started):** Center of Mass marker — drops a parametric point at a selected solid's
   world-space centroid (`ISolid.massProperties().centerOfMass`). _Remaining: section analysis,
   draft/curvature/zebra analysis._
+- **Batch 3/reference (started):** Extract Edges — combines a body's edges into a reusable compound
+  of reference curves (Fusion's include/project geometry). Headless test: a box yields exactly 12.
 - **Batch 6/11 (started):** Move to Origin — recentres the selection's combined world bbox at the
   origin (pure post-multiplied translation; pattern proven by a Matrix4 convention test). Create
   Bounding Box — an AABB box matching the selection's world extents (stock/extents utility).

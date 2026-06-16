@@ -88,7 +88,11 @@ export const DefaultRibbon: RibbonTabProfile[] = [
             },
             {
                 groupName: "ribbon.group.converter",
-                items: ["convert.toWire", ["convert.toFace", "convert.toShell", "convert.toSolid"]],
+                items: [
+                    "convert.toWire",
+                    ["convert.toFace", "convert.toShell", "convert.toSolid"],
+                    ["create.extractEdges"],
+                ],
             },
         ],
     },

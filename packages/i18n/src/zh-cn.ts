@@ -86,6 +86,7 @@ export default {
         "command.create.ellipse": "椭圆",
         "command.create.ellipsoid": "椭球体",
         "command.create.extrude": "挤出",
+        "command.create.extractEdges": "提取边",
         "command.create.linkedExtrude": "关联挤出",
         "command.create.folder": "文件夹",
         "command.create.group": "创建组",
