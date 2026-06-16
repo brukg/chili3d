@@ -618,6 +618,7 @@ interface EmbindModule {
     ellipsoid(_0: Vector3, _1: Vector3, _2: Vector3, _3: number, _4: number, _5: number): ShapeResult;
     ellipse(_0: Vector3, _1: Vector3, _2: Vector3, _3: number, _4: number): ShapeResult;
     cylinder(_0: Vector3, _1: Vector3, _2: number, _3: number): ShapeResult;
+    torus(_0: Vector3, _1: Vector3, _2: number, _3: number): ShapeResult;
     thread(_0: Vector3, _1: Vector3, _2: number, _3: number, _4: number, _5: number, _6: boolean): ShapeResult;
     rib(_0: TopoDS_Shape, _1: TopoDS_Shape, _2: Vector3, _3: Vector3, _4: number, _5: number, _6: boolean): ShapeResult;
     prism(_0: TopoDS_Shape, _1: Vector3): ShapeResult;

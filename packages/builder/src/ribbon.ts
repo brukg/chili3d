@@ -73,6 +73,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                             "create.cylinder",
                             "create.cone",
                             "create.pyramid",
+                            "create.torus",
                         ],
                     },
                     ["create.extrude", "create.linkedExtrude"],

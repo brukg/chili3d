@@ -33,3 +33,4 @@ export * from "./sphere";
 export * from "./sweep";
 export * from "./thickSolid";
 export * from "./thread";
+export * from "./torus";

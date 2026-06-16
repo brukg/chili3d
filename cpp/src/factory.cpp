@@ -38,6 +38,7 @@
 #include <BRepPrimAPI_MakePrism.hxx>
 #include <BRepPrimAPI_MakeRevol.hxx>
 #include <BRepPrimAPI_MakeSphere.hxx>
+#include <BRepPrimAPI_MakeTorus.hxx>
 #include <BRepProj_Projection.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom2d_Line.hxx>
@@ -209,6 +210,17 @@ public:
             return ShapeResult { TopoDS_Shape(), false, "Failed to create cylinder" };
         }
         return ShapeResult { cylinder.Solid(), true, "" };
+    }
+
+    static ShapeResult torus(const Vector3& normal, const Vector3& center, double radius, double tubeRadius)
+    {
+        gp_Ax2 ax2(Vector3::toPnt(center), Vector3::toDir(normal));
+        BRepPrimAPI_MakeTorus torus(ax2, radius, tubeRadius);
+        torus.Build();
+        if (!torus.IsDone()) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to create torus" };
+        }
+        return ShapeResult { torus.Solid(), true, "" };
     }
 
     static ShapeResult sweep(const ShapeArray& sections, const TopoDS_Wire& path, bool isFrenet, bool isForceC1)
@@ -842,6 +854,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("ellipsoid", &ShapeFactory::ellipsoid)
         .class_function("ellipse", &ShapeFactory::ellipse)
         .class_function("cylinder", &ShapeFactory::cylinder)
+        .class_function("torus", &ShapeFactory::torus)
         .class_function("pyramid", &ShapeFactory::pyramid)
         .class_function("sweep", &ShapeFactory::sweep)
         .class_function("thread", &ShapeFactory::thread)

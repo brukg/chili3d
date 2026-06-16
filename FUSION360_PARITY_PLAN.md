@@ -19,8 +19,9 @@ Items marked **[session]** were shipped in the current rollout.
 - **Batch 4 (partial):** construction planes — Offset, At-Angle, Midplane. _Remaining: tangent
   plane, plane-along-path, construction axes, construction points._
 - **Batch 2 (progressing):** Thicken (open face/shell → solid via makeThickSolidBySimple);
-  Ellipsoid primitive (completed a half-wired kernel binding). _Remaining: coil, torus, hole dialog,
-  replace-face, split-body, split-face, emboss, boundary-fill, align._
+  Ellipsoid primitive (completed a half-wired kernel binding); **Torus** primitive (new C++
+  `BRepPrimAPI_MakeTorus` kernel fn + WASM rebuild + TorusNode). _Remaining: coil, hole dialog,
+  replace-face, emboss, boundary-fill, align. (split-body/split-face already covered by modify.split.)_
 
 ---
 

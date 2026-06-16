@@ -30,3 +30,4 @@ export * from "./sketchNode";
 export * from "./sphere";
 export * from "./sweep";
 export * from "./thread";
+export * from "./torus";

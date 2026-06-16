@@ -295,6 +295,11 @@ export class ShapeFactory implements IShapeFactory {
     cylinder(dir: XYZ, center: XYZ, radius: number, dz: number): Result<ISolid> {
         return convertShapeResult(wasm.ShapeFactory.cylinder(dir, center, radius, dz)) as Result<ISolid>;
     }
+    torus(normal: XYZLike, center: XYZLike, radius: number, tubeRadius: number): Result<ISolid> {
+        return convertShapeResult(
+            wasm.ShapeFactory.torus(normal, center, radius, tubeRadius),
+        ) as Result<ISolid>;
+    }
     cone(dir: XYZ, center: XYZ, radius: number, radiusUp: number, dz: number): Result<ISolid> {
         return convertShapeResult(
             wasm.ShapeFactory.cone(dir, center, radius, radiusUp, dz),

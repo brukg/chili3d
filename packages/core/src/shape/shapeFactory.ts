@@ -30,6 +30,7 @@ export interface IShapeFactory {
         minorRadius: number,
     ): Result<IEdge>;
     cylinder(normal: XYZLike, center: XYZLike, radius: number, dz: number): Result<ISolid>;
+    torus(normal: XYZLike, center: XYZLike, radius: number, tubeRadius: number): Result<ISolid>;
     cone(normal: XYZLike, center: XYZLike, radius: number, radiusUp: number, dz: number): Result<ISolid>;
     sphere(center: XYZLike, radius: number): Result<ISolid>;
     ellipsoid(
