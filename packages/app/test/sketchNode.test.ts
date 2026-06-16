@@ -145,6 +145,40 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         expect(solved[2].x).toBeCloseTo(5, 5);
     });
 
+    test("the Sketch Rectangle constraint set solves to an exact 30x20 rectangle", () => {
+        const doc = new TestDocument() as any;
+        // The constraints the Sketch Rectangle command emits for corners dragged to (30, 20),
+        // starting from deliberately skewed initial points so the solver must do the work.
+        const node = new SketchNode({
+            document: doc,
+            plane: Plane.XY,
+            points: [
+                { x: 1, y: -1 },
+                { x: 28, y: 2 },
+                { x: 31, y: 19 },
+                { x: -2, y: 22 },
+            ],
+            constraints: [
+                { type: "fixed", point: 0, x: 0, y: 0 },
+                { type: "horizontal", a: 0, b: 1 },
+                { type: "horizontal", a: 3, b: 2 },
+                { type: "vertical", a: 0, b: 3 },
+                { type: "vertical", a: 1, b: 2 },
+                { type: "distanceX", a: 0, b: 1, dx: 30 },
+                { type: "distanceY", a: 0, b: 3, dy: 20 },
+            ],
+        });
+        const p = node.solvedPoints();
+        expect(p[0].x).toBeCloseTo(0, 5);
+        expect(p[0].y).toBeCloseTo(0, 5);
+        expect(p[1].x).toBeCloseTo(30, 5);
+        expect(p[1].y).toBeCloseTo(0, 5);
+        expect(p[2].x).toBeCloseTo(30, 5);
+        expect(p[2].y).toBeCloseTo(20, 5);
+        expect(p[3].x).toBeCloseTo(0, 5);
+        expect(p[3].y).toBeCloseTo(20, 5);
+    });
+
     test("a symmetric constraint mirrors two points about an axis segment", () => {
         const doc = new TestDocument() as any;
         // Axis 0→1 along the Y axis (the line x=0). Points 2 and 3 should become mirror images

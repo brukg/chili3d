@@ -97,6 +97,7 @@ export const I18N_KEYS = [
     "command.create.revol",
     "command.create.section",
     "command.create.sketch",
+    "command.create.sketchRect",
     "command.create.sphere",
     "command.create.sweep",
     "command.create.thickSolid",

@@ -102,6 +102,7 @@ export default {
         "command.create.revol": "Revolve",
         "command.create.section": "Section",
         "command.create.sketch": "Sketch",
+        "command.create.sketchRect": "Sketch Rectangle",
         "command.create.sphere": "Sphere",
         "command.create.sweep": "Sweep",
         "command.create.thickSolid": "Thick Solid",
