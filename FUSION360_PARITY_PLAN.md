@@ -27,8 +27,11 @@ Items marked **[session]** were shipped in the current rollout.
   _Remaining: replace-face, emboss, boundary-fill, align. (split-body/split-face already covered by
   modify.split; coil/spring already covered by the Thread primitive — helical sweep of a circle.)_
 - **Batch 8 (started):** Center of Mass marker — drops a parametric point at a selected solid's
-  world-space centroid (`ISolid.massProperties().centerOfMass`). _Remaining: section analysis,
-  draft/curvature/zebra analysis._
+  world-space centroid (`ISolid.massProperties().centerOfMass`). Measure Bounding Box — reports the
+  selection's overall dx×dy×dz. _Remaining: section analysis, draft/curvature/zebra analysis._
+- **DEFERRED (needs more than one safe iteration):** arc-segment support in sketches (unlocks sketch
+  circle/arc + tangent/concentric constraints; touches SketchNode serialization — do carefully, not
+  in a 1-shot loop tick)._
 - **Batch 1/3 (started):** Sketch Rectangle — two-corner rectangle created as a fully-constrained
   SketchNode (H/V edges + signed width/height dimensions), editable like a real sketch profile
   (vs the static create.rect face). Headless test: solves to an exact 30×20 rectangle.
