@@ -5,6 +5,8 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import {
     type IApplication,
+    type IFace,
+    type IWire,
     Plane,
     type Point2d,
     type SketchConstraint,
@@ -85,6 +87,33 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         // Pin every point → fully defined.
         const full: SketchConstraint[] = pts.map((p, i) => ({ type: "fixed", point: i, x: p.x, y: p.y }));
         expect(SketchNode.describeStatus(pts, full, doc)).toBe("Fully constrained");
+    });
+
+    test("bulged segments turn a 2-point sketch into a full circle (area π·r²)", () => {
+        const doc = new TestDocument() as any;
+        // Two points 10 apart, both segments bulged by 1 (semicircles on opposite sides) → a circle
+        // of diameter 10. This exercises the arc-segment build path added to generateShape.
+        const node = new SketchNode({
+            document: doc,
+            plane: Plane.XY,
+            points: [
+                { x: 0, y: 0 },
+                { x: 10, y: 0 },
+            ],
+            constraints: [
+                { type: "fixed", point: 0, x: 0, y: 0 },
+                { type: "fixed", point: 1, x: 10, y: 0 },
+            ],
+            bulges: [1, 1],
+        });
+        const shape = node.generateShape();
+        expect(shape.isOk).toBe(true);
+
+        const factory = new ShapeFactory();
+        const face = factory.face([shape.value as IWire]);
+        expect(face.isOk).toBe(true);
+        // radius 5 → area π·25 ≈ 78.54 mm².
+        expect((face.value as IFace).area()).toBeCloseTo(Math.PI * 25, 1);
     });
 
     test("nearestPointIndex maps a plane point to the closest sketch corner", () => {

@@ -5,6 +5,7 @@ import {
     analyzeConstraints,
     type I18nKeys,
     type IDocument,
+    type IEdge,
     type IShape,
     ParameterShapeNode,
     ParameterStore,
@@ -20,12 +21,16 @@ import {
     toConstraint,
     type XYZ,
 } from "@chili3d/core";
+import { computeArcFromPoints } from "../commands/create/arcUtils";
 
 export interface SketchNodeOptions {
     document: IDocument;
     plane: Plane;
     points: Point2d[];
     constraints: SketchConstraint[];
+    /** Optional per-segment bulge (DXF convention: tan(θ/4)); segment i spans point i → point i+1.
+     * 0 (or absent) keeps the segment straight. Lets a sketch profile contain arcs, not just lines. */
+    bulges?: number[];
 }
 
 @serializable()
@@ -55,6 +60,14 @@ export class SketchNode extends ParameterShapeNode {
         this.setPropertyEmitShapeChanged("constraints", value);
     }
 
+    @serialize()
+    get bulges(): number[] {
+        return this.getPrivateValue("bulges", []);
+    }
+    set bulges(value: number[]) {
+        this.setPropertyEmitShapeChanged("bulges", value);
+    }
+
     /** Read-only solver state — "Fully constrained", or the remaining degrees of freedom / redundant
      * constraints. The sketcher feedback that tells you whether the profile is fully defined. */
     @property("sketch.status")
@@ -81,6 +94,7 @@ export class SketchNode extends ParameterShapeNode {
         this.setPrivateValue("plane", options.plane);
         this.setPrivateValue("points", options.points);
         this.setPrivateValue("constraints", options.constraints);
+        this.setPrivateValue("bulges", options.bulges ?? []);
         // Expression-valued dimensions reference named parameters; re-solve when they change.
         PubSub.default.sub("parametersChanged", this.onParametersChanged);
     }
@@ -150,8 +164,63 @@ export class SketchNode extends ParameterShapeNode {
         const points3d = solved.points.map((p) =>
             plane.origin.add(plane.xvec.multiply(p.x)).add(plane.yvec.multiply(p.y)),
         );
+
+        // When any segment is bulged, build a closed wire of mixed line/arc edges. Otherwise keep the
+        // original straight-polygon path exactly (backward compatible for every existing sketch).
+        if (points3d.length >= 2 && this.bulges.some((b) => Math.abs(b) > 1e-9)) {
+            return this.buildBulgedWire(points3d);
+        }
+
         // Close the loop — `polygon` does not auto-close, and an open profile yields a wrong face.
         if (points3d.length > 2) points3d.push(points3d[0]);
         return shapeFactory.polygon(points3d);
+    }
+
+    // Build a closed wire from the solved corners, curving each segment whose bulge is non-zero into a
+    // circular arc. A bulge is tan(θ/4): the arc's apex lies a sagitta of bulge·(chord/2) off the chord
+    // midpoint, perpendicular to the chord within the sketch plane. A degenerate segment falls back to
+    // a straight line so the wire is always built.
+    private buildBulgedWire(points3d: XYZ[]): Result<IShape> {
+        const plane = this.plane;
+        const n = points3d.length;
+        const edges: IEdge[] = [];
+
+        const lineEdge = (a: XYZ, b: XYZ): IEdge | undefined => {
+            const line = shapeFactory.line(a, b);
+            return line.isOk ? line.value : undefined;
+        };
+
+        for (let i = 0; i < n; i++) {
+            const a = points3d[i];
+            const b = points3d[(i + 1) % n];
+            const bulge = this.bulges[i] ?? 0;
+
+            let edge: IEdge | undefined;
+            if (Math.abs(bulge) > 1e-9) {
+                const chord = b.sub(a);
+                const perp = plane.normal.cross(chord).normalize();
+                if (perp) {
+                    const apex = a
+                        .add(b)
+                        .multiply(0.5)
+                        .add(perp.multiply((bulge * chord.length()) / 2));
+                    const arcParams = computeArcFromPoints(a, apex, b);
+                    if (arcParams) {
+                        const arc = shapeFactory.arc(
+                            arcParams.normal,
+                            arcParams.center,
+                            arcParams.start,
+                            arcParams.angle,
+                        );
+                        if (arc.isOk) edge = arc.value;
+                    }
+                }
+            }
+            edge ??= lineEdge(a, b);
+            if (!edge) return Result.err("Failed to build sketch segment");
+            edges.push(edge);
+        }
+
+        return shapeFactory.wire(edges);
     }
 }

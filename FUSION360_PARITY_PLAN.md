@@ -29,9 +29,12 @@ Items marked **[session]** were shipped in the current rollout.
 - **Batch 8 (started):** Center of Mass marker — drops a parametric point at a selected solid's
   world-space centroid (`ISolid.massProperties().centerOfMass`). Measure Bounding Box — reports the
   selection's overall dx×dy×dz. _Remaining: section analysis, draft/curvature/zebra analysis._
-- **DEFERRED (needs more than one safe iteration):** arc-segment support in sketches (unlocks sketch
-  circle/arc + tangent/concentric constraints; touches SketchNode serialization — do carefully, not
-  in a 1-shot loop tick)._
+- **Batch 1 (arc support — step 1 DONE):** SketchNode now supports **arc segments** via an optional
+  per-segment `bulges` field (DXF tan(θ/4) convention) — pure geometry-build params, NO solver/
+  constraint change, fully backward compatible (empty bulges = the old polygon exactly). generateShape
+  builds a mixed line/arc wire. Headless test: a 2-point sketch bulged both sides = a circle (area πr²).
+  _Next steps: a Sketch Circle/Arc tool that emits bulges; tangent/concentric constraints (need the
+  solver to see arc centres — larger)._
 - **Batch 1/3 (started):** Sketch Rectangle — two-corner rectangle created as a fully-constrained
   SketchNode (H/V edges + signed width/height dimensions), editable like a real sketch profile
   (vs the static create.rect face). Headless test: solves to an exact 30×20 rectangle.
