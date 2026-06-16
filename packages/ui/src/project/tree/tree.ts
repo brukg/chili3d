@@ -13,7 +13,23 @@ import {
     VisualNode,
 } from "@chili3d/core";
 import { NodeSelectionHandler, ShapeSelectionHandler } from "@chili3d/core/src/eventHandlers";
+import { type ContextMenuEntry, SEPARATOR, showContextMenu } from "../../contextMenu";
 import style from "./tree.module.css";
+
+const NODE_CONTEXT_MENU: ContextMenuEntry[] = [
+    "modify.cutNode",
+    "modify.copyNode",
+    "modify.pasteNode",
+    "modify.duplicate",
+    "modify.deleteNode",
+    SEPARATOR,
+    "modify.isolate",
+    "modify.hideOthers",
+    "modify.showAll",
+    SEPARATOR,
+    "modify.toggleLock",
+];
+
 import { TreeItem } from "./treeItem";
 import { TreeGroup } from "./treeItemGroup";
 import { TreeModel } from "./treeModel";
@@ -150,6 +166,7 @@ export class Tree extends HTMLElement {
         item.addEventListener("dragleave", this.onDragLeave);
         item.addEventListener("drop", this.onDrop);
         item.addEventListener("click", this.onClick);
+        item.addEventListener("contextmenu", this.onContextMenu);
     }
 
     private removeEvents(item: HTMLElement) {
@@ -158,7 +175,20 @@ export class Tree extends HTMLElement {
         item.removeEventListener("dragleave", this.onDragLeave);
         item.removeEventListener("drop", this.onDrop);
         item.removeEventListener("click", this.onClick);
+        item.removeEventListener("contextmenu", this.onContextMenu);
     }
+
+    private readonly onContextMenu = (event: MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const node = this.getTreeItem(event.target as HTMLElement)?.node;
+        // Right-clicking a node that isn't part of the current selection selects just that node, so
+        // the dispatched command acts on what the user clicked.
+        if (node && !this.selectedNodes.has(node)) {
+            this.document.selection.setSelection([node], false);
+        }
+        showContextMenu(event.clientX, event.clientY, NODE_CONTEXT_MENU);
+    };
 
     private getTreeItem(item: HTMLElement | null): TreeItem | undefined {
         if (item === null) return undefined;
