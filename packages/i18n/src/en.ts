@@ -98,6 +98,7 @@ export default {
         "command.create.offset": "Offset",
         "command.create.pipe": "Pipe",
         "command.create.point": "Point",
+        "command.create.midpointPoint": "Point at Midpoint",
         "command.create.polygon": "Pline",
         "command.create.regularPolygon": "Regular Polygon",
         "command.create.pyramid": "Pyramid",

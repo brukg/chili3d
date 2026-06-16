@@ -30,6 +30,10 @@ Items marked **[session]** were shipped in the current rollout.
   world-space centroid (`ISolid.massProperties().centerOfMass`). Measure Bounding Box — reports the
   selection's overall dx×dy×dz. _Remaining: section analysis, draft/curvature/zebra analysis._
 - **Batch 11:** Toggle Perspective/Orthographic projection command (flips `cameraController.cameraType`).
+- **Batch 4 (construction):** Point at Midpoint — drops a construction point at each selected edge's
+  true midpoint (curve mid-parameter, correct for arcs too). Headless test: line midpoint (5,0,2).
+  _CORRECTION: Move/Rotate/Mirror already support a copy/clone option (TransformedCommand.isClone) —
+  Move/Copy is not a gap._
 - **Batch 1 (arc support — step 1 DONE):** SketchNode now supports **arc segments** via an optional
   per-segment `bulges` field (DXF tan(θ/4) convention) — pure geometry-build params, NO solver/
   constraint change, fully backward compatible (empty bulges = the old polygon exactly). generateShape

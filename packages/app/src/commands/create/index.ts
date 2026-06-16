@@ -23,6 +23,7 @@ export * from "./group";
 export * from "./line";
 export * from "./linkedExtrude";
 export * from "./loft";
+export * from "./midpointPoint";
 export * from "./offset";
 export * from "./pipe";
 export * from "./point";
