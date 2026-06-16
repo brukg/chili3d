@@ -158,6 +158,7 @@ export default {
         "command.modify.toggleLock": "锁定 / 解锁",
         "command.modify.groupFolder": "成组",
         "command.modify.ungroup": "取消成组",
+        "command.modify.setColor": "设置颜色",
         "command.modify.shell": "抽壳",
         "command.modify.thicken": "加厚",
         "command.modify.pushPull": "推/拉",
