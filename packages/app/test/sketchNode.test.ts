@@ -11,6 +11,7 @@ import {
     setCurrentApplication,
     solveConstraints,
     toConstraint,
+    XYZ,
 } from "@chili3d/core";
 import { initWasm, ShapeFactory } from "@chili3d/wasm";
 import { beforeAll, describe, expect, test } from "@rstest/core";
@@ -84,5 +85,40 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         // Pin every point → fully defined.
         const full: SketchConstraint[] = pts.map((p, i) => ({ type: "fixed", point: i, x: p.x, y: p.y }));
         expect(SketchNode.describeStatus(pts, full, doc)).toBe("Fully constrained");
+    });
+
+    test("nearestPointIndex maps a plane point to the closest sketch corner", () => {
+        const doc = new TestDocument() as any;
+        const node = new SketchNode({ document: doc, plane: Plane.XY, points, constraints });
+        // On Plane.XY a plane point's (x, y) are its (u, v); the square solves to corners at
+        // (0,0) (10,0) (10,10) (0,10) — so a probe near each corner resolves to that index.
+        expect(node.nearestPointIndex(new XYZ({ x: 0.1, y: 0.1, z: 0 }))).toBe(0);
+        expect(node.nearestPointIndex(new XYZ({ x: 9.9, y: 0.1, z: 0 }))).toBe(1);
+        expect(node.nearestPointIndex(new XYZ({ x: 9.9, y: 9.9, z: 0 }))).toBe(2);
+        expect(node.nearestPointIndex(new XYZ({ x: 0.1, y: 9.9, z: 0 }))).toBe(3);
+    });
+
+    test("addConstraint re-solves: pinning a free corner fully constrains the sketch", () => {
+        const doc = new TestDocument() as any;
+        // A single fixed point leaves 6 DoF; adding constraints drives the sketch toward defined.
+        const node = new SketchNode({
+            document: doc,
+            plane: Plane.XY,
+            points: [
+                { x: 0, y: 0 },
+                { x: 9.7, y: 0.3 },
+            ],
+            constraints: [{ type: "fixed", point: 0, x: 0, y: 0 }],
+        });
+        doc.modelManager.rootNode.add(node);
+        expect(node.constraints.length).toBe(1);
+
+        node.addConstraint({ type: "horizontal", a: 0, b: 1 });
+        node.addConstraint({ type: "fixed", point: 1, x: 10, y: 0 });
+        expect(node.constraints.length).toBe(3);
+        // Point 1 was pulled onto the x-axis at x=10.
+        const solved = node.solvedPoints();
+        expect(solved[1].x).toBeCloseTo(10, 6);
+        expect(solved[1].y).toBeCloseTo(0, 6);
     });
 });

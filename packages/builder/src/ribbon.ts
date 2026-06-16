@@ -24,6 +24,29 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                 collapsedItems: ["create.point", "create.polygon", "create.bezier"],
             },
             {
+                groupName: "ribbon.group.constraints",
+                items: [
+                    "sketch.dimension",
+                    {
+                        type: "split",
+                        items: [
+                            "sketch.constrainHorizontal",
+                            "sketch.constrainVertical",
+                            "sketch.constrainCoincident",
+                            "sketch.constrainFix",
+                        ],
+                    },
+                    {
+                        type: "split",
+                        items: [
+                            "sketch.constrainParallel",
+                            "sketch.constrainPerpendicular",
+                            "sketch.constrainEqual",
+                        ],
+                    },
+                ],
+            },
+            {
                 groupName: "ribbon.group.workingPlane",
                 items: [
                     "workingPlane.toggleDynamic",

@@ -18,6 +18,7 @@ import {
     serialize,
     solveConstraints,
     toConstraint,
+    type XYZ,
 } from "@chili3d/core";
 
 export interface SketchNodeOptions {
@@ -93,6 +94,45 @@ export class SketchNode extends ParameterShapeNode {
     override disposeInternal(): void {
         PubSub.default.remove("parametersChanged", this.onParametersChanged);
         super.disposeInternal();
+    }
+
+    /** The solved 2D positions of every sketch point (constraints applied). Falls back to the stored
+     * positions when the system does not converge, so callers always get one position per point. */
+    solvedPoints(): Point2d[] {
+        const scope = new ParameterStore(this.document).resolve();
+        const parameters = scope.isOk ? scope.value : {};
+        const solved = solveConstraints(
+            this.points,
+            this.constraints.map((c) => toConstraint(c, parameters)),
+        );
+        return solved.converged ? solved.points : this.points;
+    }
+
+    /** Map a world-space point on the sketch plane (e.g. a picked vertex) to the index of the nearest
+     * sketch point. Returns -1 when the sketch has no points. The IShape geometry is built in
+     * plane-absolute coordinates, so a picked vertex's `point()` projects straight onto the plane. */
+    nearestPointIndex(planePoint: XYZ): number {
+        const plane = this.plane;
+        const d = planePoint.sub(plane.origin);
+        const u = d.dot(plane.xvec);
+        const v = d.dot(plane.yvec);
+        const solved = this.solvedPoints();
+        let best = -1;
+        let bestDist = Number.POSITIVE_INFINITY;
+        solved.forEach((p, i) => {
+            const dist = Math.hypot(p.x - u, p.y - v);
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = i;
+            }
+        });
+        return best;
+    }
+
+    /** Append a constraint and re-solve. The `constraints` setter emits a shape change, so the sketch
+     * rebuilds to satisfy the new constraint (or reports over-constrained via {@link constraintStatus}). */
+    addConstraint(constraint: SketchConstraint): void {
+        this.constraints = [...this.constraints, constraint];
     }
 
     generateShape(): Result<IShape> {
