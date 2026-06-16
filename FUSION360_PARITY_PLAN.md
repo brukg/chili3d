@@ -33,7 +33,9 @@ Items marked **[session]** were shipped in the current rollout.
   per-segment `bulges` field (DXF tan(θ/4) convention) — pure geometry-build params, NO solver/
   constraint change, fully backward compatible (empty bulges = the old polygon exactly). generateShape
   builds a mixed line/arc wire. Headless test: a 2-point sketch bulged both sides = a circle (area πr²).
-  _Next steps: a Sketch Circle/Arc tool that emits bulges; tangent/concentric constraints (need the
+  **Sketch Circle tool (step 2 DONE):** centre + radius creates an editable SketchNode circle (two
+  diameter points + bulges [1,1]) — a real sketch profile, not a static face.
+  _Next steps: Sketch Arc / Slot tools that emit bulges; tangent/concentric constraints (need the
   solver to see arc centres — larger)._
 - **Batch 1/3 (started):** Sketch Rectangle — two-corner rectangle created as a fully-constrained
   SketchNode (H/V edges + signed width/height dimensions), editable like a real sketch profile

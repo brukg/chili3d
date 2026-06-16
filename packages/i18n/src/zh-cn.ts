@@ -102,6 +102,7 @@ export default {
         "command.create.revol": "旋转",
         "command.create.section": "相交曲线",
         "command.create.sketch": "草图",
+        "command.create.sketchCircle": "草图圆",
         "command.create.sketchRect": "草图矩形",
         "command.create.sphere": "球体",
         "command.create.sweep": "扫略",
