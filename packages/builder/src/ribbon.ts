@@ -28,6 +28,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                 items: [
                     "workingPlane.toggleDynamic",
                     ["workingPlane.set", "workingPlane.alignToPlane", "workingPlane.fromSection"],
+                    ["workingPlane.from3Points"],
                 ],
             },
         ],
@@ -78,6 +79,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     ["modify.shell", "modify.pushPull"],
                     ["modify.rib", "modify.pipeFeature", "modify.explode"],
                     ["modify.deleteNode", "modify.removeShapes", "modify.removeFeature"],
+                    ["modify.removeFillet"],
                 ],
                 collapsedItems: ["modify.brushAdd", "modify.brushRemove", "modify.brushClear"],
             },

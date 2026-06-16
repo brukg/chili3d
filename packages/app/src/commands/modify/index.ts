@@ -25,6 +25,7 @@ export * from "./move";
 export * from "./pipeFeature";
 export * from "./pushPull";
 export * from "./removeFeature";
+export * from "./removeFillet";
 export * from "./removeSubShapes";
 export * from "./rib";
 export * from "./rotate";

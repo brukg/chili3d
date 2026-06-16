@@ -15,6 +15,7 @@ import {
     Observable,
     Plane,
     PointOnCurveStep,
+    PointStep,
     PropertyUtils,
     PubSub,
     property,
@@ -85,6 +86,38 @@ export class AlignToPlane implements ICommand {
             xvec = XYZ.unitZ.cross(normal).normalize()!;
         }
         view.workplane = new Plane({ origin: point, normal, xvec });
+    }
+}
+
+// Define the working plane by picking three points: the first is the origin, the first→second
+// direction is the X axis, and the plane normal is (p2-p1) × (p3-p1). A classic construction-plane
+// tool for sketching on an arbitrary datum.
+@command({
+    key: "workingPlane.from3Points",
+    icon: "icon-setWorkingPlane",
+})
+export class WorkingPlaneFrom3Points extends MultistepCommand {
+    protected override executeMainTask() {
+        const view = this.application.activeView;
+        if (!view) return;
+        const p1 = this.stepDatas[0].point!;
+        const p2 = this.stepDatas[1].point!;
+        const p3 = this.stepDatas[2].point!;
+        const xvec = p2.sub(p1).normalize();
+        const normal = p2.sub(p1).cross(p3.sub(p1)).normalize();
+        if (!xvec || !normal) {
+            PubSub.default.pub("showToast", "toast.converter.error");
+            return;
+        }
+        view.workplane = new Plane({ origin: p1, normal, xvec });
+    }
+
+    protected override getSteps(): IStep[] {
+        return [
+            new PointStep("prompt.pickFistPoint", undefined, true),
+            new PointStep("prompt.pickNextPoint", undefined, true),
+            new PointStep("prompt.pickNextPoint", undefined, true),
+        ];
     }
 }
 
