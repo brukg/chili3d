@@ -27,6 +27,7 @@ export const I18N_KEYS = [
     "body.cylinder",
     "body.editableShape",
     "body.ellipse",
+    "body.ellipsoid",
     "body.face",
     "body.fuse",
     "body.group",

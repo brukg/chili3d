@@ -68,6 +68,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         items: [
                             "create.box",
                             "create.sphere",
+                            "create.ellipsoid",
                             "create.cylinder",
                             "create.cone",
                             "create.pyramid",

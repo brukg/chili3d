@@ -13,6 +13,7 @@ export * from "./copySubShape";
 export * from "./curveProjection";
 export * from "./cylinder";
 export * from "./ellipse";
+export * from "./ellipsoid";
 export * from "./extrude";
 export * from "./group";
 export * from "./line";

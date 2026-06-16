@@ -303,6 +303,18 @@ export class ShapeFactory implements IShapeFactory {
     sphere(center: XYZ, radius: number): Result<ISolid> {
         return convertShapeResult(wasm.ShapeFactory.sphere(center, radius)) as Result<ISolid>;
     }
+    ellipsoid(
+        normal: XYZ,
+        center: XYZ,
+        xvec: XYZ,
+        xRadius: number,
+        yRadius: number,
+        zRadius: number,
+    ): Result<ISolid> {
+        return convertShapeResult(
+            wasm.ShapeFactory.ellipsoid(normal, center, xvec, xRadius, yRadius, zRadius),
+        ) as Result<ISolid>;
+    }
     ellipse(
         normal: XYZLike,
         center: XYZLike,

@@ -32,6 +32,7 @@ export default {
         "body.cylinder": "Cylinder",
         "body.editableShape": "Editable Shape",
         "body.ellipse": "Ellipse",
+        "body.ellipsoid": "Ellipsoid",
         "body.face": "Face",
         "body.fuse": "Fuse",
         "body.group": "Group",

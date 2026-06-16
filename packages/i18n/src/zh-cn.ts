@@ -32,6 +32,7 @@ export default {
         "body.cylinder": "圆柱",
         "body.editableShape": "可编辑的形状",
         "body.ellipse": "椭圆",
+        "body.ellipsoid": "椭球",
         "body.face": "面",
         "body.fuse": "合并",
         "body.group": "组",

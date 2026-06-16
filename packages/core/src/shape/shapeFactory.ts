@@ -32,6 +32,14 @@ export interface IShapeFactory {
     cylinder(normal: XYZLike, center: XYZLike, radius: number, dz: number): Result<ISolid>;
     cone(normal: XYZLike, center: XYZLike, radius: number, radiusUp: number, dz: number): Result<ISolid>;
     sphere(center: XYZLike, radius: number): Result<ISolid>;
+    ellipsoid(
+        normal: XYZLike,
+        center: XYZLike,
+        xvec: XYZLike,
+        xRadius: number,
+        yRadius: number,
+        zRadius: number,
+    ): Result<ISolid>;
     pyramid(plane: Plane, dx: number, dy: number, dz: number): Result<ISolid>;
     wire(edges: IEdge[]): Result<IWire>;
     prism(shape: IShape, vec: XYZ): Result<IShape>;

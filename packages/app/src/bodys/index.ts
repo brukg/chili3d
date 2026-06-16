@@ -6,6 +6,7 @@ export * from "./circle";
 export * from "./cone";
 export * from "./cylinder";
 export * from "./ellipse";
+export * from "./ellipsoid";
 export * from "./extrude";
 export * from "./line";
 export * from "./linkedArray";
