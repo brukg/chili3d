@@ -15,5 +15,6 @@ export * from "./modify";
 export * from "./multistepCommand";
 export * from "./redo";
 export * from "./undo";
+export * from "./view";
 export * from "./visibility";
 export * from "./workingPlane";
