@@ -34,6 +34,7 @@ export * from "./section";
 export * from "./sketch";
 export * from "./sketchCenterRect";
 export * from "./sketchCircle";
+export * from "./sketchCircle3p";
 export * from "./sketchPolygon";
 export * from "./sketchRect";
 export * from "./sketchSlot";

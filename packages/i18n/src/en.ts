@@ -105,6 +105,7 @@ export default {
         "command.create.sketch": "Sketch",
         "command.create.sketchCenterRect": "Sketch Center Rectangle",
         "command.create.sketchCircle": "Sketch Circle",
+        "command.create.sketchCircle3p": "Sketch Circle (3 Points)",
         "command.create.sketchPolygon": "Sketch Polygon",
         "command.create.sketchRect": "Sketch Rectangle",
         "command.create.sketchSlot": "Sketch Slot",

@@ -105,6 +105,7 @@ export default {
         "command.create.sketch": "草图",
         "command.create.sketchCenterRect": "草图中心矩形",
         "command.create.sketchCircle": "草图圆",
+        "command.create.sketchCircle3p": "草图圆（三点）",
         "command.create.sketchPolygon": "草图多边形",
         "command.create.sketchRect": "草图矩形",
         "command.create.sketchSlot": "草图槽",

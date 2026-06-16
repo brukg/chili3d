@@ -40,8 +40,11 @@ Items marked **[session]** were shipped in the current rollout.
   **Sketch Polygon tool (DONE):** inscribed regular N-gon as an editable SketchNode (N pinned corners
   on the radius circle; sides count is a property). Headless test: area = ½·N·r²·sin(2π/N).
   **Sketch Center Rectangle (DONE):** centre + corner → centred constrained rectangle (same proven
-  fixed-4-corner pattern as Sketch Rectangle). The sketch toolbar now has line, 2-corner & centre
-  rectangle, circle, slot, polygon (+ existing arcs) and the full geometric/dimensional constraint set.
+  fixed-4-corner pattern as Sketch Rectangle).
+  **Sketch 3-Point Circle (DONE):** circle through three picked points (centre/radius from
+  computeCircleFromPoints, built as the bulge circle). Pure-math test covers the 3-point circle logic.
+  The sketch toolbar now has line, 2-corner & centre rectangle, circle (centre+radius & 3-point),
+  slot, polygon (+ existing arcs) and the full geometric/dimensional constraint set.
   _Next steps: a freehand Sketch Arc tool; tangent/concentric constraints (need the solver to see arc
   centres — larger)._
 - **CORRECTION — I/O is already comprehensive:** export covers STEP/IGES/BREP/STL/3MF/PLY/OBJ/GLTF/
