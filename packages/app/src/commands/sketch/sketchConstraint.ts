@@ -169,6 +169,15 @@ export class SketchCollinearCommand extends SketchConstraintCommand {
     }
 }
 
+@command({ key: "sketch.constrainConcentric", icon: "icon-circle" })
+export class SketchConcentricCommand extends SketchConstraintCommand {
+    protected readonly subShapeType = ShapeTypes.edge;
+    protected readonly count = 2;
+    protected buildConstraint(_node: SketchNode, [a, b, c, d]: number[]): SketchConstraint | undefined {
+        return { type: "concentric", a, b, c, d };
+    }
+}
+
 @command({ key: "sketch.dimension", icon: "icon-dimension" })
 export class SketchDimensionCommand extends SketchConstraintCommand {
     protected readonly subShapeType = ShapeTypes.vertex;

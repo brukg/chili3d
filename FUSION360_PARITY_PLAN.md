@@ -52,7 +52,9 @@ Items marked **[session]** were shipped in the current rollout.
   (added `midpoint()` to the solver, like symmetric). Headless test: point pinned to (5,2).
   **Collinear constraint (DONE):** new solver constraint putting two segments on the same line
   (added `collinear()`). Headless test: a skew segment drops onto the first segment's line.
-  The solver now has 16 constraint functions (3 added this run: symmetric, midpoint, collinear).
+  **Concentric constraint (DONE):** new solver constraint making two diameter segments share a centre
+  (equal midpoints) — concentric circles/arcs. Headless test: a diameter's centre moves to the origin.
+  The solver now has 17 constraint functions (4 added this run: symmetric, midpoint, collinear, concentric).
 - **Batch 2 (primitive):** Coil — a discoverable Coil command + parametric CoilNode (Fusion's Coil/
   spring). Same helical-sweep kernel as Thread but presented as a spring with loose-turn defaults;
   previously the only access to a helix was the Thread primitive.

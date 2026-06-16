@@ -208,6 +208,7 @@ export default {
         "command.sketch.constrainPerpendicular": "Perpendicular",
         "command.sketch.constrainEqual": "Equal",
         "command.sketch.constrainCollinear": "Collinear",
+        "command.sketch.constrainConcentric": "Concentric",
         "command.sketch.constrainPointOnLine": "Point on Line",
         "command.sketch.constrainMidpoint": "Midpoint",
         "command.sketch.constrainSymmetric": "Symmetric",

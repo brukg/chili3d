@@ -262,6 +262,34 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         expect(p[3].y).toBeCloseTo(20, 5);
     });
 
+    test("a concentric constraint makes two diameter segments share a centre", () => {
+        const doc = new TestDocument() as any;
+        // Segment 0→1 is a diameter centred at (0,0); segment 2→3 is a diameter centred at (10,10)
+        // and is made concentric, so its centre moves to (0,0).
+        const node = new SketchNode({
+            document: doc,
+            plane: Plane.XY,
+            points: [
+                { x: -5, y: 0 },
+                { x: 5, y: 0 },
+                { x: 7, y: 10 }, // 2
+                { x: 13, y: 10 }, // 3 — midpoint (10,10)
+            ],
+            constraints: [
+                { type: "fixed", point: 0, x: -5, y: 0 },
+                { type: "fixed", point: 1, x: 5, y: 0 },
+                // Pin the second diameter's shape (length/orientation) but let it translate.
+                { type: "distanceX", a: 2, b: 3, dx: 6 },
+                { type: "horizontal", a: 2, b: 3 },
+                { type: "concentric", a: 0, b: 1, c: 2, d: 3 },
+            ],
+        });
+        const solved = node.solvedPoints();
+        // Midpoint of 2→3 should now be (0,0): points symmetric as (-3,0) and (3,0).
+        expect((solved[2].x + solved[3].x) / 2).toBeCloseTo(0, 5);
+        expect((solved[2].y + solved[3].y) / 2).toBeCloseTo(0, 5);
+    });
+
     test("a collinear constraint puts a second segment onto the first's line", () => {
         const doc = new TestDocument() as any;
         // Segment 0→1 on the x-axis; segment 2→3 starts skew and is made collinear with it.

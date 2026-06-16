@@ -162,6 +162,17 @@ export function collinear(a: number, b: number, c: number, d: number): Constrain
     };
 }
 
+/** Segments a→b and c→d share the same midpoint (their centres coincide). For circles built from a
+ * diameter point-pair, this makes them concentric. */
+export function concentric(a: number, b: number, c: number, d: number): Constraint {
+    return {
+        residuals: (v) => [
+            (v[px(a)] + v[px(b)]) / 2 - (v[px(c)] + v[px(d)]) / 2,
+            (v[py(a)] + v[py(b)]) / 2 - (v[py(c)] + v[py(d)]) / 2,
+        ],
+    };
+}
+
 /** Point p sits at the midpoint of the segment from a to b. */
 export function midpoint(p: number, a: number, b: number): Constraint {
     return {

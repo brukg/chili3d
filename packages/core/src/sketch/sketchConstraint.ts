@@ -7,6 +7,7 @@ import {
     type Constraint,
     coincident,
     collinear,
+    concentric,
     distance,
     distanceX,
     distanceY,
@@ -45,6 +46,7 @@ export type SketchConstraint =
     | { type: "pointOnLine"; point: number; a: number; b: number }
     | { type: "midpoint"; point: number; a: number; b: number }
     | { type: "collinear"; a: number; b: number; c: number; d: number }
+    | { type: "concentric"; a: number; b: number; c: number; d: number }
     | { type: "symmetric"; p: number; q: number; a: number; b: number }
     | { type: "distanceX"; a: number; b: number; dx: SketchDimension }
     | { type: "distanceY"; a: number; b: number; dy: SketchDimension }
@@ -83,6 +85,8 @@ export function toConstraint(c: SketchConstraint, scope: Record<string, number> 
             return midpoint(c.point, c.a, c.b);
         case "collinear":
             return collinear(c.a, c.b, c.c, c.d);
+        case "concentric":
+            return concentric(c.a, c.b, c.c, c.d);
         case "symmetric":
             return symmetric(c.p, c.q, c.a, c.b);
         case "distanceX":
