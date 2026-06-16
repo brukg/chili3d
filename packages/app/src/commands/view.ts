@@ -1,7 +1,15 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
-import { command, type IApplication, type ICommand, type INode, NodeUtils, VisualNode } from "@chili3d/core";
+import {
+    command,
+    type IApplication,
+    type ICommand,
+    type INode,
+    NodeUtils,
+    ViewModes,
+    VisualNode,
+} from "@chili3d/core";
 
 // Select every object in the document (Ctrl+A).
 @command({
@@ -43,6 +51,21 @@ export class ZoomFit implements ICommand {
         const view = app.activeView;
         if (!view) return;
         view.cameraController.fitContent();
+        view.update();
+    }
+}
+
+// Cycle the active view's display mode: solid → wireframe → solid-and-wireframe (W).
+@command({
+    key: "view.toggleDisplayMode",
+    icon: "icon-fitcontent",
+})
+export class ToggleDisplayMode implements ICommand {
+    async execute(app: IApplication): Promise<void> {
+        const view = app.activeView;
+        if (!view) return;
+        const next = (ViewModes.indexOf(view.mode) + 1) % ViewModes.length;
+        view.mode = ViewModes[next];
         view.update();
     }
 }

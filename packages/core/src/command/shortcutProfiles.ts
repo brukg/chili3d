@@ -11,6 +11,7 @@ export const Chili3dShortcuts: ShortcutMap = {
     "edit.redo": ["ctrl+y", "ctrl+shift+z"],
     "edit.selectAll": "ctrl+a",
     "view.zoomFit": "f",
+    "view.toggleDisplayMode": "w",
     "modify.deleteNode": ["Delete", "Backspace"],
     "modify.cutNode": "ctrl+x",
     "modify.copyNode": "ctrl+c",

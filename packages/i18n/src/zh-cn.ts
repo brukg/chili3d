@@ -110,6 +110,7 @@ export default {
         "command.edit.selectAll": "全选",
         "command.edit.undo": "撤销",
         "command.view.zoomFit": "缩放适应",
+        "command.view.toggleDisplayMode": "显示模式",
         "command.file.export": "导出",
         "command.file.import": "导入",
         "command.measure.angle": "角度",

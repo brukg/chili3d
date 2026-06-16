@@ -166,6 +166,7 @@ export const I18N_KEYS = [
     "command.special.last",
     "command.test.performance",
     "command.view.zoomFit",
+    "command.view.toggleDisplayMode",
     "command.wechat.group",
     "command.workingPlane.alignToPlane",
     "command.workingPlane.from3Points",

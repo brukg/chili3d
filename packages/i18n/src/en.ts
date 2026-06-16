@@ -110,6 +110,7 @@ export default {
         "command.edit.selectAll": "Select All",
         "command.edit.undo": "Undo",
         "command.view.zoomFit": "Zoom Fit",
+        "command.view.toggleDisplayMode": "Display Mode",
         "command.file.export": "Export",
         "command.file.import": "Import",
         "command.measure.angle": "Angle",
