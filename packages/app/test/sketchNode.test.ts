@@ -145,6 +145,32 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         expect(solved[2].x).toBeCloseTo(5, 5);
     });
 
+    test("a symmetric constraint mirrors two points about an axis segment", () => {
+        const doc = new TestDocument() as any;
+        // Axis 0→1 along the Y axis (the line x=0). Points 2 and 3 should become mirror images
+        // across it: equal |x|, equal y.
+        const node = new SketchNode({
+            document: doc,
+            plane: Plane.XY,
+            points: [
+                { x: 0, y: 0 }, // 0 (axis start)
+                { x: 0, y: 10 }, // 1 (axis end)
+                { x: 3, y: 5 }, // 2
+                { x: -7, y: 2 }, // 3 (skew; should mirror to x=-3, y=5)
+            ],
+            constraints: [
+                { type: "fixed", point: 0, x: 0, y: 0 },
+                { type: "fixed", point: 1, x: 0, y: 10 },
+                { type: "fixed", point: 2, x: 3, y: 5 },
+                { type: "symmetric", p: 2, q: 3, a: 0, b: 1 },
+            ],
+        });
+        const solved = node.solvedPoints();
+        // Point 3 mirrors point 2 across x=0: x = -3, y = 5.
+        expect(solved[3].x).toBeCloseTo(-3, 5);
+        expect(solved[3].y).toBeCloseTo(5, 5);
+    });
+
     test("addConstraint re-solves: pinning a free corner fully constrains the sketch", () => {
         const doc = new TestDocument() as any;
         // A single fixed point leaves 6 DoF; adding constraints drives the sketch toward defined.

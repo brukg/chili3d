@@ -11,10 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
-- **Batch 1 (partial):** interactive sketch constraints — 12 commands (Horizontal, Vertical,
-  Coincident, Fix, Parallel, Perpendicular, Equal, Point-on-Line, Dimension, Horizontal/Vertical/Angle
-  dimension). Every solver constraint type now has a command. Solver was already there; wired to
-  viewport sub-shape selection. _Remaining in Batch 1: constraint glyphs, drag-to-solve, DOF colour,
+- **Batch 1 (partial):** interactive sketch constraints — 13 commands (Horizontal, Vertical,
+  Coincident, Fix, Parallel, Perpendicular, Equal, Point-on-Line, **Symmetric**, Dimension,
+  Horizontal/Vertical/Angle dimension). Symmetric is a NEW solver constraint (added `symmetric()` to
+  the Gauss-Newton solver). Every other command wires the pre-existing solver to viewport sub-shape
+  selection. _Remaining in Batch 1: constraint glyphs, drag-to-solve, DOF colour,
   sketch fillet/trim/offset/mirror (all viewport-rendering work)._
 - **Batch 4 (partial):** construction planes — Offset, At-Angle, Midplane. _Remaining: tangent
   plane, plane-along-path, construction axes, construction points._

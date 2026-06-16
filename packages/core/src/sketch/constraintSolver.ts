@@ -128,6 +128,26 @@ export function angle(a: number, b: number, c: number, d: number, radians: numbe
     };
 }
 
+/**
+ * Points p and q are symmetric about the line through a and b. Two residuals: the midpoint of p,q
+ * lies on the axis (collinear), and the segment p→q is perpendicular to the axis.
+ */
+export function symmetric(p: number, q: number, a: number, b: number): Constraint {
+    return {
+        residuals: (v) => {
+            const ux = v[px(b)] - v[px(a)];
+            const uy = v[py(b)] - v[py(a)];
+            const mx = (v[px(p)] + v[px(q)]) / 2;
+            const my = (v[py(p)] + v[py(q)]) / 2;
+            // Midpoint collinear with the axis (cross product of axis and a→midpoint is zero).
+            const onAxis = ux * (my - v[py(a)]) - uy * (mx - v[px(a)]);
+            // p→q perpendicular to the axis (dot product is zero).
+            const perp = (v[px(q)] - v[px(p)]) * ux + (v[py(q)] - v[py(p)]) * uy;
+            return [onAxis, perp];
+        },
+    };
+}
+
 export interface SolveOptions {
     maxIterations?: number;
     tolerance?: number;

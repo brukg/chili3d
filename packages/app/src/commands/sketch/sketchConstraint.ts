@@ -261,3 +261,51 @@ export class SketchPointOnLineCommand extends MultistepCommand {
         this.document.visual.update();
     }
 }
+
+// Symmetric: make two sketch points mirror-symmetric about the line through a picked segment —
+// Fusion's symmetry constraint. Picks two vertices (the symmetric pair) and one edge (the axis).
+@command({ key: "sketch.constrainSymmetric", icon: "icon-line" })
+export class SketchSymmetricCommand extends MultistepCommand {
+    protected override getSteps(): IStep[] {
+        return [
+            new SelectShapeStep((ShapeTypes.vertex | ShapeTypes.edge) as ShapeType, "prompt.select.shape", {
+                multiple: true,
+                nodeFilter: { allow: (node) => node instanceof SketchNode },
+            }),
+        ];
+    }
+
+    protected override executeMainTask(): void {
+        const shapes = this.stepDatas[0].shapes;
+        const node = shapes[0]?.owner.node as ShapeNode | undefined;
+        const vertices = shapes.filter((s) => s.shape.shapeType === ShapeTypes.vertex);
+        const edge = shapes.find((s) => s.shape.shapeType === ShapeTypes.edge);
+        if (!(node instanceof SketchNode) || shapes.length !== 3 || vertices.length !== 2 || !edge) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+        if (shapes.some((s) => s.owner.node !== node)) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+
+        const p = node.nearestPointIndex((vertices[0].shape as IVertex).point());
+        const q = node.nearestPointIndex((vertices[1].shape as IVertex).point());
+        const verts = edge.shape.findSubShapes(ShapeTypes.vertex) as IVertex[];
+        if (verts.length < 2) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+        const a = node.nearestPointIndex(verts[0].point());
+        const b = node.nearestPointIndex(verts[1].point());
+        if ([p, q, a, b].some((i) => i < 0) || p === q) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+
+        Transaction.execute(this.document, "add symmetric constraint", () => {
+            node.addConstraint({ type: "symmetric", p, q, a, b });
+        });
+        this.document.visual.update();
+    }
+}
