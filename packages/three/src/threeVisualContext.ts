@@ -28,6 +28,7 @@ import {
     type ShapeType,
     ShapeTypes,
     Texture,
+    VisualNode,
     XY,
     type XYZ,
 } from "@chili3d/core";
@@ -50,7 +51,12 @@ import {
 import { ThreeGeometry } from "./threeGeometry";
 import { ThreeGeometryFactory } from "./threeGeometryFactory";
 import { ThreeHelper } from "./threeHelper";
-import { GroupVisualObject, ThreeComponentObject, ThreeMeshObject } from "./threeVisualObject";
+import {
+    GroupVisualObject,
+    ThreeComponentObject,
+    ThreeMeshObject,
+    ThreeVisualObject,
+} from "./threeVisualObject";
 
 export class ThreeVisualContext implements IVisualContext {
     private readonly _visualNodeMap = new Map<IVisualObject, INode>();
@@ -373,6 +379,9 @@ export class ThreeVisualContext implements IVisualContext {
         }
 
         if (visualObject) {
+            if (node instanceof VisualNode && visualObject instanceof ThreeVisualObject) {
+                visualObject.locked = node.locked;
+            }
             const parent = this.getParentVisual(node);
             parent.add(visualObject);
             this._visualNodeMap.set(visualObject, node);

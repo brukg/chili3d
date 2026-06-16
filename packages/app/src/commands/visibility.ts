@@ -9,6 +9,8 @@ import {
     type INode,
     NodeUtils,
     PubSub,
+    Transaction,
+    VisualNode,
 } from "@chili3d/core";
 
 function forEachNode(document: IDocument, action: (node: INode) => void) {
@@ -115,6 +117,34 @@ export class ShowAll implements ICommand {
         if (!document) return;
         forEachNode(document, (node) => {
             node.visible = true;
+        });
+        document.visual.update();
+    }
+}
+
+// Lock or unlock the selected object(s): locked nodes render in a muted material as a "do not edit"
+// signal. Toggles as a group — if every selection is already locked it unlocks, otherwise it locks.
+@command({
+    key: "modify.toggleLock",
+    icon: "icon-lock",
+})
+export class ToggleLock implements ICommand {
+    async execute(app: IApplication): Promise<void> {
+        const document = app.activeView?.document;
+        if (!document) return;
+        const selected = document.selection
+            .getSelectedNodes()
+            .filter((node): node is VisualNode => node instanceof VisualNode);
+        if (selected.length === 0) {
+            PubSub.default.pub("showToast", "toast.select.noSelected");
+            return;
+        }
+
+        const lock = !selected.every((node) => node.locked);
+        Transaction.execute(document, "toggle lock", () => {
+            selected.forEach((node) => {
+                node.locked = lock;
+            });
         });
         document.visual.update();
     }

@@ -109,6 +109,8 @@ export abstract class ThreeVisualObject extends Object3D implements IVisualObjec
     private readonly handlePropertyChanged = (property: keyof VisualNode) => {
         if (property === "transform") {
             this.transform = this.node.transform;
+        } else if (property === "locked") {
+            this.locked = this.node.locked;
         }
     };
 

@@ -3,6 +3,7 @@
 
 import type { I18nKeys } from "../i18n";
 import { type BoundingBox, Matrix4 } from "../math";
+import { property } from "../property";
 import { serialize } from "../serialize";
 import { Node } from "./node";
 
@@ -17,6 +18,17 @@ export abstract class VisualNode extends Node {
         this.setProperty("transform", value, undefined, {
             equals: (left, right) => left.equals(right),
         });
+    }
+
+    // Locked nodes render in a muted "locked" material as a signal not to edit them. Serialized so the
+    // state survives save/load; the viewport mirrors it (see threeVisualObject / threeVisualContext).
+    @serialize()
+    @property("model.locked")
+    get locked(): boolean {
+        return this.getPrivateValue("locked", false);
+    }
+    set locked(value: boolean) {
+        this.setProperty("locked", value);
     }
 
     worldTransform(): Matrix4 {
