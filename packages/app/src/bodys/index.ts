@@ -3,6 +3,7 @@
 
 export * from "./box";
 export * from "./circle";
+export * from "./coil";
 export * from "./cone";
 export * from "./cylinder";
 export * from "./ellipse";

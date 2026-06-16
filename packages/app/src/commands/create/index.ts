@@ -8,6 +8,7 @@ export * from "./bezier";
 export * from "./boundingBox";
 export * from "./box";
 export * from "./circle";
+export * from "./coil";
 export * from "./cone";
 export * from "./converter";
 export * from "./copySubShape";
