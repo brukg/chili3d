@@ -87,6 +87,7 @@ export default {
         "command.create.ellipsoid": "Ellipsoid",
         "command.create.extrude": "Extrude",
         "command.create.extractEdges": "Extract Edges",
+        "command.create.extractFaces": "Extract Faces",
         "command.create.linkedExtrude": "Linked Extrude",
         "command.create.folder": "Folder",
         "command.create.group": "Group",

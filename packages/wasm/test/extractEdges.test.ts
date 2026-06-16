@@ -27,4 +27,17 @@ describe("Extract Edges (headless)", () => {
         // The compound round-trips the same 12 edges as reusable reference geometry.
         expect(compound.value.findSubShapes(ShapeTypes.edge).length).toBe(12);
     });
+
+    test("Extract Faces: a box yields its 6 faces, combined into one compound", async () => {
+        await initWasm({ wasmBinary: WASM_BINARY });
+
+        const factory = new ShapeFactory();
+        const box = factory.box(Plane.XY, 10, 10, 10);
+        const faces = box.value.findSubShapes(ShapeTypes.face);
+        expect(faces.length).toBe(6);
+
+        const compound = factory.combine(faces);
+        expect(compound.isOk).toBe(true);
+        expect(compound.value.findSubShapes(ShapeTypes.face).length).toBe(6);
+    });
 });

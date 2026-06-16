@@ -16,6 +16,7 @@ export * from "./cylinder";
 export * from "./ellipse";
 export * from "./ellipsoid";
 export * from "./extractEdges";
+export * from "./extractFaces";
 export * from "./extrude";
 export * from "./group";
 export * from "./line";

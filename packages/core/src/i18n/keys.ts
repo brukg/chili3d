@@ -82,6 +82,7 @@ export const I18N_KEYS = [
     "command.create.ellipsoid",
     "command.create.extrude",
     "command.create.extractEdges",
+    "command.create.extractFaces",
     "command.create.linkedExtrude",
     "command.create.folder",
     "command.create.group",
