@@ -99,6 +99,7 @@ export default {
         "command.create.pipe": "Pipe",
         "command.create.point": "Point",
         "command.create.midpointPoint": "Point at Midpoint",
+        "command.create.centerPoint": "Point at Center",
         "command.create.polygon": "Pline",
         "command.create.regularPolygon": "Regular Polygon",
         "command.create.pyramid": "Pyramid",

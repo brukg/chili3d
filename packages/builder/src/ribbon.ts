@@ -28,7 +28,13 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         items: ["create.arc", "create.arc2point", "create.arc3point"],
                     },
                 ],
-                collapsedItems: ["create.point", "create.midpointPoint", "create.polygon", "create.bezier"],
+                collapsedItems: [
+                    "create.point",
+                    "create.midpointPoint",
+                    "create.centerPoint",
+                    "create.polygon",
+                    "create.bezier",
+                ],
             },
             {
                 groupName: "ribbon.group.constraints",

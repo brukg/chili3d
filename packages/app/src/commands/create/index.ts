@@ -7,6 +7,7 @@ export * from "./arc3point";
 export * from "./bezier";
 export * from "./boundingBox";
 export * from "./box";
+export * from "./centerPoint";
 export * from "./circle";
 export * from "./coil";
 export * from "./cone";

@@ -32,6 +32,8 @@ Items marked **[session]** were shipped in the current rollout.
 - **Batch 11:** Toggle Perspective/Orthographic projection command (flips `cameraController.cameraType`).
 - **Batch 4 (construction):** Point at Midpoint — drops a construction point at each selected edge's
   true midpoint (curve mid-parameter, correct for arcs too). Headless test: line midpoint (5,0,2).
+  Point at Center — drops a point at a circular edge's centre (via the curve/basis-curve, CurveUtils.
+  isCircle). Headless test: circle centred (3,4,0) → centre (3,4,0).
   _CORRECTION: Move/Rotate/Mirror already support a copy/clone option (TransformedCommand.isClone) —
   Move/Copy is not a gap._
 - **Batch 1 (arc support — step 1 DONE):** SketchNode now supports **arc segments** via an optional
