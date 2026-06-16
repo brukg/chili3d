@@ -103,6 +103,7 @@ export const I18N_KEYS = [
     "command.create.sketchCircle3p",
     "command.create.sketchPolygon",
     "command.create.sketchRect",
+    "command.create.sketchRect3p",
     "command.create.sketchSlot",
     "command.create.sphere",
     "command.create.sweep",

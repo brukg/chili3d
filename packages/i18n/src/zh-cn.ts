@@ -108,6 +108,7 @@ export default {
         "command.create.sketchCircle3p": "草图圆（三点）",
         "command.create.sketchPolygon": "草图多边形",
         "command.create.sketchRect": "草图矩形",
+        "command.create.sketchRect3p": "草图矩形（三点）",
         "command.create.sketchSlot": "草图槽",
         "command.create.sphere": "球体",
         "command.create.sweep": "扫略",

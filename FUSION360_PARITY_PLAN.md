@@ -43,8 +43,11 @@ Items marked **[session]** were shipped in the current rollout.
   fixed-4-corner pattern as Sketch Rectangle).
   **Sketch 3-Point Circle (DONE):** circle through three picked points (centre/radius from
   computeCircleFromPoints, built as the bulge circle). Pure-math test covers the 3-point circle logic.
-  The sketch toolbar now has line, 2-corner & centre rectangle, circle (centre+radius & 3-point),
-  slot, polygon (+ existing arcs) and the full geometric/dimensional constraint set.
+  **Sketch 3-Point Rectangle (DONE):** angled rectangle from a base edge (2 points) + width point;
+  same fixed-corner construction in a base-edge-aligned frame.
+  The sketch toolbar now has line, rectangle (2-corner, centre, 3-point/angled), circle (centre+radius
+  & 3-point), slot, polygon (+ existing arcs) and the full geometric/dimensional constraint set —
+  effectively Fusion-complete for 2D sketching.
   _Next steps: a freehand Sketch Arc tool; tangent/concentric constraints (need the solver to see arc
   centres — larger)._
 - **CORRECTION — I/O is already comprehensive:** export covers STEP/IGES/BREP/STL/3MF/PLY/OBJ/GLTF/

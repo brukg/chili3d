@@ -108,6 +108,7 @@ export default {
         "command.create.sketchCircle3p": "Sketch Circle (3 Points)",
         "command.create.sketchPolygon": "Sketch Polygon",
         "command.create.sketchRect": "Sketch Rectangle",
+        "command.create.sketchRect3p": "Sketch Rectangle (3 Points)",
         "command.create.sketchSlot": "Sketch Slot",
         "command.create.sphere": "Sphere",
         "command.create.sweep": "Sweep",

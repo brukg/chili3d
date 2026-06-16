@@ -14,6 +14,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     "create.sketch",
                     "create.sketchRect",
                     "create.sketchCenterRect",
+                    "create.sketchRect3p",
                     "create.sketchCircle",
                     "create.sketchCircle3p",
                     "create.sketchSlot",
