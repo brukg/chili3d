@@ -17,8 +17,23 @@ import {
     ViewModes,
 } from "@chili3d/core";
 import { collection, div, input, label, span, svg } from "@chili3d/element";
+import { type ContextMenuEntry, SEPARATOR, showContextMenu } from "../contextMenu";
 import { Flyout } from "./flyout";
 import style from "./viewport.module.css";
+
+const SELECTION_CONTEXT_MENU: ContextMenuEntry[] = [
+    "modify.cutNode",
+    "modify.copyNode",
+    "modify.pasteNode",
+    "modify.duplicate",
+    "modify.deleteNode",
+    SEPARATOR,
+    "modify.isolate",
+    "modify.hideOthers",
+    "modify.toggleLock",
+];
+
+const EMPTY_CONTEXT_MENU: ContextMenuEntry[] = ["edit.selectAll", "modify.showAll", "view.zoomFit"];
 
 class CameraConverter implements IConverter<CameraType> {
     constructor(readonly type: CameraType) {}
@@ -281,6 +296,12 @@ export class Viewport extends HTMLElement {
         this.removeEvents();
     }
 
+    private readonly onContextMenu = (e: MouseEvent) => {
+        e.stopPropagation();
+        const hasSelection = this.view.document.selection.getSelectedNodes().length > 0;
+        showContextMenu(e.clientX, e.clientY, hasSelection ? SELECTION_CONTEXT_MENU : EMPTY_CONTEXT_MENU);
+    };
+
     private initEvent() {
         const events: [keyof HTMLElementEventMap, (e: any) => any][] = [
             ["pointerdown", this.pointerDown],
@@ -288,6 +309,7 @@ export class Viewport extends HTMLElement {
             ["pointerout", this.pointerOut],
             ["pointerup", this.pointerUp],
             ["wheel", this.mouseWheel],
+            ["contextmenu", this.onContextMenu],
         ];
         events.forEach((v) => {
             this.addEventListenerHandler(v[0], v[1]);
