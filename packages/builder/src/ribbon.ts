@@ -158,7 +158,22 @@ export const DefaultRibbon: RibbonTabProfile[] = [
             },
             {
                 groupName: "ribbon.group.act",
-                items: ["act.alignCamera"],
+                items: [
+                    "act.alignCamera",
+                    "view.isometric",
+                    {
+                        type: "split",
+                        items: [
+                            "view.front",
+                            "view.back",
+                            "view.top",
+                            "view.bottom",
+                            "view.right",
+                            "view.left",
+                        ],
+                    },
+                    ["view.zoomFit", "view.toggleDisplayMode"],
+                ],
             },
             {
                 groupName: "ribbon.group.importExport",

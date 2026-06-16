@@ -9,6 +9,7 @@ import {
     NodeUtils,
     ViewModes,
     VisualNode,
+    XYZ,
 } from "@chili3d/core";
 
 // Select every object in the document (Ctrl+A).
@@ -68,4 +69,66 @@ export class ToggleDisplayMode implements ICommand {
         view.mode = ViewModes[next];
         view.update();
     }
+}
+
+// Snap the camera to a standard orientation (Z-up CAD convention): the eye is placed along `dir`
+// from the current target, then the model is re-framed. Subclasses pick the direction and up vector.
+abstract class StandardViewCommand implements ICommand {
+    protected abstract readonly dir: XYZ;
+    protected abstract readonly up: XYZ;
+
+    async execute(app: IApplication): Promise<void> {
+        const view = app.activeView;
+        if (!view) return;
+        const controller = view.cameraController;
+        const target = controller.cameraTarget;
+        const distance = Math.max(controller.cameraPosition.distanceTo(target), 1);
+        const direction = this.dir.normalize() ?? this.dir;
+        const eye = target.add(direction.multiply(distance));
+        controller.lookAt(eye, target, this.up);
+        controller.fitContent();
+        view.update();
+    }
+}
+
+@command({ key: "view.top", icon: "icon-fitcontent" })
+export class ViewTop extends StandardViewCommand {
+    protected readonly dir = new XYZ({ x: 0, y: 0, z: 1 });
+    protected readonly up = new XYZ({ x: 0, y: 1, z: 0 });
+}
+
+@command({ key: "view.bottom", icon: "icon-fitcontent" })
+export class ViewBottom extends StandardViewCommand {
+    protected readonly dir = new XYZ({ x: 0, y: 0, z: -1 });
+    protected readonly up = new XYZ({ x: 0, y: 1, z: 0 });
+}
+
+@command({ key: "view.front", icon: "icon-fitcontent" })
+export class ViewFront extends StandardViewCommand {
+    protected readonly dir = new XYZ({ x: 0, y: -1, z: 0 });
+    protected readonly up = new XYZ({ x: 0, y: 0, z: 1 });
+}
+
+@command({ key: "view.back", icon: "icon-fitcontent" })
+export class ViewBack extends StandardViewCommand {
+    protected readonly dir = new XYZ({ x: 0, y: 1, z: 0 });
+    protected readonly up = new XYZ({ x: 0, y: 0, z: 1 });
+}
+
+@command({ key: "view.right", icon: "icon-fitcontent" })
+export class ViewRight extends StandardViewCommand {
+    protected readonly dir = new XYZ({ x: 1, y: 0, z: 0 });
+    protected readonly up = new XYZ({ x: 0, y: 0, z: 1 });
+}
+
+@command({ key: "view.left", icon: "icon-fitcontent" })
+export class ViewLeft extends StandardViewCommand {
+    protected readonly dir = new XYZ({ x: -1, y: 0, z: 0 });
+    protected readonly up = new XYZ({ x: 0, y: 0, z: 1 });
+}
+
+@command({ key: "view.isometric", icon: "icon-fitcontent" })
+export class ViewIsometric extends StandardViewCommand {
+    protected readonly dir = new XYZ({ x: 1, y: -1, z: 1 });
+    protected readonly up = new XYZ({ x: 0, y: 0, z: 1 });
 }
