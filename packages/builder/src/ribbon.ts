@@ -15,6 +15,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     "create.sketchRect",
                     "create.sketchCircle",
                     "create.sketchSlot",
+                    "create.sketchPolygon",
                     {
                         type: "split",
                         items: ["create.rect", "create.circle", "create.ellipse", "create.regularPolygon"],

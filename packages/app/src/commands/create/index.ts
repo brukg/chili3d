@@ -32,6 +32,7 @@ export * from "./revolve";
 export * from "./section";
 export * from "./sketch";
 export * from "./sketchCircle";
+export * from "./sketchPolygon";
 export * from "./sketchRect";
 export * from "./sketchSlot";
 export * from "./sphere";

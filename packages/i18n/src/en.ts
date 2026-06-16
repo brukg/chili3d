@@ -103,6 +103,7 @@ export default {
         "command.create.section": "Section",
         "command.create.sketch": "Sketch",
         "command.create.sketchCircle": "Sketch Circle",
+        "command.create.sketchPolygon": "Sketch Polygon",
         "command.create.sketchRect": "Sketch Rectangle",
         "command.create.sketchSlot": "Sketch Slot",
         "command.create.sphere": "Sphere",

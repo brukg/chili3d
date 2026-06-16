@@ -146,6 +146,30 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         expect((face.value as IFace).area()).toBeCloseTo(200 + 25 * Math.PI, 1);
     });
 
+    test("a regular hexagon sketch has area ½·N·r²·sin(2π/N)", () => {
+        const doc = new TestDocument() as any;
+        const n = 6;
+        const r = 10;
+        const pts: Point2d[] = Array.from({ length: n }, (_, k) => {
+            const a = (2 * Math.PI * k) / n;
+            return { x: r * Math.cos(a), y: r * Math.sin(a) };
+        });
+        const node = new SketchNode({
+            document: doc,
+            plane: Plane.XY,
+            points: pts,
+            constraints: pts.map((p, i) => ({ type: "fixed", point: i, x: p.x, y: p.y })),
+        });
+        const shape = node.generateShape();
+        expect(shape.isOk).toBe(true);
+
+        const factory = new ShapeFactory();
+        const face = factory.face([shape.value as IWire]);
+        expect(face.isOk).toBe(true);
+        // Regular hexagon, r=10: ½·6·100·sin(60°) ≈ 259.81 mm².
+        expect((face.value as IFace).area()).toBeCloseTo(0.5 * n * r * r * Math.sin((2 * Math.PI) / n), 1);
+    });
+
     test("nearestPointIndex maps a plane point to the closest sketch corner", () => {
         const doc = new TestDocument() as any;
         const node = new SketchNode({ document: doc, plane: Plane.XY, points, constraints });

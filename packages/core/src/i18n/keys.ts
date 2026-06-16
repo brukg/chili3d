@@ -98,6 +98,7 @@ export const I18N_KEYS = [
     "command.create.section",
     "command.create.sketch",
     "command.create.sketchCircle",
+    "command.create.sketchPolygon",
     "command.create.sketchRect",
     "command.create.sketchSlot",
     "command.create.sphere",

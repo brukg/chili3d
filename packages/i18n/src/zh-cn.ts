@@ -103,6 +103,7 @@ export default {
         "command.create.section": "相交曲线",
         "command.create.sketch": "草图",
         "command.create.sketchCircle": "草图圆",
+        "command.create.sketchPolygon": "草图多边形",
         "command.create.sketchRect": "草图矩形",
         "command.create.sketchSlot": "草图槽",
         "command.create.sphere": "球体",
