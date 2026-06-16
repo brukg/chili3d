@@ -20,6 +20,8 @@ export const Chili3dShortcuts: ShortcutMap = {
     "modify.hideOthers": "alt+h",
     "modify.showAll": "alt+shift+h",
     "modify.toggleLock": "ctrl+l",
+    "modify.groupFolder": "ctrl+g",
+    "modify.ungroup": "ctrl+shift+g",
     "special.last": [" ", "Enter"],
 
     // Sketching

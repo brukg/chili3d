@@ -139,6 +139,8 @@ export default {
         "command.modify.hideOthers": "隐藏其他",
         "command.modify.showAll": "显示全部",
         "command.modify.toggleLock": "锁定 / 解锁",
+        "command.modify.groupFolder": "成组",
+        "command.modify.ungroup": "取消成组",
         "command.modify.shell": "抽壳",
         "command.modify.pushPull": "推/拉",
         "command.modify.scale": "缩放",

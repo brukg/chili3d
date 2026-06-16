@@ -9,6 +9,7 @@ export * from "./createActCommand";
 export * from "./createCommand";
 export * from "./delete";
 export * from "./folder";
+export * from "./grouping";
 export * from "./importExport";
 export * from "./measure";
 export * from "./modify";

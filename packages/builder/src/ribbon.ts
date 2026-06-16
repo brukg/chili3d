@@ -81,6 +81,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     ["modify.deleteNode", "modify.removeShapes", "modify.removeFeature"],
                     ["modify.removeFillet"],
                     ["modify.toggleLock"],
+                    ["modify.groupFolder", "modify.ungroup"],
                 ],
                 collapsedItems: ["modify.brushAdd", "modify.brushRemove", "modify.brushClear"],
             },

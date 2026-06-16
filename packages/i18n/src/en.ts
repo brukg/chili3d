@@ -139,6 +139,8 @@ export default {
         "command.modify.hideOthers": "Hide Others",
         "command.modify.showAll": "Show All",
         "command.modify.toggleLock": "Lock / Unlock",
+        "command.modify.groupFolder": "Group",
+        "command.modify.ungroup": "Ungroup",
         "command.modify.shell": "Shell",
         "command.modify.pushPull": "Push/Pull",
         "command.modify.scale": "Scale",
