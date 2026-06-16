@@ -48,6 +48,10 @@ Items marked **[session]** were shipped in the current rollout.
   The sketch toolbar now has line, rectangle (2-corner, centre, 3-point/angled), circle (centre+radius
   & 3-point), slot, polygon (+ existing arcs) and the full geometric/dimensional constraint set —
   effectively Fusion-complete for 2D sketching.
+  **Midpoint constraint (DONE):** new solver constraint pinning a point to a segment's midpoint
+  (added `midpoint()` to the solver, like symmetric). Headless test: point pinned to (5,2).
+  _CORRECTION: `modify.array` already does 3D rectangular (X×Y×Z) AND circular patterns — patterns
+  are comprehensive, not a gap._
   _Next steps: a freehand Sketch Arc tool; tangent/concentric constraints (need the solver to see arc
   centres — larger)._
 - **CORRECTION — I/O is already comprehensive:** export covers STEP/IGES/BREP/STL/3MF/PLY/OBJ/GLTF/

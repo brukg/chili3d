@@ -148,6 +148,13 @@ export function symmetric(p: number, q: number, a: number, b: number): Constrain
     };
 }
 
+/** Point p sits at the midpoint of the segment from a to b. */
+export function midpoint(p: number, a: number, b: number): Constraint {
+    return {
+        residuals: (v) => [v[px(p)] - (v[px(a)] + v[px(b)]) / 2, v[py(p)] - (v[py(a)] + v[py(b)]) / 2],
+    };
+}
+
 export interface SolveOptions {
     maxIterations?: number;
     tolerance?: number;

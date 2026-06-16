@@ -262,6 +262,53 @@ export class SketchPointOnLineCommand extends MultistepCommand {
     }
 }
 
+// Midpoint: pin a sketch point to the midpoint of a picked segment — Fusion's midpoint constraint.
+// Picks one vertex and one edge.
+@command({ key: "sketch.constrainMidpoint", icon: "icon-line" })
+export class SketchMidpointCommand extends MultistepCommand {
+    protected override getSteps(): IStep[] {
+        return [
+            new SelectShapeStep((ShapeTypes.vertex | ShapeTypes.edge) as ShapeType, "prompt.select.shape", {
+                multiple: true,
+                nodeFilter: { allow: (node) => node instanceof SketchNode },
+            }),
+        ];
+    }
+
+    protected override executeMainTask(): void {
+        const shapes = this.stepDatas[0].shapes;
+        const node = shapes[0]?.owner.node as ShapeNode | undefined;
+        const vertex = shapes.find((s) => s.shape.shapeType === ShapeTypes.vertex);
+        const edge = shapes.find((s) => s.shape.shapeType === ShapeTypes.edge);
+        if (!(node instanceof SketchNode) || shapes.length !== 2 || !vertex || !edge) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+        if (shapes.some((s) => s.owner.node !== node)) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+
+        const point = node.nearestPointIndex((vertex.shape as IVertex).point());
+        const verts = edge.shape.findSubShapes(ShapeTypes.vertex) as IVertex[];
+        if (verts.length < 2) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+        const a = node.nearestPointIndex(verts[0].point());
+        const b = node.nearestPointIndex(verts[1].point());
+        if ([point, a, b].some((i) => i < 0) || point === a || point === b) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+
+        Transaction.execute(this.document, "add midpoint constraint", () => {
+            node.addConstraint({ type: "midpoint", point, a, b });
+        });
+        this.document.visual.update();
+    }
+}
+
 // Symmetric: make two sketch points mirror-symmetric about the line through a picked segment —
 // Fusion's symmetry constraint. Picks two vertices (the symmetric pair) and one edge (the axis).
 @command({ key: "sketch.constrainSymmetric", icon: "icon-line" })

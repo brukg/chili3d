@@ -12,6 +12,7 @@ import {
     equalLength,
     fixed,
     horizontal,
+    midpoint,
     parallel,
     perpendicular,
     pointOnLine,
@@ -41,6 +42,7 @@ export type SketchConstraint =
     | { type: "perpendicular"; a: number; b: number; c: number; d: number }
     | { type: "equalLength"; a: number; b: number; c: number; d: number }
     | { type: "pointOnLine"; point: number; a: number; b: number }
+    | { type: "midpoint"; point: number; a: number; b: number }
     | { type: "symmetric"; p: number; q: number; a: number; b: number }
     | { type: "distanceX"; a: number; b: number; dx: SketchDimension }
     | { type: "distanceY"; a: number; b: number; dy: SketchDimension }
@@ -75,6 +77,8 @@ export function toConstraint(c: SketchConstraint, scope: Record<string, number> 
             return equalLength(c.a, c.b, c.c, c.d);
         case "pointOnLine":
             return pointOnLine(c.point, c.a, c.b);
+        case "midpoint":
+            return midpoint(c.point, c.a, c.b);
         case "symmetric":
             return symmetric(c.p, c.q, c.a, c.b);
         case "distanceX":

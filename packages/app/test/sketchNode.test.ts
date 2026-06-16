@@ -262,6 +262,28 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         expect(p[3].y).toBeCloseTo(20, 5);
     });
 
+    test("a midpoint constraint pins a point to the centre of a segment", () => {
+        const doc = new TestDocument() as any;
+        // Segment 0→1 from (0,0) to (10,4); point 2 starts off and is pinned to its midpoint (5,2).
+        const node = new SketchNode({
+            document: doc,
+            plane: Plane.XY,
+            points: [
+                { x: 0, y: 0 },
+                { x: 10, y: 4 },
+                { x: 9, y: -3 },
+            ],
+            constraints: [
+                { type: "fixed", point: 0, x: 0, y: 0 },
+                { type: "fixed", point: 1, x: 10, y: 4 },
+                { type: "midpoint", point: 2, a: 0, b: 1 },
+            ],
+        });
+        const solved = node.solvedPoints();
+        expect(solved[2].x).toBeCloseTo(5, 5);
+        expect(solved[2].y).toBeCloseTo(2, 5);
+    });
+
     test("a symmetric constraint mirrors two points about an axis segment", () => {
         const doc = new TestDocument() as any;
         // Axis 0→1 along the Y axis (the line x=0). Points 2 and 3 should become mirror images

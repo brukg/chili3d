@@ -50,6 +50,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                             "sketch.constrainPerpendicular",
                             "sketch.constrainEqual",
                             "sketch.constrainPointOnLine",
+                            "sketch.constrainMidpoint",
                             "sketch.constrainSymmetric",
                         ],
                     },
