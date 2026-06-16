@@ -171,6 +171,7 @@ export const I18N_KEYS = [
     "command.sketch.constrainParallel",
     "command.sketch.constrainPerpendicular",
     "command.sketch.constrainEqual",
+    "command.sketch.constrainPointOnLine",
     "command.sketch.constrainFix",
     "command.sketch.dimension",
     "command.sketch.dimensionX",

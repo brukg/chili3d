@@ -188,6 +188,7 @@ export default {
         "command.sketch.constrainParallel": "Parallel",
         "command.sketch.constrainPerpendicular": "Perpendicular",
         "command.sketch.constrainEqual": "Equal",
+        "command.sketch.constrainPointOnLine": "Point on Line",
         "command.sketch.constrainFix": "Fix",
         "command.sketch.dimension": "Dimension",
         "command.sketch.dimensionX": "Horizontal Dimension",

@@ -188,6 +188,7 @@ export default {
         "command.sketch.constrainParallel": "平行",
         "command.sketch.constrainPerpendicular": "垂直",
         "command.sketch.constrainEqual": "相等",
+        "command.sketch.constrainPointOnLine": "点在线上",
         "command.sketch.constrainFix": "固定",
         "command.sketch.dimension": "标注尺寸",
         "command.sketch.dimensionX": "水平标注",

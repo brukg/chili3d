@@ -214,3 +214,50 @@ export class SketchAngleCommand extends SketchConstraintCommand {
         return { type: "angle", a, b, c, d, radians: (this.angle * Math.PI) / 180 };
     }
 }
+
+// Point-on-line: pin a sketch point onto the line through a segment — Fusion's collinear/on-line
+// constraint. Needs one vertex and one edge, so it picks a mixed selection rather than a single kind.
+@command({ key: "sketch.constrainPointOnLine", icon: "icon-line" })
+export class SketchPointOnLineCommand extends MultistepCommand {
+    protected override getSteps(): IStep[] {
+        return [
+            new SelectShapeStep((ShapeTypes.vertex | ShapeTypes.edge) as ShapeType, "prompt.select.shape", {
+                multiple: true,
+                nodeFilter: { allow: (node) => node instanceof SketchNode },
+            }),
+        ];
+    }
+
+    protected override executeMainTask(): void {
+        const shapes = this.stepDatas[0].shapes;
+        const node = shapes[0]?.owner.node as ShapeNode | undefined;
+        const vertex = shapes.find((s) => s.shape.shapeType === ShapeTypes.vertex);
+        const edge = shapes.find((s) => s.shape.shapeType === ShapeTypes.edge);
+        if (!(node instanceof SketchNode) || shapes.length !== 2 || !vertex || !edge) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+        if (shapes.some((s) => s.owner.node !== node)) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+
+        const point = node.nearestPointIndex((vertex.shape as IVertex).point());
+        const verts = edge.shape.findSubShapes(ShapeTypes.vertex) as IVertex[];
+        if (verts.length < 2) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+        const a = node.nearestPointIndex(verts[0].point());
+        const b = node.nearestPointIndex(verts[1].point());
+        if ([point, a, b].some((i) => i < 0) || point === a || point === b) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+
+        Transaction.execute(this.document, "add pointOnLine constraint", () => {
+            node.addConstraint({ type: "pointOnLine", point, a, b });
+        });
+        this.document.visual.update();
+    }
+}

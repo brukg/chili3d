@@ -122,6 +122,29 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         expect(Math.abs(solved[2].y)).toBeCloseTo(5, 4);
     });
 
+    test("a point-on-line constraint pulls a point onto the segment's line", () => {
+        const doc = new TestDocument() as any;
+        // Segment 0→1 lies on the X axis; point 2 starts above it and is constrained on-line.
+        const node = new SketchNode({
+            document: doc,
+            plane: Plane.XY,
+            points: [
+                { x: 0, y: 0 }, // 0
+                { x: 10, y: 0 }, // 1
+                { x: 5, y: 4 }, // 2 (off the line; should drop to y≈0)
+            ],
+            constraints: [
+                { type: "fixed", point: 0, x: 0, y: 0 },
+                { type: "fixed", point: 1, x: 10, y: 0 },
+                { type: "distanceX", a: 0, b: 2, dx: 5 },
+                { type: "pointOnLine", point: 2, a: 0, b: 1 },
+            ],
+        });
+        const solved = node.solvedPoints();
+        expect(solved[2].y).toBeCloseTo(0, 5);
+        expect(solved[2].x).toBeCloseTo(5, 5);
+    });
+
     test("addConstraint re-solves: pinning a free corner fully constrains the sketch", () => {
         const doc = new TestDocument() as any;
         // A single fixed point leaves 6 DoF; adding constraints drives the sketch toward defined.
