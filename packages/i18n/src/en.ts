@@ -158,7 +158,7 @@ export default {
         "command.modify.toggleLock": "Lock / Unlock",
         "command.modify.groupFolder": "Group",
         "command.modify.ungroup": "Ungroup",
-        "command.modify.setColor": "Set Color",
+        "command.modify.setColor": "Appearance",
         "command.modify.shell": "Shell",
         "command.modify.thicken": "Thicken",
         "command.modify.pushPull": "Push/Pull",

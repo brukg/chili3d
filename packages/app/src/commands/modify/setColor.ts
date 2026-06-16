@@ -13,9 +13,9 @@ import {
 } from "@chili3d/core";
 import { MultistepCommand } from "../multistepCommand";
 
-// Set Color: apply an appearance colour to the selected body(ies). A new material of the chosen
-// colour is created and assigned to each selection — Fusion's appearance/colour override. The colour
-// property renders as a colour picker in the property panel.
+// Appearance: apply a colour and opacity to the selected body(ies). A new material with the chosen
+// colour/opacity is created and assigned to each selection — Fusion's appearance override. The colour
+// property renders as a colour picker in the property panel; opacity < 1 makes the body see-through.
 @command({
     key: "modify.setColor",
     icon: "icon-addBrush",
@@ -27,6 +27,15 @@ export class SetColor extends MultistepCommand {
     }
     set color(value: number) {
         this.setProperty("color", value);
+    }
+
+    // 1 = fully opaque, < 1 = see-through (useful for viewing internals / assemblies).
+    @property("common.opacity")
+    get opacity(): number {
+        return this.getPrivateValue("opacity", 1);
+    }
+    set opacity(value: number) {
+        this.setProperty("opacity", Math.min(1, Math.max(0, value)));
     }
 
     protected override getSteps(): IStep[] {
@@ -49,6 +58,7 @@ export class SetColor extends MultistepCommand {
                 name: `Color ${this.color.toString(16)}`,
                 color: this.color,
             });
+            material.opacity = this.opacity;
             this.document.modelManager.materials.push(material);
             for (const node of nodes) {
                 node.materialId = material.id;
