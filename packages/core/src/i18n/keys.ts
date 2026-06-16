@@ -158,6 +158,7 @@ export const I18N_KEYS = [
     "command.modify.linkedRevolve",
     "command.modify.mirror",
     "command.modify.move",
+    "command.modify.moveToOrigin",
     "command.modify.pipeFeature",
     "command.modify.removeFeature",
     "command.modify.removeShapes",

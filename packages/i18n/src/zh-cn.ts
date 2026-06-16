@@ -175,6 +175,7 @@ export default {
         "command.modify.linkedRevolve": "关联旋转",
         "command.modify.mirror": "镜像",
         "command.modify.move": "移动",
+        "command.modify.moveToOrigin": "移动到原点",
         "command.modify.pipeFeature": "管特征",
         "command.modify.removeFeature": "删除特征",
         "command.modify.removeShapes": "删除子元素",

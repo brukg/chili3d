@@ -34,6 +34,20 @@ describe("test Transform", () => {
         expect(t6!.ofPoint(new XYZ({ x: -1, y: 10, z: 0 })).isEqualTo(XYZ.unitY)).toBeTruthy();
     });
 
+    test("move-to-origin: post-multiplied world translation recentres a body", () => {
+        // A body placed in the world by an arbitrary transform (rotate + translate).
+        const place = Matrix4.fromTranslation(40, -10, 7).multiply(
+            Matrix4.fromAxisRad(XYZ.zero, XYZ.unitZ, Math.PI / 3),
+        );
+        const localCenter = new XYZ({ x: 5, y: 5, z: 5 });
+        const worldCenter = place.ofPoint(localCenter);
+        // The command post-multiplies a translation of -worldCenter (world space, applied last).
+        const recenter = place.multiply(
+            Matrix4.fromTranslation(-worldCenter.x, -worldCenter.y, -worldCenter.z),
+        );
+        expect(recenter.ofPoint(localCenter).distanceTo(XYZ.zero)).toBeLessThan(1e-4);
+    });
+
     test("test mirror", () => {
         let mirror = Matrix4.createMirrorWithPlane(
             new Plane({ origin: XYZ.zero, normal: XYZ.unitX, xvec: XYZ.unitY }),

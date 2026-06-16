@@ -175,6 +175,7 @@ export default {
         "command.modify.linkedRevolve": "Linked Revolve",
         "command.modify.mirror": "Mirror",
         "command.modify.move": "Move",
+        "command.modify.moveToOrigin": "Move to Origin",
         "command.modify.pipeFeature": "Pipe Feature",
         "command.modify.removeFeature": "Remove Feature",
         "command.modify.removeShapes": "Remove Shapes",

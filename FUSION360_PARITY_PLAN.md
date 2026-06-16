@@ -26,6 +26,10 @@ Items marked **[session]** were shipped in the current rollout.
 - **Batch 8 (started):** Center of Mass marker — drops a parametric point at a selected solid's
   world-space centroid (`ISolid.massProperties().centerOfMass`). _Remaining: section analysis,
   draft/curvature/zebra analysis._
+- **Batch 6/11 (started):** Move to Origin — recentres the selection's combined world bbox at the
+  origin (pure post-multiplied translation; pattern proven by a Matrix4 convention test). _Deferred,
+  need live verification to get right: Align face-to-face, Replace-face (replaceSubShape is fragile —
+  swaps raw topology), per-face appearances/colour._
 
 ---
 
