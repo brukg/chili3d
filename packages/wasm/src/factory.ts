@@ -173,6 +173,21 @@ export class ShapeFactory implements IShapeFactory {
         return Result.err("Not OccShape");
     }
 
+    chamferAsym(shape: IShape, edges: number[], distance1: number, distance2: number): Result<IShape> {
+        if (distance1 < Precision.Distance || distance2 < Precision.Distance) {
+            return Result.err("The distance is too small.");
+        }
+        if (edges.length === 0) {
+            return Result.err("The edges is empty.");
+        }
+        if (shape instanceof OccShape) {
+            return convertShapeResult(
+                wasm.ShapeFactory.chamferAsym(shape.shape, edges, distance1, distance2),
+            );
+        }
+        return Result.err("Not OccShape");
+    }
+
     removeFeature(shape: IShape, faces: IFace[]): Result<IShape> {
         if (!(shape instanceof OccShape)) {
             return Result.err("Not OccShape");

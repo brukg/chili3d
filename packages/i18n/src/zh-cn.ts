@@ -188,6 +188,7 @@ export default {
         "command.modify.brushRemove": "删除画笔",
         "command.modify.chamfer": "倒角",
         "command.modify.chamferAll": "全部边倒角",
+        "command.modify.chamferAsym": "双距离倒角",
         "command.modify.createJoint": "创建关节",
         "command.modify.exportUrdf": "导出 URDF",
         "error.export.needLinkNode":

@@ -188,6 +188,7 @@ export default {
         "command.modify.brushRemove": "Brush Remove",
         "command.modify.chamfer": "Chamfer",
         "command.modify.chamferAll": "Chamfer All Edges",
+        "command.modify.chamferAsym": "Two-Distance Chamfer",
         "command.modify.createJoint": "Create Joint",
         "command.modify.exportUrdf": "Export URDF",
         "error.export.needLinkNode":

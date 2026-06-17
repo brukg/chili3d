@@ -860,6 +860,33 @@ public:
         return ShapeResult { makeChamfer.Shape(), true, "" };
     }
 
+    // Asymmetric chamfer: set back distance1 on one of the edge's faces and distance2 on the other.
+    // The reference face (the face distance1 is measured from) is the first face adjacent to the edge.
+    static ShapeResult chamferAsym(const TopoDS_Shape& shape, const NumberArray& edges, double distance1, double distance2)
+    {
+        std::vector<int> edgeVec = vecFromJSArray<int>(edges);
+
+        NCollection_IndexedMap<TopoDS_Shape, TopTools_ShapeMapHasher> edgeMap;
+        TopExp::MapShapes(shape, TopAbs_EDGE, edgeMap);
+        NCollection_IndexedDataMap<TopoDS_Shape, NCollection_List<TopoDS_Shape>, TopTools_ShapeMapHasher> edgeFaceMap;
+        TopExp::MapShapesAndAncestors(shape, TopAbs_EDGE, TopAbs_FACE, edgeFaceMap);
+
+        BRepFilletAPI_MakeChamfer makeChamfer(shape);
+        for (auto edge : edgeVec) {
+            const TopoDS_Edge& e = TopoDS::Edge(edgeMap.FindKey(edge + 1));
+            const auto& faces = edgeFaceMap.FindFromKey(e);
+            if (faces.IsEmpty()) {
+                return ShapeResult { TopoDS_Shape(), false, "Edge has no adjacent face" };
+            }
+            makeChamfer.Add(distance1, distance2, e, TopoDS::Face(faces.First()));
+        }
+        makeChamfer.Build();
+        if (!makeChamfer.IsDone()) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to chamfer" };
+        }
+        return ShapeResult { makeChamfer.Shape(), true, "" };
+    }
+
     static ShapeResult loft(const ShapeArray& sections, bool isSolid, bool isRuled, GeomAbs_Shape continuity)
     {
         std::vector<TopoDS_Shape> shapeVector = emscripten::vecFromJSArray<TopoDS_Shape>(sections);
@@ -966,6 +993,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("fillSurface", &ShapeFactory::fillSurface)
         .class_function("makeHole", &ShapeFactory::makeHole)
         .class_function("chamfer", &ShapeFactory::chamfer)
+        .class_function("chamferAsym", &ShapeFactory::chamferAsym)
         .class_function("fixShape", &ShapeFactory::fixShape)
         .class_function("fixSmallFace", &ShapeFactory::fixSmallFace)
         .class_function("loft", &ShapeFactory::loft)

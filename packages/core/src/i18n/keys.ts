@@ -173,6 +173,7 @@ export const I18N_KEYS = [
     "command.modify.brushRemove",
     "command.modify.chamfer",
     "command.modify.chamferAll",
+    "command.modify.chamferAsym",
     "command.modify.createJoint",
     "command.modify.createLink",
     "command.modify.exportUrdf",

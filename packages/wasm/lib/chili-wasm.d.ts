@@ -602,6 +602,7 @@ interface EmbindModule {
     fillet(_0: TopoDS_Shape, _1: Array<number>, _2: number): ShapeResult;
     variableFillet(_0: TopoDS_Shape, _1: Array<number>, _2: number, _3: number): ShapeResult;
     chamfer(_0: TopoDS_Shape, _1: Array<number>, _2: number): ShapeResult;
+    chamferAsym(_0: TopoDS_Shape, _1: Array<number>, _2: number, _3: number): ShapeResult;
     sweep(_0: Array<TopoDS_Shape>, _1: TopoDS_Wire, _2: boolean, _3: boolean): ShapeResult;
     makeThickSolidByJoin(_0: TopoDS_Shape, _1: Array<TopoDS_Shape>, _2: number): ShapeResult;
     simplifyShape(_0: TopoDS_Shape, _1: boolean, _2: boolean, _3: Array<TopoDS_Shape>): ShapeResult;

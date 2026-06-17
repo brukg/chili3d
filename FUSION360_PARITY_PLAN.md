@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 2:** **Two-Distance (asymmetric) Chamfer** — bevel edges setting back distance1 on one adjacent
+  face and distance2 on the other (Fusion's two-distance chamfer), unlike the equal-distance Chamfer. New
+  kernel factory `chamferAsym` (C++ `BRepFilletAPI_MakeChamfer::Add(d1,d2,edge,face)` with the reference
+  face auto-picked via MapShapesAndAncestors; WASM rebuilt). WASM test: a 20mm cube edge chamfered 2×4
+  removes a triangular prism of volume 80 (8000→7920).
+
 - **Batch 1:** **Sketch Chamfer** — bevel the corner between two straight edges that share an endpoint:
   set back the given distance along each edge and join the setback points with a straight line (companion
   to Sketch Fillet). Pure `chamferCorner(C,A,B,d)` recipe (rejects too-large setback). Unit tests: a 90°

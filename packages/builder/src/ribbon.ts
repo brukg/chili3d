@@ -158,6 +158,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         "modify.variableFillet",
                         "modify.chamfer",
                         "modify.chamferAll",
+                        "modify.chamferAsym",
                     ],
                     ["modify.draft", "modify.hole", "modify.fillSurface", "modify.offsetSurface"],
                     ["modify.shell", "modify.thicken", "modify.pushPull"],

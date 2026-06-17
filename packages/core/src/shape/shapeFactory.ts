@@ -122,6 +122,8 @@ export interface IShapeFactory {
         depth: number,
     ): Result<IShape>;
     chamfer(shape: IShape, edges: number[], distance: number): Result<IShape>;
+    /** Asymmetric chamfer: set back distance1 on one adjacent face and distance2 on the other. */
+    chamferAsym(shape: IShape, edges: number[], distance1: number, distance2: number): Result<IShape>;
     loft(
         sections: (IVertex | IEdge | IWire)[],
         isSolid: boolean,
