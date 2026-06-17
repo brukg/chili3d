@@ -78,7 +78,7 @@ export class DefaultDataExchange implements IDataExchange {
         } else if (this.extensionIs(fileName, ".obj")) {
             importResult = importObj(document, file.name, await file.text());
         } else if (this.extensionIs(fileName, ".ply")) {
-            importResult = importPly(document, file.name, await file.text());
+            importResult = importPly(document, file.name, new Uint8Array(await file.arrayBuffer()));
         } else if (this.extensionIs(fileName, ".3mf")) {
             importResult = await importThreeMf(document, file.name, new Uint8Array(await file.arrayBuffer()));
         } else if (this.extensionIs(fileName, ".dxf")) {

@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 7:** **Binary PLY import** — the PLY importer now reads binary (little- and big-endian) PLY,
+  not just ASCII (common scanner/MeshLab output). New `parsePlyBinary` walks the binary body per the
+  header's vertex/face layouts (typed DataView reads, x/y/z by declared property, fan-triangulated
+  faces); `importPly` takes raw bytes and auto-detects ASCII vs binary. WASM/parse test: a binary
+  little-endian triangle round-trips to the expected positions and indices.
+
 - **Batch 1:** **Polygon circumscribed option** — the Regular Polygon now offers inscribed (default;
   radius reaches the vertices) or **circumscribed** (radius reaches the edge midpoints / apothem, so the
   polygon's edges are tangent to the circle), via a `circumscribed` toggle that scales the vertex radius

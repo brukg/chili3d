@@ -2,7 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 import { describe, expect, test } from "@rstest/core";
-import { parsePly } from "../src/ply/plyImporter";
+import { parsePly, parsePlyBinary } from "../src/ply/plyImporter";
 
 const QUAD = `ply
 format ascii 1.0
@@ -30,9 +30,28 @@ describe("PLY importer", () => {
         expect(Math.max(...index)).toBeLessThan(4);
     });
 
-    test("returns empty for a binary PLY (unsupported)", () => {
-        const bin = "ply\nformat binary_little_endian 1.0\nelement vertex 1\nend_header\n";
-        const { position } = parsePly(bin);
-        expect(position.length).toBe(0);
+    test("parses a binary little-endian PLY triangle", () => {
+        const header =
+            "ply\nformat binary_little_endian 1.0\n" +
+            "element vertex 3\nproperty float x\nproperty float y\nproperty float z\n" +
+            "element face 1\nproperty list uchar int vertex_indices\nend_header\n";
+        const headerBytes = new TextEncoder().encode(header);
+        // 3 vertices × 3 float32 (36 bytes) + face (1 uchar count + 3 int32 = 13 bytes).
+        const body = new ArrayBuffer(36 + 13);
+        const dv = new DataView(body);
+        const verts = [0, 0, 0, 2, 0, 0, 2, 3, 0];
+        verts.forEach((v, i) => dv.setFloat32(i * 4, v, true));
+        dv.setUint8(36, 3);
+        dv.setInt32(37, 0, true);
+        dv.setInt32(41, 1, true);
+        dv.setInt32(45, 2, true);
+
+        const data = new Uint8Array(headerBytes.length + body.byteLength);
+        data.set(headerBytes, 0);
+        data.set(new Uint8Array(body), headerBytes.length);
+
+        const { position, index } = parsePlyBinary(data);
+        expect(Array.from(position)).toEqual([0, 0, 0, 2, 0, 0, 2, 3, 0]);
+        expect(Array.from(index)).toEqual([0, 1, 2]);
     });
 });
