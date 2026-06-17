@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1/2:** **Helix curve** — a standalone parametric helical edge (`HelixNode`) of a given radius,
+  pitch and height, via a NEW kernel factory `helix` (extracted from the thread/coil C++ helix builder;
+  WASM rebuilt). A ready path for sweeping a custom profile (Fusion's helix/spiral curve) — distinct
+  from Coil (which is the swept solid). WASM test: arc length = turns·√(circumference²+pitch²).
+
 - **Batch 8:** **Oriented Bounding Box** — build the tightest enclosing box, free to rotate to the
   part's natural axes (kernel `Bnd_OBB` via the previously-unused `IShape.orientedBoundingBox`) — the
   minimal stock box for a rotated part, unlike the axis-aligned Create Bounding Box. Reconstructs the

@@ -26,6 +26,7 @@ export * from "./extractEdges";
 export * from "./extractFaces";
 export * from "./extrude";
 export * from "./group";
+export * from "./helix";
 export * from "./intersectionPoint";
 export * from "./line";
 export * from "./linkedExtrude";

@@ -379,6 +379,18 @@ export class ShapeFactory implements IShapeFactory {
             wasm.ShapeFactory.sweep(ensureOccShape(profile), ensureOccShape(path)[0], true, isRound),
         );
     }
+    helix(
+        normal: XYZLike,
+        center: XYZLike,
+        radius: number,
+        pitch: number,
+        height: number,
+        leftHanded: boolean,
+    ): Result<IEdge> {
+        return convertShapeResult(
+            wasm.ShapeFactory.helix(normal, center, radius, pitch, height, leftHanded),
+        ) as Result<IEdge>;
+    }
     thread(
         normal: XYZLike,
         center: XYZLike,

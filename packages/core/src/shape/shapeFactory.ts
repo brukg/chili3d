@@ -49,6 +49,15 @@ export interface IShapeFactory {
     pushPull(shape: IShape, face: IShape, vec: XYZ): Result<IShape>;
     fuse(bottom: IShape, top: IShape): Result<IShape>;
     sweep(profile: IShape[], path: IWire, isRoundCorner: boolean): Result<IShape>;
+    /** A helix curve (edge) of the given radius, pitch and height — a ready path for a helical sweep. */
+    helix(
+        normal: XYZLike,
+        center: XYZLike,
+        radius: number,
+        pitch: number,
+        height: number,
+        leftHanded: boolean,
+    ): Result<IEdge>;
     thread(
         normal: XYZLike,
         center: XYZLike,

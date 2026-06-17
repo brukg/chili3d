@@ -259,6 +259,26 @@ public:
     // Helical thread / coil: sweep a circular profile (radius `profileRadius`) along a helix
     // of the given cylinder `radius`, `pitch` (axial advance per turn) and total `height`,
     // placed at `center` with its axis along `normal`.
+    // A helix curve (edge): a line in the (angle, height) parameter space of a cylindrical surface.
+    // The standalone path used by thread()/coil(), exposed so a custom profile can be swept along it.
+    static ShapeResult helix(const Vector3& normal, const Vector3& center, double radius, double pitch,
+        double height, bool leftHanded)
+    {
+        if (radius <= 0 || pitch <= 0 || height <= 0) {
+            return ShapeResult { TopoDS_Shape(), false, "Invalid helix parameters" };
+        }
+        Handle(Geom_CylindricalSurface) cyl
+            = new Geom_CylindricalSurface(gp_Ax3(Vector3::toPnt(center), Vector3::toDir(normal)), radius);
+        double slope = pitch / (2.0 * M_PI);
+        double uSpan = 2.0 * M_PI * (height / pitch);
+        gp_Dir2d dir(leftHanded ? -1.0 : 1.0, slope);
+        Handle(Geom2d_Line) line2d = new Geom2d_Line(gp_Pnt2d(0.0, 0.0), dir);
+        double paramLength = uSpan * std::sqrt(1.0 + slope * slope);
+        TopoDS_Edge helixEdge = BRepBuilderAPI_MakeEdge(line2d, cyl, 0.0, paramLength).Edge();
+        BRepLib::BuildCurves3d(helixEdge);
+        return ShapeResult { helixEdge, true, "" };
+    }
+
     static ShapeResult thread(const Vector3& normal, const Vector3& center, double radius, double pitch,
         double height, double profileRadius, bool leftHanded)
     {
@@ -899,6 +919,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("torus", &ShapeFactory::torus)
         .class_function("pyramid", &ShapeFactory::pyramid)
         .class_function("sweep", &ShapeFactory::sweep)
+        .class_function("helix", &ShapeFactory::helix)
         .class_function("thread", &ShapeFactory::thread)
         .class_function("rib", &ShapeFactory::rib)
         .class_function("pipeFeature", &ShapeFactory::pipeFeature)

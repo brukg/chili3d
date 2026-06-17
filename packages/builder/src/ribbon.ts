@@ -113,7 +113,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         "create.orientedBoundingBox",
                     ],
                     ["create.loft", "create.ruledSurface", "create.sweep", "create.revol", "create.thread"],
-                    ["create.coil"],
+                    ["create.coil", "create.helix"],
                 ],
                 collapsedItems: ["create.pipe"],
             },
