@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8:** **Measure Arc Angle** — report the included (sweep) angle of a selected circular arc edge
+  (a circle is parametrized by angle, so the sweep is the curve's parameter span). Complements Measure
+  Radius. WASM test: 90° and 135° arcs report their sweep.
+
 - **I/O:** **DXF native ELLIPSE export** — the DXF exporter now emits a real ELLIPSE entity for ellipse
   edges (centre + major-axis vector + minor/major ratio + start/end params) instead of tessellating them
   into line segments, so ellipses survive an export→import round-trip as ellipses. Added a

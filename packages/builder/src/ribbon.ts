@@ -222,6 +222,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         "measure.angle",
                         "measure.faceAngle",
                         "measure.edgeAngle",
+                        "measure.arcAngle",
                         "measure.radius",
                         "measure.select",
                     ],
