@@ -1,13 +1,14 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
-import { EditableShapeNode, type IDocument, type IEdge, type INode, Result } from "@chili3d/core";
+import { computeArcFromPoints } from "@chili3d/app";
+import { EditableShapeNode, type IDocument, type IEdge, type INode, Result, XYZ } from "@chili3d/core";
 
 export type DxfEntity =
     | { type: "line"; x1: number; y1: number; x2: number; y2: number }
     | { type: "circle"; cx: number; cy: number; r: number }
     | { type: "arc"; cx: number; cy: number; r: number; start: number; end: number }
-    | { type: "polyline"; vertices: { x: number; y: number }[]; closed: boolean };
+    | { type: "polyline"; vertices: { x: number; y: number; bulge: number }[]; closed: boolean };
 
 const KNOWN = new Set(["LINE", "CIRCLE", "ARC", "LWPOLYLINE"]);
 
@@ -22,7 +23,7 @@ export function parseDxf(text: string): DxfEntity[] {
     let type: string | null = null;
     let codes: Record<number, number> = {};
     // LWPOLYLINE repeats codes 10/20 per vertex, so it needs its own accumulator.
-    let poly: { vertices: { x: number; y: number }[]; closed: boolean } | null = null;
+    let poly: { vertices: { x: number; y: number; bulge: number }[]; closed: boolean } | null = null;
 
     const flush = () => {
         const c = codes;
@@ -58,15 +59,37 @@ export function parseDxf(text: string): DxfEntity[] {
             if (type === "LWPOLYLINE") poly = { vertices: [], closed: false };
         } else if (type === "LWPOLYLINE" && poly) {
             const n = Number(value);
+            const last = poly.vertices[poly.vertices.length - 1];
             if (code === 70) poly.closed = (n & 1) === 1;
-            else if (code === 10) poly.vertices.push({ x: n, y: 0 });
-            else if (code === 20 && poly.vertices.length) poly.vertices[poly.vertices.length - 1].y = n;
+            else if (code === 10) poly.vertices.push({ x: n, y: 0, bulge: 0 });
+            else if (code === 20 && last) last.y = n;
+            else if (code === 42 && last) last.bulge = n; // arc bulge for the segment after this vertex
         } else if (type) {
             codes[code] = Number(value);
         }
     }
     flush();
     return entities;
+}
+
+// Build an arc edge for a bulged polyline segment. A DXF bulge is tan(θ/4): the arc apex sits a
+// sagitta of bulge·(chord/2) off the chord midpoint, perpendicular to the chord. Reuses the proven
+// 3-point arc recipe (apex → computeArcFromPoints → shapeFactory.arc).
+function bulgeArc(ax: number, ay: number, bx: number, by: number, bulge: number): Result<IEdge> | undefined {
+    const z = 0;
+    const cx = bx - ax;
+    const cy = by - ay;
+    const len = Math.hypot(cx, cy);
+    if (len < 1e-9) return undefined;
+    const nx = -cy / len; // unit left-normal of the chord a→b
+    const ny = cx / len;
+    const sag = (bulge * len) / 2;
+    const apex = new XYZ({ x: (ax + bx) / 2 + nx * sag, y: (ay + by) / 2 + ny * sag, z });
+    const a = new XYZ({ x: ax, y: ay, z });
+    const b = new XYZ({ x: bx, y: by, z });
+    const params = computeArcFromPoints(a, apex, b);
+    if (!params) return shapeFactory.line(a, b);
+    return shapeFactory.arc(params.normal, params.center, params.start, params.angle);
 }
 
 /** Import a DXF file's 2D geometry (in the XY plane) as a compound of edges in an EditableShapeNode. */
@@ -85,8 +108,11 @@ export function importDxf(document: IDocument, name: string, text: string): Resu
             for (let i = 0; i < segments; i++) {
                 const a = e.vertices[i];
                 const b = e.vertices[(i + 1) % n];
-                const seg = shapeFactory.line({ x: a.x, y: a.y, z }, { x: b.x, y: b.y, z });
-                if (seg.isOk) edges.push(seg.value);
+                const seg =
+                    Math.abs(a.bulge) > 1e-9
+                        ? bulgeArc(a.x, a.y, b.x, b.y, a.bulge)
+                        : shapeFactory.line({ x: a.x, y: a.y, z }, { x: b.x, y: b.y, z });
+                if (seg?.isOk) edges.push(seg.value);
             }
             continue;
         } else {

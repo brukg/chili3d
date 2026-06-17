@@ -84,9 +84,9 @@ describe("DXF importer", () => {
         if (poly.type === "polyline") {
             expect(poly.closed).toBe(true);
             expect(poly.vertices).toEqual([
-                { x: 0, y: 0 },
-                { x: 4, y: 0 },
-                { x: 4, y: 3 },
+                { x: 0, y: 0, bulge: 0 },
+                { x: 4, y: 0, bulge: 0 },
+                { x: 4, y: 3, bulge: 0 },
             ]);
         }
     });
