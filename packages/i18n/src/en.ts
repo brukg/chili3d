@@ -100,6 +100,7 @@ export default {
         "command.create.group": "Group",
         "command.create.line": "Line",
         "command.create.loft": "Loft",
+        "command.create.ruledSurface": "Ruled Surface",
         "command.create.offset": "Offset",
         "command.create.pipe": "Pipe",
         "command.create.point": "Point",

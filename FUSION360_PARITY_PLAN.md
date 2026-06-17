@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 3:** **Ruled Surface** — a dedicated 2-rail ruled surface command (Fusion's "Ruled"): select
+  two edges/wires, build the straight-line surface between them via a ruled, non-solid loft. Discoverable
+  one-click alternative to the general Loft. WASM test: a ruled surface between two parallel 10mm
+  segments 5mm apart is a 50 mm² strip.
+
 - **Batch 1:** **Fit Point Spline** — a B-spline curve passing through every picked point (Fusion's
   fit-point spline), via a NEW kernel factory `interpolate(points, periodic)` (C++ GeomAPI_Interpolate;
   WASM rebuilt). Click the first point again to close into a smooth periodic spline. Distinct from

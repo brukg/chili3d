@@ -95,6 +95,7 @@ export const I18N_KEYS = [
     "command.create.group",
     "command.create.line",
     "command.create.loft",
+    "command.create.ruledSurface",
     "command.create.offset",
     "command.create.pipe",
     "command.create.point",

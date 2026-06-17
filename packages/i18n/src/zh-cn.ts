@@ -100,6 +100,7 @@ export default {
         "command.create.group": "创建组",
         "command.create.line": "直线",
         "command.create.loft": "放样",
+        "command.create.ruledSurface": "直纹曲面",
         "command.create.offset": "偏移",
         "command.create.pipe": "管状体",
         "command.create.point": "点",
