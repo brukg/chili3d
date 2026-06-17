@@ -306,8 +306,22 @@ export class SketchAngleCommand extends SketchConstraintCommand {
         this.setProperty("angle", value);
     }
 
+    // Optional expression in DEGREES (e.g. "draftAngle * 2") evaluated against the document's named
+    // parameters. The solver stores the angle in radians, so the expression is wrapped with the
+    // deg→rad factor; an empty expression falls back to the literal angle.
+    @property("parameter.expression")
+    get expression() {
+        return this.getPrivateValue("expression", "");
+    }
+    set expression(value: string) {
+        this.setProperty("expression", value);
+    }
+
     protected buildConstraint(_node: SketchNode, [a, b, c, d]: number[]): SketchConstraint | undefined {
-        return { type: "angle", a, b, c, d, radians: (this.angle * Math.PI) / 180 };
+        const expr = this.expression.trim();
+        const radians: SketchDimension =
+            expr.length > 0 ? `(${expr})*${Math.PI / 180}` : (this.angle * Math.PI) / 180;
+        return { type: "angle", a, b, c, d, radians };
     }
 }
 

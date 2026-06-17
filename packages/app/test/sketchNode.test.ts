@@ -283,6 +283,30 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         expect(Math.hypot(solved.points[1].x - solved.points[0].x, solved.points[1].y)).toBeCloseTo(10, 6);
     });
 
+    test("an expression-valued angle dimension (degrees) resolves against parameters", () => {
+        // The angle command wraps a degrees expression as "(expr)*<deg2rad>" so it solves in radians.
+        const factor = Math.PI / 180;
+        const pts: Point2d[] = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 3, y: 4 },
+        ];
+        const cons: SketchConstraint[] = [
+            { type: "fixed", point: 0, x: 0, y: 0 },
+            { type: "fixed", point: 1, x: 10, y: 0 },
+            { type: "distance", a: 0, b: 2, d: 5 },
+            { type: "angle", a: 0, b: 1, c: 0, d: 2, radians: `(w)*${factor}` },
+        ];
+        const solved = solveConstraints(
+            pts,
+            cons.map((c) => toConstraint(c, { w: 90 })),
+        );
+        expect(solved.converged).toBe(true);
+        // w=90° → segment 0→2 is perpendicular to the x-axis: x≈0, |y|≈5.
+        expect(solved.points[2].x).toBeCloseTo(0, 4);
+        expect(Math.abs(solved.points[2].y)).toBeCloseTo(5, 4);
+    });
+
     test("a tangent constraint makes two circles externally tangent", () => {
         const doc = new TestDocument() as any;
         // Circle 1: diameter (−2,0)-(2,0) → centre (0,0), r=2 (fixed). Circle 2: diameter points start

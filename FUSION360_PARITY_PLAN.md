@@ -79,10 +79,11 @@ Items marked **[session]** were shipped in the current rollout.
   Headless test: a circle's centre moves to distance r1+r2.
   The solver now has 18 constraint functions (5 added this run: symmetric, midpoint, collinear,
   concentric, tangent-circles).
-- **Batch 1 (parametric):** expression-driven dimensions — the Dimension / Horizontal / Vertical
-  dimension commands now take an optional expression (e.g. "width/2") evaluated against the document's
-  named parameters, instead of only a literal. Changing a parameter resizes the sketch — core Fusion
-  parametric behaviour. Headless test: a "w*2" dimension solves to 10 when w=5.
+- **Batch 1 (parametric):** expression-driven dimensions — the Dimension / Horizontal / Vertical /
+  **Angle** dimension commands take an optional expression evaluated against the document's named
+  parameters, instead of only a literal (angle wraps the degrees expression with the deg→rad factor).
+  Changing a parameter resizes the sketch — core Fusion parametric behaviour. Headless tests: a "w*2"
+  distance solves to 10 at w=5; a "w" degrees angle solves to 90° at w=90.
 - **Batch 2 (primitive):** Coil — a discoverable Coil command + parametric CoilNode (Fusion's Coil/
   spring). Same helical-sweep kernel as Thread but presented as a spring with loose-turn defaults;
   previously the only access to a helix was the Thread primitive.
