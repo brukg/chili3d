@@ -107,6 +107,9 @@ Items marked **[session]** were shipped in the current rollout.
   to open the package, order-independent regex parse of the `<model>` vertices/triangles). Mesh import
   now covers STL/OBJ/PLY/3MF — matching what the exporter supports. _Remaining: GLTF/binary PLY import,
   mesh→BRep, reduce/remesh._
+- **Batch 11 (2D I/O):** DXF import — parses LINE/CIRCLE/ARC group-code entities into edges (XY plane)
+  → compound EditableShapeNode (import 2D profiles to extrude; round-trips with the DXF export). Pure
+  parser is headless-tested. _Remaining: LWPOLYLINE/SPLINE entities._
 - **Batch 1/3 (started):** Sketch Rectangle — two-corner rectangle created as a fully-constrained
   SketchNode (H/V edges + signed width/height dimensions), editable like a real sketch profile
   (vs the static create.rect face). Headless test: solves to an exact 30×20 rectangle.
