@@ -231,6 +231,7 @@ export default {
         "command.workingPlane.offset": "Offset Plane",
         "command.workingPlane.atAngle": "Plane at Angle",
         "command.workingPlane.midPlane": "Midplane",
+        "command.workingPlane.tangent": "Tangent Plane",
         "command.workingPlane.set": "Set",
         "command.workingPlane.toggleDynamic": "Toggle",
         "common.3DNavigation": "3D Navigation",

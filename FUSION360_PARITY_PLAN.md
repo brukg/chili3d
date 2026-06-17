@@ -32,6 +32,9 @@ Items marked **[session]** were shipped in the current rollout.
   isCircle). Measure Edge Length — total true (curve) length of selected edges/wires, so arcs measure
   along the curve. _Remaining: section analysis, draft/curvature/zebra analysis._
 - **Batch 11:** Toggle Perspective/Orthographic projection command (flips `cameraController.cameraType`).
+- **Batch 4 (construction):** Tangent Plane — pick a face + a point on it; the working plane becomes
+  tangent to the face there (origin = point, normal = surface normal via `surface.parameter` +
+  `face.normal`). For curved faces this is the local tangent plane to sketch on.
 - **Batch 4 (construction):** Point at Midpoint — drops a construction point at each selected edge's
   true midpoint (curve mid-parameter, correct for arcs too). Headless test: line midpoint (5,0,2).
   Point at Center — drops a point at a circular edge's centre (via the curve/basis-curve, CurveUtils.

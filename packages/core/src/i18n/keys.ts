@@ -223,6 +223,7 @@ export const I18N_KEYS = [
     "command.workingPlane.offset",
     "command.workingPlane.atAngle",
     "command.workingPlane.midPlane",
+    "command.workingPlane.tangent",
     "command.workingPlane.set",
     "command.workingPlane.toggleDynamic",
     "common.3DNavigation",

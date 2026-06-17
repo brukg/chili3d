@@ -231,6 +231,7 @@ export default {
         "command.workingPlane.offset": "偏移平面",
         "command.workingPlane.atAngle": "成角度平面",
         "command.workingPlane.midPlane": "中间平面",
+        "command.workingPlane.tangent": "相切平面",
         "command.workingPlane.set": "设置工作平面",
         "command.workingPlane.toggleDynamic": "动态工作平面",
         "common.3DNavigation": "3D导航",

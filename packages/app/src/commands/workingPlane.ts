@@ -306,3 +306,37 @@ export class MidPlane extends MultistepCommand {
         ];
     }
 }
+
+// Tangent construction plane: pick a face and a point on it; the working plane becomes tangent to the
+// face at that point (origin = the point, normal = the surface normal there). For a curved face this
+// gives the local tangent plane to sketch on — Fusion's "tangent plane".
+@command({
+    key: "workingPlane.tangent",
+    icon: "icon-setWorkingPlane",
+})
+export class TangentPlane extends MultistepCommand {
+    protected override executeMainTask() {
+        const view = this.application.activeView;
+        if (!view) return;
+        const data = this.stepDatas[0].shapes[0];
+        const face = data.shape.transformedMul(data.transform) as IFace;
+        const picked = this.stepDatas[1].point!;
+        // Recover the face parameters at the picked point, then read the true surface normal there.
+        const uv = face.surface().parameter(picked, 1e-3);
+        if (!uv) {
+            face.dispose();
+            PubSub.default.pub("showToast", "toast.converter.error");
+            return;
+        }
+        const [origin, normal] = face.normal(uv.u, uv.v);
+        face.dispose();
+        view.workplane = new Plane({ origin, normal, xvec: planeXVec(normal) });
+    }
+
+    protected override getSteps(): IStep[] {
+        return [
+            new SelectShapeStep(ShapeTypes.face, "prompt.select.faces"),
+            new PointStep("prompt.pickPoint"),
+        ];
+    }
+}
