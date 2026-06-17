@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Measure:** **Moments of Inertia** — report the inertia tensor of a solid about its centre of mass
+  (Fusion's Properties → moments of inertia): the diagonal Ixx/Iyy/Izz and products Ixy/Ixz/Iyz in mm⁵
+  (unit density). The kernel already integrated these via `massProperties()`; only the mass/properties
+  measures consumed them. New `measure.inertia` command surfaces them. WASM test: a 20 mm cube has
+  isotropic diagonal moments V·(s²+s²)/12 = 533333.33 and zero products.
 - **Batch 2:** **Emboss** — extrude a profile face along its normal and fuse it onto a target body
   (raise, default) or cut it into the body (engrave) by a given depth — Fusion's emboss/engrave for
   planar profiles, one of the last genuinely-missing CREATE features. WASM tests: a r=3 profile engraved

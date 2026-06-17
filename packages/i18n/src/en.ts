@@ -185,6 +185,7 @@ export default {
         "command.measure.radius": "Radius",
         "command.measure.boundingBox": "Bounding Box",
         "command.measure.centerOfMass": "Center of Mass",
+        "command.measure.inertia": "Moments of Inertia",
         "command.measure.interference": "Interference",
         "command.measure.length": "Length",
         "command.measure.distance": "Distance",
@@ -523,6 +524,8 @@ export default {
         "toast.measure.interference:{0}": "Bodies interfere — overlap volume: {0} mm³",
         "toast.measure.noInterference": "No interference",
         "toast.measure.properties:{0}{1}{2}{3}{4}": "Volume: {0} mm³, Area: {1} mm², Center: ({2}, {3}, {4})",
+        "toast.measure.inertia:{0}{1}{2}{3}{4}{5}":
+            "Inertia about center of mass (mm⁵) — Ixx: {0}, Iyy: {1}, Izz: {2}; Ixy: {3}, Ixz: {4}, Iyz: {5}",
         "toast.measure.boundingBox:{0}{1}{2}": "Bounding box: {0} × {1} × {2} mm",
         "toast.measure.radius:{0}{1}": "Radius: {0} mm, Diameter: {1} mm",
         "toast.measure.edgeLength:{0}": "Total length: {0} mm",

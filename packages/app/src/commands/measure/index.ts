@@ -11,6 +11,7 @@ export * from "./distance";
 export * from "./edgeAngle";
 export * from "./edgeLength";
 export * from "./faceAngle";
+export * from "./inertia";
 export * from "./interferenceCheck";
 export * from "./length";
 export * from "./mass";
