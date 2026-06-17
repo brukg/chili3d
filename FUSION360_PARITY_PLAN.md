@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8:** **Measure Distance** — minimum (extrema) gap between two selected shapes of any
+  topology (vertex/edge/face/solid), via the existing `IShape.extremaDistance` (BRepExtrema_DistShapeShape).
+  Two single-select steps → toast. Complements free point-to-point Measure Length. WASM test asserts
+  analytic values (3-4-5 points → 5; box face to external point → 5).
+
 - **Batch 1 (partial):** interactive sketch constraints — 13 commands (Horizontal, Vertical,
   Coincident, Fix, Parallel, Perpendicular, Equal, Point-on-Line, **Symmetric**, Dimension,
   Horizontal/Vertical/Angle dimension). Symmetric is a NEW solver constraint (added `symmetric()` to
