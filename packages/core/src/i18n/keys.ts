@@ -408,6 +408,7 @@ export const I18N_KEYS = [
     "point.position",
     "polygon.points",
     "regularPolygon.sides",
+    "regularPolygon.circumscribed",
     "pipe.bendRadius",
     "pipe.bendType",
     "torus.radius",

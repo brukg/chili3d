@@ -414,6 +414,7 @@ export default {
         "point.position": "Position",
         "polygon.points": "Points",
         "regularPolygon.sides": "Number of Sides",
+        "regularPolygon.circumscribed": "Circumscribed",
         "pipe.bendRadius": "Bend Radius",
         "pipe.bendType": "Bend Type",
         "torus.radius": "Ring Radius",

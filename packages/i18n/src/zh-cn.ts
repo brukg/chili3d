@@ -414,6 +414,7 @@ export default {
         "point.position": "位置",
         "polygon.points": "点",
         "regularPolygon.sides": "边数",
+        "regularPolygon.circumscribed": "外切",
         "pipe.bendRadius": "弯管半径",
         "pipe.bendType": "弯管类型",
         "torus.radius": "环半径",

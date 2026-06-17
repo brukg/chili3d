@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1:** **Polygon circumscribed option** — the Regular Polygon now offers inscribed (default;
+  radius reaches the vertices) or **circumscribed** (radius reaches the edge midpoints / apothem, so the
+  polygon's edges are tangent to the circle), via a `circumscribed` toggle that scales the vertex radius
+  by 1/cos(π/sides) — Fusion's polygon option. Unit tests: circumscribed hexagon apothem = the radius.
+
 - **Batch 1:** **Polyline** — chain connected straight segments by clicking a sequence of points
   (Fusion's Line tool behaviour, vs the single-segment Line); click the first point again to close into
   a loop. Builds one wire of line edges. WASM tests: an open 3-point polyline → 2 edges, length 15; a

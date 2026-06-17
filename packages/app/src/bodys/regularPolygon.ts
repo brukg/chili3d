@@ -20,6 +20,7 @@ export interface RegularPolygonOptions {
     center: XYZ;
     radius: number;
     sides: number;
+    circumscribed?: boolean;
 }
 
 @serializable()
@@ -56,6 +57,15 @@ export class RegularPolygonNode extends FacebaseNode {
     }
 
     @serialize()
+    @property("regularPolygon.circumscribed")
+    get circumscribed() {
+        return this.getPrivateValue("circumscribed", false);
+    }
+    set circumscribed(value: boolean) {
+        this.setPropertyEmitShapeChanged("circumscribed", value);
+    }
+
+    @serialize()
     get normal(): XYZ {
         return this.getPrivateValue("normal");
     }
@@ -72,12 +82,19 @@ export class RegularPolygonNode extends FacebaseNode {
         this.setPrivateValue("center", options.center);
         this.setPrivateValue("radius", options.radius);
         this.setPrivateValue("sides", options.sides);
+        this.setPrivateValue("circumscribed", options.circumscribed ?? false);
+    }
+
+    // For an inscribed polygon the radius reaches the vertices; for a circumscribed one it reaches the
+    // edge midpoints (the apothem), so the vertices sit further out by 1/cos(π/sides).
+    static effectiveRadius(radius: number, sides: number, circumscribed: boolean): number {
+        return circumscribed ? radius / Math.cos(Math.PI / sides) : radius;
     }
 
     generateShape(): Result<IShape, string> {
         const points = RegularPolygonNode.calculateVertices(
             this.center,
-            this.radius,
+            RegularPolygonNode.effectiveRadius(this.radius, this.sides, this.circumscribed),
             this.sides,
             this.normal,
             this.xvec,

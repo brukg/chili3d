@@ -34,6 +34,14 @@ export class RegularPolygon extends CreateFaceableCommand {
         }
     }
 
+    @property("regularPolygon.circumscribed")
+    get circumscribed() {
+        return this.getPrivateValue("circumscribed", false);
+    }
+    set circumscribed(value: boolean) {
+        this.setProperty("circumscribed", value);
+    }
+
     getSteps(): IStep[] {
         const centerStep = new PointStep("prompt.pickCircleCenter");
         const radiusStep = new LengthAtPlaneStep("prompt.pickRadius", this.getRadiusData);
@@ -64,6 +72,7 @@ export class RegularPolygon extends CreateFaceableCommand {
             center: p1,
             radius: plane.projectDistance(p1, p2),
             sides: this._sides,
+            circumscribed: this.circumscribed,
         });
         body.isFace = this.isFace;
         return body;
@@ -79,7 +88,7 @@ export class RegularPolygon extends CreateFaceableCommand {
 
         const vertices = RegularPolygonNode.calculateVertices(
             point!,
-            radius,
+            RegularPolygonNode.effectiveRadius(radius, this._sides, this.circumscribed),
             this._sides,
             plane.normal,
             plane.xvec,
