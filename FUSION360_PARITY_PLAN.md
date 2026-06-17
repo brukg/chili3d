@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1:** **Spiral curve** — a flat Archimedean spiral (`SpiralNode`) whose radius grows linearly
+  from start to end over N turns, built by interpolating sampled points through the spline factory
+  (`shapeFactory.interpolate`) — Fusion's spiral. Pure `spiralPoints` sampler is unit-tested
+  (linear-radius, in-plane, integer-turn collinearity); WASM test confirms the curve passes through
+  its samples. No kernel change — reuses the interpolate factory.
+
 - **Batch 1/2:** **Helix curve** — a standalone parametric helical edge (`HelixNode`) of a given radius,
   pitch and height, via a NEW kernel factory `helix` (extracted from the thread/coil C++ helix builder;
   WASM rebuilt). A ready path for sweeping a custom profile (Fusion's helix/spiral curve) — distinct

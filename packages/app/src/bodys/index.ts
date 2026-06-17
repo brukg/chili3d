@@ -30,6 +30,7 @@ export * from "./revolve";
 export * from "./rib";
 export * from "./sketchNode";
 export * from "./sphere";
+export * from "./spiral";
 export * from "./sweep";
 export * from "./thread";
 export * from "./torus";
