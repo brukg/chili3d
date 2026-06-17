@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 2/6:** **Shell direction option** — the Shell command now offers inward (default; outer
+  dimensions preserved) or **outward** walls (inner cavity preserved), via a new `outside` toggle that
+  flips the kernel offset sign — Fusion's shell direction. WASM tests: inward shell of an open-top 20mm
+  cube → volume 3392 (outer box unchanged); outward shell grows the footprint past 20mm.
+
 - **Batch 8/9:** **Half Section (cutaway)** — cut the selected solid with a plane through its centre
   (parallel to the active workplane) and keep the back half, exposing the interior — a one-step
   section/cutaway view (vs split+delete). Cuts away a half-space box via booleanCut; the original body

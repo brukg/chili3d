@@ -389,6 +389,7 @@ export default {
         "option.command.isRoundCorner": "Round Corner",
         "option.command.isRuled": "Ruled",
         "option.command.isSolid": "Solid",
+        "option.command.shellOutside": "Outward walls",
         "option.command.repeat": "Repeat",
         "option.command.thickness": "Thickness",
         "option.command.distance": "Distance",

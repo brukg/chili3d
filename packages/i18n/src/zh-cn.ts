@@ -389,6 +389,7 @@ export default {
         "option.command.isRoundCorner": "圆角",
         "option.command.isRuled": "直纹曲面",
         "option.command.isSolid": "实体",
+        "option.command.shellOutside": "向外加厚",
         "option.command.repeat": "重复",
         "option.command.thickness": "厚度",
         "option.command.distance": "距离",

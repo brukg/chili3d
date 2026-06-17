@@ -33,11 +33,21 @@ export class ShellCommand extends MultistepCommand {
         this.setProperty("thickness", value);
     }
 
+    // Wall direction: inward (default — outer dimensions preserved) or outward (inner cavity preserved).
+    @property("option.command.shellOutside")
+    get outside() {
+        return this.getPrivateValue("outside", false);
+    }
+    set outside(value: boolean) {
+        this.setProperty("outside", value);
+    }
+
     protected override executeMainTask(): void {
         Transaction.execute(this.document, `excute ${Object.getPrototypeOf(this).data.name}`, () => {
             const node = this.stepDatas[0].shapes[0].owner.node as ShapeNode;
             const faces = this.stepDatas[1].shapes.map((x) => x.shape as IFace);
-            const result = shapeFactory.makeThickSolidByJoin(node.shape.value, faces, -this.thickness);
+            const offset = this.outside ? this.thickness : -this.thickness;
+            const result = shapeFactory.makeThickSolidByJoin(node.shape.value, faces, offset);
             if (!result.isOk) {
                 PubSub.default.pub("showToast", "toast.converter.error");
                 return;

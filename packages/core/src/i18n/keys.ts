@@ -383,6 +383,7 @@ export const I18N_KEYS = [
     "option.command.isRoundCorner",
     "option.command.isRuled",
     "option.command.isSolid",
+    "option.command.shellOutside",
     "option.command.repeat",
     "option.command.thickness",
     "option.command.distance",
