@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1:** **Sketch Chamfer** — bevel the corner between two straight edges that share an endpoint:
+  set back the given distance along each edge and join the setback points with a straight line (companion
+  to Sketch Fillet). Pure `chamferCorner(C,A,B,d)` recipe (rejects too-large setback). Unit tests: a 90°
+  corner set back 2 → bevel length 2√2; over-long setback → undefined.
+
 - **Batch 1:** **Sketch Fillet** — round the corner between two straight edges that share an endpoint
   with a tangent arc of a given radius (Fusion's sketch fillet): the edges are trimmed to the tangent
   points and joined by the fillet arc → wire. Pure `filletCorner(C,A,B,r)` recipe (tangent points + arc

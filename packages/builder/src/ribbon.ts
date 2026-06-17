@@ -20,6 +20,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     "create.sketchSlot",
                     "create.roundedRect",
                     "create.sketchFillet",
+                    "create.sketchChamfer",
                     "create.sketchPolygon",
                     {
                         type: "split",

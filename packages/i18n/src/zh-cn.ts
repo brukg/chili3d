@@ -139,6 +139,7 @@ export default {
         "command.create.sketchSlot": "草图槽",
         "command.create.roundedRect": "圆角矩形",
         "command.create.sketchFillet": "草图圆角",
+        "command.create.sketchChamfer": "草图倒角",
         "command.create.sphere": "球体",
         "command.create.sweep": "扫略",
         "command.create.thickSolid": "加厚实体",

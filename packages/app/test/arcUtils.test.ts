@@ -3,7 +3,12 @@
 
 import { XYZ } from "@chili3d/core";
 import { describe, expect, test } from "@rstest/core";
-import { computeCircleFromPoints, filletCorner, intersectTwoPlanes } from "../src/commands/create/arcUtils";
+import {
+    chamferCorner,
+    computeCircleFromPoints,
+    filletCorner,
+    intersectTwoPlanes,
+} from "../src/commands/create/arcUtils";
 
 describe("computeCircleFromPoints (3-point circle math)", () => {
     test("three points of the unit circle give centre (0,0,0) and radius 1", () => {
@@ -105,5 +110,24 @@ describe("filletCorner (round a corner between two rays)", () => {
     test("a collinear corner returns undefined", () => {
         const f = filletCorner(XYZ.zero, new XYZ({ x: 10, y: 0, z: 0 }), new XYZ({ x: -10, y: 0, z: 0 }), 2);
         expect(f).toBeUndefined();
+    });
+});
+
+describe("chamferCorner (bevel a corner between two rays)", () => {
+    test("a 90° corner set back 2 gives the two setback points", () => {
+        const c = chamferCorner(XYZ.zero, new XYZ({ x: 10, y: 0, z: 0 }), new XYZ({ x: 0, y: 10, z: 0 }), 2)!;
+        expect(c).toBeDefined();
+        expect(c.c1.x).toBeCloseTo(2, 6);
+        expect(c.c1.y).toBeCloseTo(0, 6);
+        expect(c.c2.x).toBeCloseTo(0, 6);
+        expect(c.c2.y).toBeCloseTo(2, 6);
+        // The bevel line length across a 90° corner = distance·√2.
+        expect(c.c1.distanceTo(c.c2)).toBeCloseTo(2 * Math.SQRT2, 6);
+    });
+
+    test("a setback longer than a ray returns undefined", () => {
+        expect(
+            chamferCorner(XYZ.zero, new XYZ({ x: 1, y: 0, z: 0 }), new XYZ({ x: 0, y: 10, z: 0 }), 5),
+        ).toBeUndefined();
     });
 });

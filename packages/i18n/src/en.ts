@@ -139,6 +139,7 @@ export default {
         "command.create.sketchSlot": "Sketch Slot",
         "command.create.roundedRect": "Rounded Rectangle",
         "command.create.sketchFillet": "Sketch Fillet",
+        "command.create.sketchChamfer": "Sketch Chamfer",
         "command.create.sphere": "Sphere",
         "command.create.sweep": "Sweep",
         "command.create.thickSolid": "Thick Solid",

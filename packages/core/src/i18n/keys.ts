@@ -134,6 +134,7 @@ export const I18N_KEYS = [
     "command.create.sketchSlot",
     "command.create.roundedRect",
     "command.create.sketchFillet",
+    "command.create.sketchChamfer",
     "command.create.sphere",
     "command.create.sweep",
     "command.create.thickSolid",

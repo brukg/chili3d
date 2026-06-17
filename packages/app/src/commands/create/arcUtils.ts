@@ -106,6 +106,19 @@ export function filletCorner(C: XYZ, A: XYZ, B: XYZ, r: number) {
     return { t1, t2, mid, center };
 }
 
+/**
+ * Compute a straight chamfer that bevels the corner C between the two rays C→A and C→B by setting back
+ * `distance` along each ray. Returns the two setback points (the chamfer line runs c1→c2). Returns
+ * undefined when a ray is degenerate or the setback exceeds an available ray length.
+ */
+export function chamferCorner(C: XYZ, A: XYZ, B: XYZ, distance: number) {
+    const d1 = A.sub(C).normalize();
+    const d2 = B.sub(C).normalize();
+    if (!d1 || !d2) return undefined;
+    if (distance > C.distanceTo(A) || distance > C.distanceTo(B)) return undefined;
+    return { c1: C.add(d1.multiply(distance)), c2: C.add(d2.multiply(distance)) };
+}
+
 function positiveAngle(from: XYZ, to: XYZ, normal: XYZ): number {
     const dot = from.dot(to);
     const crossVec = from.cross(to);
