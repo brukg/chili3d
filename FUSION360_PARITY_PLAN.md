@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 2:** **Tube primitive** — parametric hollow cylinder (`TubeNode`, serializable). Same picks
+  as Cylinder (centre, outer radius, height) plus an editable wall-thickness property; bore = outer −
+  thickness, built by cutting the inner cylinder from the outer. A non-positive bore degrades to a
+  solid cylinder. WASM node tests: annular volume = π·(R²−r²)·h, and degenerate-bore = solid cylinder.
+
 - **Batch 4:** **Axis at Two Faces** — construction axis on the line where two planar faces intersect
   (Fusion's axis-through-two-planes), derived from the faces' planes via a new pure `intersectTwoPlanes`
   helper (direction = n1×n2; nearest-origin point); parallel faces are rejected. Distinct from the line
