@@ -83,6 +83,7 @@ export default {
         "command.create.spline": "拟合点样条",
         "command.create.box": "立方体",
         "command.create.boundingBox": "包围盒",
+        "command.create.orientedBoundingBox": "有向包围盒",
         "command.create.circle": "圆形",
         "command.create.coil": "螺旋",
         "command.create.cone": "圆锥",

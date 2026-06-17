@@ -79,6 +79,7 @@ export const I18N_KEYS = [
     "command.create.spline",
     "command.create.box",
     "command.create.boundingBox",
+    "command.create.orientedBoundingBox",
     "command.create.circle",
     "command.create.coil",
     "command.create.cone",

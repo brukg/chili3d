@@ -32,6 +32,7 @@ export * from "./linkedExtrude";
 export * from "./loft";
 export * from "./midpointPoint";
 export * from "./offset";
+export * from "./orientedBoundingBox";
 export * from "./pipe";
 export * from "./point";
 export * from "./polygon";

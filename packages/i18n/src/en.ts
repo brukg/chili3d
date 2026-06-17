@@ -83,6 +83,7 @@ export default {
         "command.create.spline": "Fit Point Spline",
         "command.create.box": "Box",
         "command.create.boundingBox": "Bounding Box",
+        "command.create.orientedBoundingBox": "Oriented Bounding Box",
         "command.create.circle": "Circle",
         "command.create.coil": "Coil",
         "command.create.cone": "Cone",

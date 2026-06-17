@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8:** **Oriented Bounding Box** — build the tightest enclosing box, free to rotate to the
+  part's natural axes (kernel `Bnd_OBB` via the previously-unused `IShape.orientedBoundingBox`) — the
+  minimal stock box for a rotated part, unlike the axis-aligned Create Bounding Box. Reconstructs the
+  box from the OBB centre Ax3 + half-extents. WASM tests: a 10×20×30 box → half-extents 5/10/15, and
+  the box stays tight (volume 6000) under a 36° rotation.
+
 - **Batch 9 (first step):** **Projected View** — flatten selected solid(s) to a 2D outline along the
   current view direction using the kernel's hidden-line removal (`IShape.hlr`, previously unused in the
   app). Produces a compound of visible projected edges (a drawing view / "project to sketch"), ready
