@@ -97,8 +97,9 @@ Items marked **[session]** were shipped in the current rollout.
 - **Batch 7 (mesh, DONE for OBJ):** OBJ mesh import — a pure-TS Wavefront OBJ parser (no three.js
   dependency) → Mesh (surface) → MeshNode, wired into DefaultDataExchange (`.obj` added to import
   formats). Handles polygons (fan-triangulated), v/vt/vn face tokens, negative indices; computes
-  per-vertex normals. Headless tests: a cube parses to 8 verts / 12 triangles. _Remaining mesh import:
-  PLY/3MF/GLTF, mesh→BRep, reduce/remesh._
+  per-vertex normals. Headless tests: a cube parses to 8 verts / 12 triangles. **ASCII PLY import**
+  too (shared buildSurfaceMeshNode helper; binary PLY rejected gracefully). _Remaining mesh import:
+  3MF/GLTF, binary PLY, mesh→BRep, reduce/remesh._
 - **Batch 1/3 (started):** Sketch Rectangle — two-corner rectangle created as a fully-constrained
   SketchNode (H/V edges + signed width/height dimensions), editable like a real sketch profile
   (vs the static create.rect face). Headless test: solves to an exact 30×20 rectangle.

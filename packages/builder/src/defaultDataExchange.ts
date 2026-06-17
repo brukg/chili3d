@@ -16,6 +16,7 @@ import {
 } from "@chili3d/core";
 import { exportDxf } from "./dxf/dxfExporter";
 import { importObj } from "./obj/objImporter";
+import { importPly } from "./ply/plyImporter";
 import { exportThreeMf } from "./threemf/threeMfExporter";
 import { exportUrdf } from "./urdf/urdfExporter";
 import { importUrdf } from "./urdf/urdfImporter";
@@ -23,7 +24,7 @@ import { validateRobotTree } from "./urdf/urdfValidate";
 
 export class DefaultDataExchange implements IDataExchange {
     importFormats(): string[] {
-        return [".step", ".stp", ".iges", ".igs", ".brep", ".stl", ".obj", ".urdf"];
+        return [".step", ".stp", ".iges", ".igs", ".brep", ".stl", ".obj", ".ply", ".urdf"];
     }
 
     exportFormats(): string[] {
@@ -60,6 +61,8 @@ export class DefaultDataExchange implements IDataExchange {
             importResult = await this.importStl(document, file);
         } else if (this.extensionIs(fileName, ".obj")) {
             importResult = importObj(document, file.name, await file.text());
+        } else if (this.extensionIs(fileName, ".ply")) {
+            importResult = importPly(document, file.name, await file.text());
         } else if (this.extensionIs(fileName, ".step", ".stp")) {
             importResult = await this.importStep(document, file);
         } else if (this.extensionIs(fileName, ".iges", ".igs")) {
