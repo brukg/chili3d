@@ -173,6 +173,22 @@ export function concentric(a: number, b: number, c: number, d: number): Constrai
     };
 }
 
+/** Two circles, each given by a diameter point-pair (a,b) and (c,d), are externally tangent: the
+ * distance between their centres equals the sum of their radii. */
+export function tangentCircles(a: number, b: number, c: number, d: number): Constraint {
+    return {
+        residuals: (v) => {
+            const m1x = (v[px(a)] + v[px(b)]) / 2;
+            const m1y = (v[py(a)] + v[py(b)]) / 2;
+            const m2x = (v[px(c)] + v[px(d)]) / 2;
+            const m2y = (v[py(c)] + v[py(d)]) / 2;
+            const r1 = Math.hypot(v[px(b)] - v[px(a)], v[py(b)] - v[py(a)]) / 2;
+            const r2 = Math.hypot(v[px(d)] - v[px(c)], v[py(d)] - v[py(c)]) / 2;
+            return [Math.hypot(m2x - m1x, m2y - m1y) - (r1 + r2)];
+        },
+    };
+}
+
 /** Point p sits at the midpoint of the segment from a to b. */
 export function midpoint(p: number, a: number, b: number): Constraint {
     return {

@@ -2,9 +2,13 @@
 // See LICENSE file in the project root for full license information.
 
 import {
+    CurveUtils,
     command,
+    type ICurve,
+    type IEdge,
     type IShape,
     type IStep,
+    type ITrimmedCurve,
     type IVertex,
     PubSub,
     property,
@@ -176,6 +180,63 @@ export class SketchConcentricCommand extends SketchConstraintCommand {
     protected readonly count = 2;
     protected buildConstraint(_node: SketchNode, [a, b, c, d]: number[]): SketchConstraint | undefined {
         return { type: "concentric", a, b, c, d };
+    }
+}
+
+// Tangent (circles): make two sketch circles externally tangent. Only valid between two circular
+// edges (each a 2-point bulge circle), so the command rejects non-circular picks rather than apply a
+// meaningless constraint.
+@command({ key: "sketch.constrainTangent", icon: "icon-circle" })
+export class SketchTangentCommand extends MultistepCommand {
+    protected override getSteps(): IStep[] {
+        return [
+            new SelectShapeStep(ShapeTypes.edge, "prompt.select.edges", {
+                multiple: true,
+                nodeFilter: { allow: (node) => node instanceof SketchNode },
+            }),
+        ];
+    }
+
+    protected override executeMainTask(): void {
+        const shapes = this.stepDatas[0].shapes;
+        const node = shapes[0]?.owner.node as ShapeNode | undefined;
+        if (!(node instanceof SketchNode) || shapes.length !== 2) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+        if (shapes.some((s) => s.owner.node !== node) || !shapes.every((s) => this.isCircular(s.shape))) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+
+        const [first, second] = shapes.map((s) => s.shape.findSubShapes(ShapeTypes.vertex) as IVertex[]);
+        if (first.length < 2 || second.length < 2) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+        const idx = [
+            node.nearestPointIndex(first[0].point()),
+            node.nearestPointIndex(first[1].point()),
+            node.nearestPointIndex(second[0].point()),
+            node.nearestPointIndex(second[1].point()),
+        ];
+        if (idx.some((i) => i < 0)) {
+            PubSub.default.pub("showToast", "toast.sketch.invalidSelection");
+            return;
+        }
+
+        Transaction.execute(this.document, "add tangent constraint", () => {
+            node.addConstraint({ type: "tangent", a: idx[0], b: idx[1], c: idx[2], d: idx[3] });
+        });
+        this.document.visual.update();
+    }
+
+    private isCircular(edge: IShape): boolean {
+        const curve = (edge as IEdge).curve as ICurve | undefined;
+        if (!curve) return false;
+        if (CurveUtils.isCircle(curve)) return true;
+        const basis = (curve as ITrimmedCurve).basisCurve;
+        return !!basis && CurveUtils.isCircle(basis);
     }
 }
 

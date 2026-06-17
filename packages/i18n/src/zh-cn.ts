@@ -216,6 +216,7 @@ export default {
         "command.sketch.constrainEqual": "相等",
         "command.sketch.constrainCollinear": "共线",
         "command.sketch.constrainConcentric": "同心",
+        "command.sketch.constrainTangent": "相切（圆）",
         "command.sketch.constrainPointOnLine": "点在线上",
         "command.sketch.constrainMidpoint": "中点",
         "command.sketch.constrainSymmetric": "对称",

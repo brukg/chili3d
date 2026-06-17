@@ -283,6 +283,35 @@ describe("SketchNode (C4 — constraint solver → geometry)", () => {
         expect(Math.hypot(solved.points[1].x - solved.points[0].x, solved.points[1].y)).toBeCloseTo(10, 6);
     });
 
+    test("a tangent constraint makes two circles externally tangent", () => {
+        const doc = new TestDocument() as any;
+        // Circle 1: diameter (−2,0)-(2,0) → centre (0,0), r=2 (fixed). Circle 2: diameter points start
+        // far away with r=3 (kept via distance) and tangent pulls its centre to distance 5 from (0,0).
+        const node = new SketchNode({
+            document: doc,
+            plane: Plane.XY,
+            points: [
+                { x: -2, y: 0 }, // 0  circle1
+                { x: 2, y: 0 }, // 1
+                { x: 20, y: 0 }, // 2  circle2 (will move)
+                { x: 26, y: 0 }, // 3  diameter 6 → r=3
+            ],
+            constraints: [
+                { type: "fixed", point: 0, x: -2, y: 0 },
+                { type: "fixed", point: 1, x: 2, y: 0 },
+                { type: "distanceX", a: 2, b: 3, dx: 6 }, // keep circle2 radius 3, on the x-axis
+                { type: "horizontal", a: 2, b: 3 },
+                { type: "distanceY", a: 0, b: 2, dy: 0 }, // keep circle2 centre on the x-axis
+                { type: "tangent", a: 0, b: 1, c: 2, d: 3 },
+            ],
+        });
+        const solved = node.solvedPoints();
+        const c2x = (solved[2].x + solved[3].x) / 2;
+        const c2y = (solved[2].y + solved[3].y) / 2;
+        // Distance from circle1 centre (0,0) to circle2 centre = r1 + r2 = 2 + 3 = 5.
+        expect(Math.hypot(c2x, c2y)).toBeCloseTo(5, 4);
+    });
+
     test("a concentric constraint makes two diameter segments share a centre", () => {
         const doc = new TestDocument() as any;
         // Segment 0→1 is a diameter centred at (0,0); segment 2→3 is a diameter centred at (10,10)

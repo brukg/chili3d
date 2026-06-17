@@ -74,7 +74,11 @@ Items marked **[session]** were shipped in the current rollout.
   (added `collinear()`). Headless test: a skew segment drops onto the first segment's line.
   **Concentric constraint (DONE):** new solver constraint making two diameter segments share a centre
   (equal midpoints) — concentric circles/arcs. Headless test: a diameter's centre moves to the origin.
-  The solver now has 17 constraint functions (4 added this run: symmetric, midpoint, collinear, concentric).
+  **Tangent constraint (circles) (DONE):** new solver constraint making two sketch circles externally
+  tangent (centre distance = r1+r2); the command rejects non-circular picks so it's never misapplied.
+  Headless test: a circle's centre moves to distance r1+r2.
+  The solver now has 18 constraint functions (5 added this run: symmetric, midpoint, collinear,
+  concentric, tangent-circles).
 - **Batch 1 (parametric):** expression-driven dimensions — the Dimension / Horizontal / Vertical
   dimension commands now take an optional expression (e.g. "width/2") evaluated against the document's
   named parameters, instead of only a literal. Changing a parameter resizes the sketch — core Fusion
