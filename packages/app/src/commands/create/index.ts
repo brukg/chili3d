@@ -8,6 +8,7 @@ export * from "./arcUtils";
 export * from "./axis";
 export * from "./axisNormalToFace";
 export * from "./axisTwoFaces";
+export * from "./axisTwoPoints";
 export * from "./bezier";
 export * from "./boundingBox";
 export * from "./box";

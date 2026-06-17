@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 4:** **Axis Through Two Points** — construction axis along the line through two picked points
+  (Fusion's "axis through two points"), extended a point-gap past each end so it reads as a reference
+  axis. Completes the construction-axis family (circular-edge, two-faces, normal-to-face, two-points).
+  Unit tests cover the extension math (segment extended by its own length; diagonal; coincident→none).
+
 - **Batch 3:** **Offset Surface** — a new surface parallel to the selected face(s)/shell at a signed
   normal distance (Fusion's "Offset" surface), via a NEW kernel factory `offsetSurface` (C++
   BRepOffsetAPI_MakeOffsetShape::PerformBySimple; WASM rebuilt). Distinct from Thicken (which closes

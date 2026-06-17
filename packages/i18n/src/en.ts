@@ -110,6 +110,7 @@ export default {
         "command.create.axis": "Construction Axis",
         "command.create.axisTwoFaces": "Axis at Two Faces",
         "command.create.axisNormalToFace": "Axis Normal to Face",
+        "command.create.axisTwoPoints": "Axis Through Two Points",
         "command.create.polygon": "Pline",
         "command.create.regularPolygon": "Regular Polygon",
         "command.create.pyramid": "Pyramid",
