@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 7:** **Text glTF (.gltf) import** — extends GLB import to text `.gltf` with embedded base64
+  (data-URI) buffers. The accessor-walking is factored into a shared `extractMesh(json, buffers)` used
+  by both `parseGlb` (single BIN buffer) and the new `parseGltf` (base64-decoded buffers). Wired into
+  the dispatch + `.gltf` import list. Test: a text glTF with an embedded base64 buffer round-trips the
+  triangle. (External/relative .bin buffers still unsupported — single-file imports only.)
+
 - **Batch 7:** **GLB (binary glTF) import** — completes the mesh-import story (was the last format with
   export but no import). `parseGlb` reads the GLB container's JSON + BIN chunks, then walks every mesh
   primitive's POSITION + index accessors out of the BIN buffer (typed reads, tightly-packed bufferViews)

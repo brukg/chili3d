@@ -33,36 +33,17 @@ function componentReader(dv: DataView, componentType: number): (o: number) => nu
     }
 }
 
-/**
- * Parse a binary glTF (.glb): read the JSON + BIN chunks, then walk every mesh primitive's POSITION and
- * index accessors out of the BIN buffer (tightly-packed bufferViews) into one flat triangle mesh.
- * Interleaved byteStride and external/base64 buffers are not handled.
- */
-export function parseGlb(data: Uint8Array): ParsedMesh {
-    const dv = new DataView(data.buffer, data.byteOffset, data.byteLength);
-    if (data.length < 12 || dv.getUint32(0, true) !== GLB_MAGIC) {
-        return { position: new Float32Array(), index: new Uint32Array() };
-    }
-
-    let json: any;
-    let bin: Uint8Array | undefined;
-    let off = 12;
-    while (off + 8 <= data.length) {
-        const len = dv.getUint32(off, true);
-        const type = dv.getUint32(off + 4, true);
-        const chunk = data.subarray(off + 8, off + 8 + len);
-        if (type === CHUNK_JSON) json = JSON.parse(new TextDecoder().decode(chunk));
-        else if (type === CHUNK_BIN) bin = chunk;
-        off += 8 + len;
-    }
-    if (!json || !bin) return { position: new Float32Array(), index: new Uint32Array() };
-
-    const bdv = new DataView(bin.buffer, bin.byteOffset, bin.byteLength);
+// Walk every mesh primitive's POSITION + index accessors (tightly-packed bufferViews) out of the given
+// buffers into one flat triangle mesh. Shared by the binary (.glb) and text (.gltf) parsers.
+function extractMesh(json: any, buffers: Uint8Array[]): ParsedMesh {
     const accessors = json.accessors ?? [];
     const views = json.bufferViews ?? [];
     const readAccessor = (idx: number): number[] => {
         const acc = accessors[idx];
         const view = views[acc.bufferView];
+        const buf = buffers[view.buffer ?? 0];
+        if (!buf) return [];
+        const bdv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
         const base = (view.byteOffset ?? 0) + (acc.byteOffset ?? 0);
         const size = COMPONENT_SIZE[acc.componentType] ?? 4;
         const num = TYPE_COUNT[acc.type] ?? 1;
@@ -92,11 +73,65 @@ export function parseGlb(data: Uint8Array): ParsedMesh {
     return { position: Float32Array.from(positions), index: Uint32Array.from(indices) };
 }
 
+// Decode a `data:...;base64,…` URI into bytes (embedded glTF buffers); returns empty for other URIs.
+function decodeDataUri(uri: string | undefined): Uint8Array {
+    const i = uri?.indexOf("base64,") ?? -1;
+    if (i < 0) return new Uint8Array();
+    const b64 = uri!.slice(i + 7);
+    return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+}
+
+/**
+ * Parse a binary glTF (.glb): read the JSON + BIN chunks, then extract the mesh. Interleaved byteStride
+ * and external buffers are not handled.
+ */
+export function parseGlb(data: Uint8Array): ParsedMesh {
+    const dv = new DataView(data.buffer, data.byteOffset, data.byteLength);
+    if (data.length < 12 || dv.getUint32(0, true) !== GLB_MAGIC) {
+        return { position: new Float32Array(), index: new Uint32Array() };
+    }
+
+    let json: any;
+    let bin: Uint8Array | undefined;
+    let off = 12;
+    while (off + 8 <= data.length) {
+        const len = dv.getUint32(off, true);
+        const type = dv.getUint32(off + 4, true);
+        const chunk = data.subarray(off + 8, off + 8 + len);
+        if (type === CHUNK_JSON) json = JSON.parse(new TextDecoder().decode(chunk));
+        else if (type === CHUNK_BIN) bin = chunk;
+        off += 8 + len;
+    }
+    if (!json || !bin) return { position: new Float32Array(), index: new Uint32Array() };
+    return extractMesh(json, [bin]);
+}
+
+/** Parse a text glTF (.gltf) with embedded base64 (data-URI) buffers. */
+export function parseGltf(text: string): ParsedMesh {
+    let json: any;
+    try {
+        json = JSON.parse(text);
+    } catch {
+        return { position: new Float32Array(), index: new Uint32Array() };
+    }
+    const buffers = (json.buffers ?? []).map((b: any) => decodeDataUri(b.uri));
+    return extractMesh(json, buffers);
+}
+
 /** Import a binary glTF (.glb) file as a {@link MeshNode}. */
 export function importGlb(document: IDocument, name: string, data: Uint8Array): Result<INode> {
     const { position, index } = parseGlb(data);
     if (position.length === 0) {
         return Result.err("GLB contains no mesh data");
+    }
+    return buildSurfaceMeshNode(document, name, position, index);
+}
+
+/** Import a text glTF (.gltf) file (with embedded buffers) as a {@link MeshNode}. */
+export function importGltf(document: IDocument, name: string, text: string): Result<INode> {
+    const { position, index } = parseGltf(text);
+    if (position.length === 0) {
+        return Result.err("glTF contains no embedded mesh data");
     }
     return buildSurfaceMeshNode(document, name, position, index);
 }

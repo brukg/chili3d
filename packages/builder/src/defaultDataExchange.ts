@@ -16,7 +16,7 @@ import {
 } from "@chili3d/core";
 import { exportDxf } from "./dxf/dxfExporter";
 import { importDxf } from "./dxf/dxfImporter";
-import { importGlb } from "./gltf/gltfImporter";
+import { importGlb, importGltf } from "./gltf/gltfImporter";
 import { importObj } from "./obj/objImporter";
 import { importPly } from "./ply/plyImporter";
 import { importSvg } from "./svg/svgImporter";
@@ -39,6 +39,7 @@ export class DefaultDataExchange implements IDataExchange {
             ".ply",
             ".3mf",
             ".glb",
+            ".gltf",
             ".dxf",
             ".svg",
             ".urdf",
@@ -85,6 +86,8 @@ export class DefaultDataExchange implements IDataExchange {
             importResult = await importThreeMf(document, file.name, new Uint8Array(await file.arrayBuffer()));
         } else if (this.extensionIs(fileName, ".glb")) {
             importResult = importGlb(document, file.name, new Uint8Array(await file.arrayBuffer()));
+        } else if (this.extensionIs(fileName, ".gltf")) {
+            importResult = importGltf(document, file.name, await file.text());
         } else if (this.extensionIs(fileName, ".dxf")) {
             importResult = importDxf(document, file.name, await file.text());
         } else if (this.extensionIs(fileName, ".svg")) {

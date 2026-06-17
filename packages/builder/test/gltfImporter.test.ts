@@ -2,7 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 import { describe, expect, test } from "@rstest/core";
-import { parseGlb } from "../src/gltf/gltfImporter";
+import { parseGlb, parseGltf } from "../src/gltf/gltfImporter";
 
 // Build a minimal valid GLB containing one triangle: 3 FLOAT VEC3 positions + 3 USHORT indices.
 function buildGlb(): Uint8Array {
@@ -57,5 +57,33 @@ describe("GLB importer", () => {
     test("a non-GLB buffer returns no mesh", () => {
         const { position } = parseGlb(new Uint8Array([1, 2, 3, 4]));
         expect(position.length).toBe(0);
+    });
+
+    test("parses a text glTF with an embedded base64 buffer", () => {
+        // The same triangle BIN (36 bytes positions + 6 bytes USHORT indices), base64-encoded.
+        const bin = new ArrayBuffer(42);
+        const bdv = new DataView(bin);
+        [0, 0, 0, 2, 0, 0, 2, 3, 0].forEach((v, i) => bdv.setFloat32(i * 4, v, true));
+        bdv.setUint16(36, 0, true);
+        bdv.setUint16(38, 1, true);
+        bdv.setUint16(40, 2, true);
+        const b64 = btoa(String.fromCharCode(...new Uint8Array(bin)));
+
+        const gltf = JSON.stringify({
+            asset: { version: "2.0" },
+            buffers: [{ byteLength: 42, uri: `data:application/octet-stream;base64,${b64}` }],
+            bufferViews: [
+                { buffer: 0, byteOffset: 0, byteLength: 36 },
+                { buffer: 0, byteOffset: 36, byteLength: 6 },
+            ],
+            accessors: [
+                { bufferView: 0, componentType: 5126, count: 3, type: "VEC3" },
+                { bufferView: 1, componentType: 5123, count: 3, type: "SCALAR" },
+            ],
+            meshes: [{ primitives: [{ attributes: { POSITION: 0 }, indices: 1 }] }],
+        });
+        const { position, index } = parseGltf(gltf);
+        expect(Array.from(position)).toEqual([0, 0, 0, 2, 0, 0, 2, 3, 0]);
+        expect(Array.from(index)).toEqual([0, 1, 2]);
     });
 });
