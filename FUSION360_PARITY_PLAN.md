@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8:** **Measure Coordinates** — report the world X/Y/Z of a selected vertex (Fusion's single-
+  point coordinate readout), completing the measure suite's point inspection. WASM test: every vertex
+  of a 20mm cube is a corner of [0..20]³.
+
 - **Batch 1:** **Project to Plane** — orthographically project selected edges/wires onto the active
   workplane along its normal (Fusion's "Project" geometry into the active sketch), in one step (vs the
   existing convert.curveProjection which needs an explicit target face). Builds a target face at the

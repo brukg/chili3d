@@ -6,6 +6,7 @@ export * from "./arcAngle";
 export * from "./area";
 export * from "./boundingBox";
 export * from "./centerOfMass";
+export * from "./coordinates";
 export * from "./distance";
 export * from "./edgeAngle";
 export * from "./edgeLength";
