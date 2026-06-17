@@ -183,6 +183,7 @@ export default {
         "command.modify.removeFillet": "移除圆角",
         "command.modify.explode": "分解",
         "command.modify.fillet": "圆角",
+        "command.modify.filletAll": "全部边圆角",
         "command.modify.fillSurface": "填充曲面",
         "command.modify.variableFillet": "变半径圆角",
         "command.modify.hole": "孔",

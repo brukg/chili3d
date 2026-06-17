@@ -183,6 +183,7 @@ export default {
         "command.modify.removeFillet": "Remove Fillet",
         "command.modify.explode": "Explode",
         "command.modify.fillet": "Fillet",
+        "command.modify.filletAll": "Fillet All Edges",
         "command.modify.fillSurface": "Fill Surface",
         "command.modify.variableFillet": "Variable Fillet",
         "command.modify.hole": "Hole",

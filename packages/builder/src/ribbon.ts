@@ -124,7 +124,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     ["modify.scale", "modify.scaleNonUniform"],
                     ["modify.array", "modify.trim", "modify.sew"],
                     ["modify.split", "modify.break", "modify.simplifyShape"],
-                    ["modify.fillet", "modify.variableFillet", "modify.chamfer"],
+                    ["modify.fillet", "modify.filletAll", "modify.variableFillet", "modify.chamfer"],
                     ["modify.draft", "modify.hole", "modify.fillSurface"],
                     ["modify.shell", "modify.thicken", "modify.pushPull"],
                     ["modify.rib", "modify.pipeFeature", "modify.explode"],

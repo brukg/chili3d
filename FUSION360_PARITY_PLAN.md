@@ -34,6 +34,9 @@ Items marked **[session]** were shipped in the current rollout.
   section analysis, draft/curvature/zebra analysis._
 - **Batch 11:** Toggle Perspective/Orthographic projection command (flips `cameraController.cameraType`).
 - **Batch 11:** Invert Selection (Ctrl+Shift+A) — selects every object not currently selected.
+- **Batch 2/6 (modify):** Fillet All Edges — rounds every edge of a selected body with one radius
+  (collects all edge indices, single fillet call) — Fusion's body-level fillet. Headless test confirms
+  all 12 edges of a cube fillet to a valid solid (the corners where 3 fillets meet hold up).
 - **Batch 2 (solid):** Hole "Through All" option — drills the full extent of the solid. NOTE: the
   kernel's `makeHole` is BLIND-ONLY (fails once depth reaches the far face), so through-all cuts a
   full-length cylinder via booleanCut instead. Headless test confirms a clean through-hole (π·r²·h).

@@ -165,6 +165,7 @@ export const I18N_KEYS = [
     "command.modify.removeFillet",
     "command.modify.explode",
     "command.modify.fillet",
+    "command.modify.filletAll",
     "command.modify.fillSurface",
     "command.modify.variableFillet",
     "command.modify.hole",

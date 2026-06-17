@@ -11,6 +11,7 @@ export * from "./draft";
 export * from "./explode";
 export * from "./exportUrdf";
 export * from "./fillet";
+export * from "./filletAll";
 export * from "./fillSurface";
 export * from "./hole";
 export * from "./linkedArray";
