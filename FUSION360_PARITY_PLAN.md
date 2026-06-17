@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 7:** **GLB (binary glTF) import** — completes the mesh-import story (was the last format with
+  export but no import). `parseGlb` reads the GLB container's JSON + BIN chunks, then walks every mesh
+  primitive's POSITION + index accessors out of the BIN buffer (typed reads, tightly-packed bufferViews)
+  into one triangle mesh. Wired into the dispatch + `.glb` import list. Test: a hand-built minimal GLB
+  triangle round-trips to the expected positions/indices; a non-GLB buffer yields nothing.
+
 - **Batch 7:** **Binary PLY import** — the PLY importer now reads binary (little- and big-endian) PLY,
   not just ASCII (common scanner/MeshLab output). New `parsePlyBinary` walks the binary body per the
   header's vertex/face layouts (typed DataView reads, x/y/z by declared property, fan-triangulated
