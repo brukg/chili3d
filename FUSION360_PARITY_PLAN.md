@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 4:** **Plane Normal to Curve** — construction plane along a path (Fusion's "plane along
+  path"): pick an edge and a point on it; the workplane sits there with its normal along the curve
+  tangent (`curve.d1(u).vec`), ready for a sweep/loft profile drawn perpendicular to the path. WASM
+  test: a line's tangent is its direction; a circle's tangent is ⟂ to its radius and in-plane.
+
 - **Batch 2:** **Tube primitive** — parametric hollow cylinder (`TubeNode`, serializable). Same picks
   as Cylinder (centre, outer radius, height) plus an editable wall-thickness property; bore = outer −
   thickness, built by cutting the inner cylinder from the outer. A non-positive bore degrades to a

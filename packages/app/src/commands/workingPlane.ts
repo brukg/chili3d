@@ -340,3 +340,36 @@ export class TangentPlane extends MultistepCommand {
         ];
     }
 }
+
+// Construction plane normal to a curve at a point — Fusion's "plane along path". Pick an edge and a
+// point on it; the plane sits at that point with its normal along the curve's tangent, ready for a
+// sweep/loft profile drawn perpendicular to the path.
+@command({
+    key: "workingPlane.normalToCurve",
+    icon: "icon-setWorkingPlane",
+})
+export class PlaneNormalToCurve extends MultistepCommand {
+    protected override executeMainTask() {
+        const view = this.application.activeView;
+        if (!view) return;
+        const data = this.stepDatas[0].shapes[0];
+        const edge = data.shape.transformedMul(data.transform) as IEdge;
+        const picked = this.stepDatas[1].point!;
+        const curve = edge.curve;
+        const u = curve.parameter(picked, 1e-3) ?? curve.firstParameter();
+        const { point, vec } = curve.d1(u);
+        const normal = vec.normalize();
+        if (!normal) {
+            PubSub.default.pub("showToast", "toast.converter.error");
+            return;
+        }
+        view.workplane = new Plane({ origin: point, normal, xvec: planeXVec(normal) });
+    }
+
+    protected override getSteps(): IStep[] {
+        return [
+            new SelectShapeStep(ShapeTypes.edge, "prompt.select.edges"),
+            new PointStep("prompt.pickPoint"),
+        ];
+    }
+}
