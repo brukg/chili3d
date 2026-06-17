@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8:** **Measure Edge Angle** — the acute angle between two edges from their tangent directions
+  (|cosθ|, orientation-independent): perpendicular → 90°, parallel → 0°. Complements Face Angle and the
+  3-point Measure Angle. WASM test: ⟂ lines → 90°, diagonal → 45° (same for a reversed edge).
+
 - **Batch 2/6:** **Align** — move the body owning the first selected face so that face mates flat
   against a second face (Fusion's Align / face-to-face). Pure `alignTransform(p1,n1,p2,n2)` rotates the
   source normal to oppose the target then slides p1 onto p2 (handles aligned / anti-parallel-180°-flip /
