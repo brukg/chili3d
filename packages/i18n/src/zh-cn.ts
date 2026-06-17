@@ -134,6 +134,7 @@ export default {
         "command.create.sketchRect": "草图矩形",
         "command.create.sketchRect3p": "草图矩形（三点）",
         "command.create.sketchSlot": "草图槽",
+        "command.create.roundedRect": "圆角矩形",
         "command.create.sphere": "球体",
         "command.create.sweep": "扫略",
         "command.create.thickSolid": "加厚实体",

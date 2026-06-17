@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1:** **Rounded Rectangle** — a common Fusion sketch primitive: drag a diagonal, set the
+  corner radius; built directly as four straight edges + four 90° corner arcs → wire → face (pure
+  `roundedRectFace` helper, no kernel change). WASM tests: area = w·h − (4 − π)·r² for both a normal
+  fillet and the stadium case (r = half the short side).
+
 - **Batch 1:** **Spiral curve** — a flat Archimedean spiral (`SpiralNode`) whose radius grows linearly
   from start to end over N turns, built by interpolating sampled points through the spline factory
   (`shapeFactory.interpolate`) — Fusion's spiral. Pure `spiralPoints` sampler is unit-tested

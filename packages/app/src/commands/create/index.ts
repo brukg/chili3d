@@ -42,6 +42,7 @@ export * from "./pyramid";
 export * from "./rect";
 export * from "./regularPolygon";
 export * from "./revolve";
+export * from "./roundedRect";
 export * from "./ruledSurface";
 export * from "./section";
 export * from "./sketch";
