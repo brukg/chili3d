@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 4:** **Axis at Two Faces** — construction axis on the line where two planar faces intersect
+  (Fusion's axis-through-two-planes), derived from the faces' planes via a new pure `intersectTwoPlanes`
+  helper (direction = n1×n2; nearest-origin point); parallel faces are rejected. Distinct from the line
+  tool. Unit tests: XY∩XZ = X axis, offset planes z=5/y=2 → line (t,2,5), parallel → undefined.
+
 - **Batch 4:** **Construction Axis** — reference line along the revolution axis of each selected
   circular edge (circle/arc), through the centre along the circle's `axis`, spanning ±2·radius — a
   ready-made axis for Revolve / circular patterns. Reuses the centre+axis extraction (direct circle

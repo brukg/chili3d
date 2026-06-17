@@ -65,6 +65,23 @@ export function computeCircleFromPoints(A: XYZ, B: XYZ, C: XYZ) {
     };
 }
 
+/**
+ * Compute the line where two planes intersect. Each plane is given by a point on it and its normal.
+ * Returns the line direction (normalized) and a point on the line, or undefined when the planes are
+ * parallel. The point is the one closest to the world origin (the standard two-plane solution).
+ */
+export function intersectTwoPlanes(p1: XYZ, n1: XYZ, p2: XYZ, n2: XYZ) {
+    const u = n1.cross(n2);
+    const uLen2 = u.dot(u);
+    if (uLen2 < 1e-12) return undefined; // planes are parallel
+
+    const c1 = n1.dot(p1);
+    const c2 = n2.dot(p2);
+    // point = (c1·(n2×u) + c2·(u×n1)) / |u|²  — the point on the intersection line nearest the origin.
+    const point = n2.cross(u).multiply(c1).add(u.cross(n1).multiply(c2)).divided(uLen2)!;
+    return { point, direction: u.normalize()! };
+}
+
 function positiveAngle(from: XYZ, to: XYZ, normal: XYZ): number {
     const dot = from.dot(to);
     const crossVec = from.cross(to);

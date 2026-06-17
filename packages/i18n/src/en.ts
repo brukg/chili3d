@@ -102,6 +102,7 @@ export default {
         "command.create.centerPoint": "Point at Center",
         "command.create.intersectionPoint": "Point at Intersection",
         "command.create.axis": "Construction Axis",
+        "command.create.axisTwoFaces": "Axis at Two Faces",
         "command.create.polygon": "Pline",
         "command.create.regularPolygon": "Regular Polygon",
         "command.create.pyramid": "Pyramid",

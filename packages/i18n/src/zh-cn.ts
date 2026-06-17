@@ -102,6 +102,7 @@ export default {
         "command.create.centerPoint": "圆心点",
         "command.create.intersectionPoint": "交点",
         "command.create.axis": "构造轴",
+        "command.create.axisTwoFaces": "两面交线轴",
         "command.create.polygon": "多段线",
         "command.create.regularPolygon": "正多边形",
         "command.create.pyramid": "棱锥",
