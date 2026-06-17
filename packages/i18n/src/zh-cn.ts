@@ -99,6 +99,7 @@ export default {
         "command.create.tube": "管",
         "tube.thickness": "壁厚",
         "command.create.ellipse": "椭圆",
+        "command.create.ellipseArc": "椭圆弧",
         "command.create.ellipsoid": "椭球体",
         "command.create.extrude": "挤出",
         "command.create.extractEdges": "提取边",

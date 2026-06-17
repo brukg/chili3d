@@ -21,6 +21,7 @@ export * from "./copySubShape";
 export * from "./curveProjection";
 export * from "./cylinder";
 export * from "./ellipse";
+export * from "./ellipseArc";
 export * from "./ellipsoid";
 export * from "./extractEdges";
 export * from "./extractFaces";

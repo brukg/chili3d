@@ -619,6 +619,7 @@ interface EmbindModule {
     sphere(_0: Vector3, _1: number): ShapeResult;
     ellipsoid(_0: Vector3, _1: Vector3, _2: Vector3, _3: number, _4: number, _5: number): ShapeResult;
     ellipse(_0: Vector3, _1: Vector3, _2: Vector3, _3: number, _4: number): ShapeResult;
+    ellipseArc(_0: Vector3, _1: Vector3, _2: Vector3, _3: number, _4: number, _5: number, _6: number): ShapeResult;
     cylinder(_0: Vector3, _1: Vector3, _2: number, _3: number): ShapeResult;
     torus(_0: Vector3, _1: Vector3, _2: number, _3: number): ShapeResult;
     helix(_0: Vector3, _1: Vector3, _2: number, _3: number, _4: number, _5: boolean): ShapeResult;

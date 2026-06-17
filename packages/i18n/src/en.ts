@@ -99,6 +99,7 @@ export default {
         "command.create.tube": "Tube",
         "tube.thickness": "Wall thickness",
         "command.create.ellipse": "Ellipse",
+        "command.create.ellipseArc": "Elliptical Arc",
         "command.create.ellipsoid": "Ellipsoid",
         "command.create.extrude": "Extrude",
         "command.create.extractEdges": "Extract Edges",

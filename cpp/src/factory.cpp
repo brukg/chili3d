@@ -116,6 +116,19 @@ public:
         return ShapeResult { edge.Edge(), true, "" };
     }
 
+    // A partial ellipse: the arc of the ellipse swept between the two eccentric angles (radians).
+    static ShapeResult ellipseArc(const Vector3& normal, const Vector3& center, const Vector3& xvec,
+        double majorRadius, double minorRadius, double startAngle, double endAngle)
+    {
+        gp_Ax2 ax2(Vector3::toPnt(center), Vector3::toDir(normal), Vector3::toDir(xvec));
+        gp_Elips ellipse(ax2, majorRadius, minorRadius);
+        BRepBuilderAPI_MakeEdge edge(ellipse, startAngle, endAngle);
+        if (!edge.IsDone()) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to create elliptical arc" };
+        }
+        return ShapeResult { edge.Edge(), true, "" };
+    }
+
     /**
      * TODO
      */
@@ -915,6 +928,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("sphere", &ShapeFactory::sphere)
         .class_function("ellipsoid", &ShapeFactory::ellipsoid)
         .class_function("ellipse", &ShapeFactory::ellipse)
+        .class_function("ellipseArc", &ShapeFactory::ellipseArc)
         .class_function("cylinder", &ShapeFactory::cylinder)
         .class_function("torus", &ShapeFactory::torus)
         .class_function("pyramid", &ShapeFactory::pyramid)

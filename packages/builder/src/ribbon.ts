@@ -22,7 +22,13 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     "create.sketchPolygon",
                     {
                         type: "split",
-                        items: ["create.rect", "create.circle", "create.ellipse", "create.regularPolygon"],
+                        items: [
+                            "create.rect",
+                            "create.circle",
+                            "create.ellipse",
+                            "create.ellipseArc",
+                            "create.regularPolygon",
+                        ],
                     },
                     {
                         type: "split",

@@ -94,6 +94,7 @@ export const I18N_KEYS = [
     "command.create.cylinder",
     "command.create.tube",
     "command.create.ellipse",
+    "command.create.ellipseArc",
     "command.create.ellipsoid",
     "command.create.extrude",
     "command.create.extractEdges",

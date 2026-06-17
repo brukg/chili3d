@@ -334,6 +334,27 @@ export class ShapeFactory implements IShapeFactory {
             wasm.ShapeFactory.ellipse(normal, center, xvec, majorRadius, minorRadius),
         ) as Result<IEdge>;
     }
+    ellipseArc(
+        normal: XYZLike,
+        center: XYZLike,
+        xvec: XYZLike,
+        majorRadius: number,
+        minorRadius: number,
+        startAngle: number,
+        endAngle: number,
+    ): Result<IEdge> {
+        return convertShapeResult(
+            wasm.ShapeFactory.ellipseArc(
+                normal,
+                center,
+                xvec,
+                majorRadius,
+                minorRadius,
+                startAngle,
+                endAngle,
+            ),
+        ) as Result<IEdge>;
+    }
     pyramid(plane: Plane, dx: number, dy: number, dz: number): Result<ISolid> {
         return convertShapeResult(
             wasm.ShapeFactory.pyramid(

@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1:** **Elliptical Arc** — a partial ellipse, via a NEW kernel factory `ellipseArc` (the
+  full-ellipse `BRepBuilderAPI_MakeEdge(gp_Elips, start, end)` with eccentric angles; WASM rebuilt).
+  The command reuses the Ellipse picking (centre/major/minor) plus editable start/sweep angles.
+  Completes the conic curve family and unblocks DXF partial-ellipse import. WASM test: a 0→π/2 quarter
+  arc runs major-vertex → minor-vertex, with the π/4 point at (10cos45°, 5sin45°).
+
 - **Batch 1:** **Rounded Rectangle** — a common Fusion sketch primitive: drag a diagonal, set the
   corner radius; built directly as four straight edges + four 90° corner arcs → wire → face (pure
   `roundedRectFace` helper, no kernel change). WASM tests: area = w·h − (4 − π)·r² for both a normal

@@ -31,6 +31,16 @@ export interface IShapeFactory {
         majorRadius: number,
         minorRadius: number,
     ): Result<IEdge>;
+    /** A partial ellipse: the arc swept between two eccentric angles (radians). */
+    ellipseArc(
+        normal: XYZLike,
+        center: XYZLike,
+        xvec: XYZLike,
+        majorRadius: number,
+        minorRadius: number,
+        startAngle: number,
+        endAngle: number,
+    ): Result<IEdge>;
     cylinder(normal: XYZLike, center: XYZLike, radius: number, dz: number): Result<ISolid>;
     torus(normal: XYZLike, center: XYZLike, radius: number, tubeRadius: number): Result<ISolid>;
     cone(normal: XYZLike, center: XYZLike, radius: number, radiusUp: number, dz: number): Result<ISolid>;
