@@ -145,6 +145,7 @@ export default {
         "command.create.sketchSlot": "Sketch Slot",
         "command.create.sketchCenterSlot": "Center-Point Slot",
         "command.create.sketchOverallSlot": "Overall Slot",
+        "command.create.sketchArcSlot": "Arc Slot",
         "command.create.roundedRect": "Rounded Rectangle",
         "command.create.sketchFillet": "Sketch Fillet",
         "command.create.sketchChamfer": "Sketch Chamfer",

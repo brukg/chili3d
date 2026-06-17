@@ -145,6 +145,7 @@ export default {
         "command.create.sketchSlot": "草图槽",
         "command.create.sketchCenterSlot": "中心点槽",
         "command.create.sketchOverallSlot": "总长槽",
+        "command.create.sketchArcSlot": "圆弧槽",
         "command.create.roundedRect": "圆角矩形",
         "command.create.sketchFillet": "草图圆角",
         "command.create.sketchChamfer": "草图倒角",

@@ -54,6 +54,7 @@ export * from "./roundedRect";
 export * from "./ruledSurface";
 export * from "./section";
 export * from "./sketch";
+export * from "./sketchArcSlot";
 export * from "./sketchCenterRect";
 export * from "./sketchCenterSlot";
 export * from "./sketchChamfer";

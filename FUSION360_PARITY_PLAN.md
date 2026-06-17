@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1:** **Arc Slot** — a curved (3-point arc) slot: pick three points defining the centre arc;
+  the width is the editable radius (Fusion's arc slot). Built from an outer arc (R+r), a semicircular end
+  cap, an inner arc (R−r) and a start cap → wire → face, via a pure probe-verified `curvedSlotEdges`
+  helper. WASM test: a semicircular centre arc (R=10, θ=π) with r=2 has area 44π (= 2·R·r·θ + π·r²).
+
 - **Batch 4:** **Plane Through Point** — a construction plane parallel to a selected face, repositioned to
   pass through a picked point (Fusion's "plane through point, parallel to plane"). Rounds out the
   construction-plane family (offset / at-angle / midplane / tangent / normal-to-curve / 3-point / from-
