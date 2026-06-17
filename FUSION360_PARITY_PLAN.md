@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1:** **Center-Point Slot** — Fusion's centre-point slot construction: pick the slot centre then
+  one end (an arc centre); the opposite arc centre is mirrored through the centre (2·c − e). Same rounded-
+  slot SketchNode as the centre-to-centre Slot, defined from its middle.
+
 - **Batch 8:** **Measure Coordinates** — report the world X/Y/Z of a selected vertex (Fusion's single-
   point coordinate readout), completing the measure suite's point inspection. WASM test: every vertex
   of a 20mm cube is a corner of [0..20]³.

@@ -143,6 +143,7 @@ export default {
         "command.create.sketchRect": "草图矩形",
         "command.create.sketchRect3p": "草图矩形（三点）",
         "command.create.sketchSlot": "草图槽",
+        "command.create.sketchCenterSlot": "中心点槽",
         "command.create.roundedRect": "圆角矩形",
         "command.create.sketchFillet": "草图圆角",
         "command.create.sketchChamfer": "草图倒角",
