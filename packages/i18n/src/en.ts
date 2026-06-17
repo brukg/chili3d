@@ -175,6 +175,7 @@ export default {
         "command.measure.mass": "Mass",
         "command.measure.properties": "Properties",
         "command.measure.select": "Select",
+        "command.modify.align": "Align",
         "command.modify.array": "Array",
         "command.modify.break": "Break",
         "command.modify.brushAdd": "Brush Add",

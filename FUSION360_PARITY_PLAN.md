@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 2/6:** **Align** — move the body owning the first selected face so that face mates flat
+  against a second face (Fusion's Align / face-to-face). Pure `alignTransform(p1,n1,p2,n2)` rotates the
+  source normal to oppose the target then slides p1 onto p2 (handles aligned / anti-parallel-180°-flip /
+  oblique cases), applied to the node's world transform. Unit tests cover all three rotation cases.
 - **Batch 1:** **Elliptical Arc** — a partial ellipse, via a NEW kernel factory `ellipseArc` (the
   full-ellipse `BRepBuilderAPI_MakeEdge(gp_Elips, start, end)` with eccentric angles; WASM rebuilt).
   The command reuses the Ellipse picking (centre/major/minor) plus editable start/sweep angles.

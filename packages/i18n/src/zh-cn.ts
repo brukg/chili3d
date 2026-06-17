@@ -175,6 +175,7 @@ export default {
         "command.measure.mass": "质量",
         "command.measure.properties": "属性",
         "command.measure.select": "选择",
+        "command.modify.align": "对齐",
         "command.modify.array": "阵列",
         "command.modify.break": "打断",
         "command.modify.brushAdd": "添加画笔",

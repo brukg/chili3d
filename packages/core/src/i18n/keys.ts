@@ -160,6 +160,7 @@ export const I18N_KEYS = [
     "command.measure.mass",
     "command.measure.properties",
     "command.measure.select",
+    "command.modify.align",
     "command.modify.array",
     "command.modify.break",
     "command.modify.brushAdd",
