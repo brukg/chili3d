@@ -100,6 +100,7 @@ export default {
         "command.create.point": "点",
         "command.create.midpointPoint": "中点",
         "command.create.centerPoint": "圆心点",
+        "command.create.intersectionPoint": "交点",
         "command.create.polygon": "多段线",
         "command.create.regularPolygon": "正多边形",
         "command.create.pyramid": "棱锥",

@@ -95,6 +95,7 @@ export const I18N_KEYS = [
     "command.create.point",
     "command.create.midpointPoint",
     "command.create.centerPoint",
+    "command.create.intersectionPoint",
     "command.create.polygon",
     "command.create.regularPolygon",
     "command.create.pyramid",
