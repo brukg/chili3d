@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 9 (first step):** **Projected View** — flatten selected solid(s) to a 2D outline along the
+  current view direction using the kernel's hidden-line removal (`IShape.hlr`, previously unused in the
+  app). Produces a compound of visible projected edges (a drawing view / "project to sketch"), ready
+  to dimension or export to DXF. WASM test: a box viewed down -Z flattens to a 10×10 zero-depth outline.
+
 - **Batch 4:** **Axis Through Two Points** — construction axis along the line through two picked points
   (Fusion's "axis through two points"), extended a point-gap past each end so it reads as a reference
   axis. Completes the construction-axis family (circular-edge, two-faces, normal-to-face, two-points).

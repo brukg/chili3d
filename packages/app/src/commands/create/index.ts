@@ -35,6 +35,7 @@ export * from "./offset";
 export * from "./pipe";
 export * from "./point";
 export * from "./polygon";
+export * from "./projectedView";
 export * from "./pyramid";
 export * from "./rect";
 export * from "./regularPolygon";

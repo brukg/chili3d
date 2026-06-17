@@ -211,6 +211,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                 groupName: "ribbon.group.tools",
                 items: [
                     "convert.curveProjection",
+                    "create.projectedView",
                     "create.group",
                     ["create.section", "create.offset", "create.copyShape"],
                 ],
