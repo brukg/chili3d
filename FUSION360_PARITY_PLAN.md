@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 4:** **Construction Axis** — reference line along the revolution axis of each selected
+  circular edge (circle/arc), through the centre along the circle's `axis`, spanning ±2·radius — a
+  ready-made axis for Revolve / circular patterns. Reuses the centre+axis extraction (direct circle
+  or trimmed basis curve). WASM test asserts a circle edge yields centre (2,3,4), axis ±Z, radius 5.
+
 - **Batch 8:** **Measure Face Angle** — angle between two selected faces, taken between their outward
   normals (Fusion's face-to-face angle). Two single-select face steps → toast in degrees. WASM test:
   box faces are pairwise 90° (adjacent) / 180° (opposite). Complements the 3-point Measure Angle.

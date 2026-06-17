@@ -33,6 +33,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     "create.midpointPoint",
                     "create.centerPoint",
                     "create.intersectionPoint",
+                    "create.axis",
                     "create.polygon",
                     "create.bezier",
                 ],

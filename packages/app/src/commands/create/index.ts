@@ -5,6 +5,7 @@ export * from "./arc";
 export * from "./arc2point";
 export * from "./arc3point";
 export * from "./arcUtils";
+export * from "./axis";
 export * from "./bezier";
 export * from "./boundingBox";
 export * from "./box";
