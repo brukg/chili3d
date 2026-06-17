@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8:** **Measure Face Angle** — angle between two selected faces, taken between their outward
+  normals (Fusion's face-to-face angle). Two single-select face steps → toast in degrees. WASM test:
+  box faces are pairwise 90° (adjacent) / 180° (opposite). Complements the 3-point Measure Angle.
+
 - **Batch 3:** **Reverse Normal** — flip a face/shell's topological orientation (surface normals) via
   the already-bound `TopoDS_Shape.reversed()`, surfaced as `IShape.reversed()` (no WASM rebuild).
   New `modify.reverseNormal` command builds reversed EditableShapeNodes from the selection. Useful
