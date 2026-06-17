@@ -9,6 +9,7 @@ export * from "./distance";
 export * from "./edgeLength";
 export * from "./interferenceCheck";
 export * from "./length";
+export * from "./mass";
 export * from "./properties";
 export * from "./radius";
 export * from "./select";

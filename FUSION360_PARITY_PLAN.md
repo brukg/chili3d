@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 6/8:** **Measure Mass** — physical-material density → mass (Fusion's physical material).
+  Editable `density` property (kg/m³, default steel 7850); reports mass in g and kg from the solid's
+  kernel volume: mass(g) = density · volume(mm³) · 1e-6. WASM test: 10 mm steel cube → 7.85 g.
+
 - **Batch 8:** **Measure Distance** — minimum (extrema) gap between two selected shapes of any
   topology (vertex/edge/face/solid), via the existing `IShape.extremaDistance` (BRepExtrema_DistShapeShape).
   Two single-select steps → toast. Complements free point-to-point Measure Length. WASM test asserts

@@ -188,6 +188,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         "measure.area",
                         "measure.topology",
                         "measure.properties",
+                        "measure.mass",
                         "measure.centerOfMass",
                         "measure.boundingBox",
                         "measure.interference",
