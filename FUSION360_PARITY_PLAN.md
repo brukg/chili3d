@@ -29,7 +29,8 @@ Items marked **[session]** were shipped in the current rollout.
 - **Batch 8 (started):** Center of Mass marker — drops a parametric point at a selected solid's
   world-space centroid (`ISolid.massProperties().centerOfMass`). Measure Bounding Box — reports the
   selection's overall dx×dy×dz. Measure Radius — radius/diameter of a circular edge (via CurveUtils.
-  isCircle). _Remaining: section analysis, draft/curvature/zebra analysis._
+  isCircle). Measure Edge Length — total true (curve) length of selected edges/wires, so arcs measure
+  along the curve. _Remaining: section analysis, draft/curvature/zebra analysis._
 - **Batch 11:** Toggle Perspective/Orthographic projection command (flips `cameraController.cameraType`).
 - **Batch 4 (construction):** Point at Midpoint — drops a construction point at each selected edge's
   true midpoint (curve mid-parameter, correct for arcs too). Headless test: line midpoint (5,0,2).

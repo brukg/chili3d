@@ -24,5 +24,7 @@ describe("Edge midpoint (curve mid-parameter)", () => {
         expect(mid.x).toBeCloseTo(5, 6);
         expect(mid.y).toBeCloseTo(0, 6);
         expect(mid.z).toBeCloseTo(2, 6);
+        // curve.length() (used by Measure Edge Length) = |(10,0,4)| = √116 ≈ 10.7703.
+        expect(curve.length()).toBeCloseTo(Math.sqrt(116), 4);
     });
 });

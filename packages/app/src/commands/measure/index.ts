@@ -4,6 +4,7 @@
 export * from "./angle";
 export * from "./boundingBox";
 export * from "./centerOfMass";
+export * from "./edgeLength";
 export * from "./interferenceCheck";
 export * from "./length";
 export * from "./properties";
