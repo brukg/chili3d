@@ -42,10 +42,14 @@
 #include <BRepProj_Projection.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom2d_Line.hxx>
+#include <GeomAPI_Interpolate.hxx>
 #include <GeomAbs_Shape.hxx>
+#include <Geom_BSplineCurve.hxx>
 #include <Geom_BezierCurve.hxx>
 #include <Geom_CylindricalSurface.hxx>
 #include <Geom_Plane.hxx>
+#include <NCollection_HArray1.hxx>
+#include <Precision.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <ShapeAnalysis_WireOrder.hxx>
 #include <ShapeFix_FixSmallFace.hxx>
@@ -461,6 +465,31 @@ public:
         return ShapeResult { edge.Edge(), true, "" };
     }
 
+    // Fit-point spline: a B-spline curve that passes through every given point (GeomAPI_Interpolate),
+    // unlike bezier() whose points are control points. With periodic = true the curve closes smoothly.
+    static ShapeResult interpolate(const Vector3Array& points, bool periodic)
+    {
+        std::vector<Vector3> pts = vecFromJSArray<Vector3>(points);
+        if (pts.size() < 2) {
+            return ShapeResult { TopoDS_Shape(), false, "interpolate needs at least 2 points" };
+        }
+        Handle(NCollection_HArray1<gp_Pnt>) harray = new NCollection_HArray1<gp_Pnt>(1, pts.size());
+        for (int i = 0; i < pts.size(); i++) {
+            harray->SetValue(i + 1, Vector3::toPnt(pts[i]));
+        }
+        GeomAPI_Interpolate interp(harray, periodic, Precision::Confusion());
+        interp.Perform();
+        if (!interp.IsDone()) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to interpolate spline" };
+        }
+        Handle(Geom_BSplineCurve) curve = interp.Curve();
+        BRepBuilderAPI_MakeEdge edge(curve);
+        if (!edge.IsDone()) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to create spline edge" };
+        }
+        return ShapeResult { edge.Edge(), true, "" };
+    }
+
     static ShapeResult point(const Vector3& point)
     {
         BRepBuilderAPI_MakeVertex makeVertex(Vector3::toPnt(point));
@@ -867,6 +896,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("circle", &ShapeFactory::circle)
         .class_function("arc", &ShapeFactory::arc)
         .class_function("bezier", &ShapeFactory::bezier)
+        .class_function("interpolate", &ShapeFactory::interpolate)
         .class_function("rect", &ShapeFactory::rect)
         .class_function("point", &ShapeFactory::point)
         .class_function("line", &ShapeFactory::line)

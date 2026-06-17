@@ -15,6 +15,8 @@ export interface IShapeFactory {
     shell(faces: IFace[]): Result<IShell>;
     solid(shells: IShell[]): Result<ISolid>;
     bezier(points: XYZLike[], weights?: number[]): Result<IEdge>;
+    /** A fit-point spline: a B-spline edge passing through every point (unlike bezier control points). */
+    interpolate(points: XYZLike[], periodic: boolean): Result<IEdge>;
     point(point: XYZLike): Result<IVertex>;
     line(start: XYZLike, end: XYZLike): Result<IEdge>;
     arc(normal: XYZLike, center: XYZLike, start: XYZLike, angle: number): Result<IEdge>;

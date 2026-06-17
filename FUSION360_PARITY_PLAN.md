@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1:** **Fit Point Spline** — a B-spline curve passing through every picked point (Fusion's
+  fit-point spline), via a NEW kernel factory `interpolate(points, periodic)` (C++ GeomAPI_Interpolate;
+  WASM rebuilt). Click the first point again to close into a smooth periodic spline. Distinct from
+  Bezier (control points). WASM test: the spline passes through every fit point (distance ~0); <2
+  points fails cleanly. Unblocks future DXF SPLINE import.
+
 - **Batch 4:** **Axis Normal to Face** — construction axis perpendicular to a face at a picked point
   (Fusion's "axis perpendicular to face at point"), via recovered surface parameters → true normal
   (works on curved faces). Completes the axis family: circular-edge axis, two-faces axis, normal-to-

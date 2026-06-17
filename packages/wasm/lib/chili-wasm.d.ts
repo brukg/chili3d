@@ -596,6 +596,7 @@ interface EmbindModule {
     fixSmallFace(_0: TopoDS_Shape, _1: number): ShapeResult;
     curveProjection(_0: TopoDS_Shape, _1: TopoDS_Shape, _2: gp_Dir): ShapeResult;
     polygon(_0: Array<Vector3>): ShapeResult;
+    interpolate(_0: Array<Vector3>, _1: boolean): ShapeResult;
     bezier(_0: Array<Vector3>, _1: Array<number>): ShapeResult;
     fillet(_0: TopoDS_Shape, _1: Array<number>, _2: number): ShapeResult;
     variableFillet(_0: TopoDS_Shape, _1: Array<number>, _2: number, _3: number): ShapeResult;

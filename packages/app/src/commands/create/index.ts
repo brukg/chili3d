@@ -48,6 +48,7 @@ export * from "./sketchRect";
 export * from "./sketchRect3p";
 export * from "./sketchSlot";
 export * from "./sphere";
+export * from "./spline";
 export * from "./sweep";
 export * from "./thickSolid";
 export * from "./thread";

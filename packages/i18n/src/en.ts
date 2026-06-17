@@ -80,6 +80,7 @@ export default {
         "command.create.arc2point": "2-Point Arc",
         "command.create.arc3point": "3-Point Arc",
         "command.create.bezier": "Bezier",
+        "command.create.spline": "Fit Point Spline",
         "command.create.box": "Box",
         "command.create.boundingBox": "Bounding Box",
         "command.create.circle": "Circle",

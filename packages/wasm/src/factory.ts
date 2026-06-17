@@ -244,6 +244,9 @@ export class ShapeFactory implements IShapeFactory {
     bezier(points: XYZLike[], weights?: number[]): Result<IEdge> {
         return convertShapeResult(wasm.ShapeFactory.bezier(points, weights ?? [])) as Result<IEdge>;
     }
+    interpolate(points: XYZLike[], periodic: boolean): Result<IEdge> {
+        return convertShapeResult(wasm.ShapeFactory.interpolate(points, periodic)) as Result<IEdge>;
+    }
     point(point: XYZLike): Result<IVertex> {
         return convertShapeResult(wasm.ShapeFactory.point(point)) as Result<IVertex>;
     }

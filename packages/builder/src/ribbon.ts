@@ -38,6 +38,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     "create.axisNormalToFace",
                     "create.polygon",
                     "create.bezier",
+                    "create.spline",
                 ],
             },
             {
