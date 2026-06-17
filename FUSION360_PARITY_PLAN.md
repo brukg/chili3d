@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1:** **Overall Slot** — the two picked points are the slot's outermost ends (total length), so
+  the arc centres are inset from them by the radius (Fusion's overall/two-point slot). Completes the
+  straight-slot trio (centre-to-centre / centre-point / overall).
+
 - **Batch 1:** **Center-Point Slot** — Fusion's centre-point slot construction: pick the slot centre then
   one end (an arc centre); the opposite arc centre is mirrored through the centre (2·c − e). Same rounded-
   slot SketchNode as the centre-to-centre Slot, defined from its middle.

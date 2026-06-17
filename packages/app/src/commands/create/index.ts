@@ -60,6 +60,7 @@ export * from "./sketchChamfer";
 export * from "./sketchCircle";
 export * from "./sketchCircle3p";
 export * from "./sketchFillet";
+export * from "./sketchOverallSlot";
 export * from "./sketchPolygon";
 export * from "./sketchRect";
 export * from "./sketchRect3p";

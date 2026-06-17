@@ -144,6 +144,7 @@ export default {
         "command.create.sketchRect3p": "Sketch Rectangle (3 Points)",
         "command.create.sketchSlot": "Sketch Slot",
         "command.create.sketchCenterSlot": "Center-Point Slot",
+        "command.create.sketchOverallSlot": "Overall Slot",
         "command.create.roundedRect": "Rounded Rectangle",
         "command.create.sketchFillet": "Sketch Fillet",
         "command.create.sketchChamfer": "Sketch Chamfer",
