@@ -125,6 +125,7 @@ export default {
         "command.doc.saveToFile": "保存到文件",
         "command.edit.redo": "重做",
         "command.edit.selectAll": "全选",
+        "command.edit.invertSelection": "反选",
         "command.edit.undo": "撤销",
         "command.view.zoomFit": "缩放适应",
         "command.view.toggleDisplayMode": "显示模式",

@@ -10,6 +10,7 @@ export const Chili3dShortcuts: ShortcutMap = {
     "edit.undo": "ctrl+z",
     "edit.redo": ["ctrl+y", "ctrl+shift+z"],
     "edit.selectAll": "ctrl+a",
+    "edit.invertSelection": "ctrl+shift+a",
     "view.zoomFit": "f",
     "view.toggleDisplayMode": "w",
     "view.front": "1",

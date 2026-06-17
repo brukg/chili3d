@@ -42,6 +42,37 @@ export class SelectAll implements ICommand {
     }
 }
 
+// Invert the current selection: select every object that is NOT currently selected.
+@command({
+    key: "edit.invertSelection",
+    icon: "icon-select",
+})
+export class InvertSelection implements ICommand {
+    async execute(app: IApplication): Promise<void> {
+        const document = app.activeView?.document;
+        if (!document) return;
+
+        const selected = new Set<INode>(document.selection.getSelectedNodes());
+        const nodes: INode[] = [];
+        const walk = (node: INode) => {
+            if (node instanceof VisualNode && !selected.has(node)) nodes.push(node);
+            if (NodeUtils.isLinkedListNode(node)) {
+                let child = node.firstChild;
+                while (child) {
+                    walk(child);
+                    child = child.nextSibling;
+                }
+            }
+        };
+        let child = document.modelManager.rootNode.firstChild;
+        while (child) {
+            walk(child);
+            child = child.nextSibling;
+        }
+        document.selection.setSelection(nodes, false);
+    }
+}
+
 // Frame the whole model in the active view (F).
 @command({
     key: "view.zoomFit",

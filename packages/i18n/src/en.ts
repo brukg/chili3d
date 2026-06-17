@@ -125,6 +125,7 @@ export default {
         "command.doc.saveToFile": "Save To File",
         "command.edit.redo": "Redo",
         "command.edit.selectAll": "Select All",
+        "command.edit.invertSelection": "Invert Selection",
         "command.edit.undo": "Undo",
         "command.view.zoomFit": "Zoom Fit",
         "command.view.toggleDisplayMode": "Display Mode",

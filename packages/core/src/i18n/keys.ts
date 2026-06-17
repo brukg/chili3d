@@ -120,6 +120,7 @@ export const I18N_KEYS = [
     "command.doc.saveToFile",
     "command.edit.redo",
     "command.edit.selectAll",
+    "command.edit.invertSelection",
     "command.edit.undo",
     "command.file.export",
     "command.file.import",

@@ -32,6 +32,7 @@ Items marked **[session]** were shipped in the current rollout.
   isCircle). Measure Edge Length — total true (curve) length of selected edges/wires, so arcs measure
   along the curve. _Remaining: section analysis, draft/curvature/zebra analysis._
 - **Batch 11:** Toggle Perspective/Orthographic projection command (flips `cameraController.cameraType`).
+- **Batch 11:** Invert Selection (Ctrl+Shift+A) — selects every object not currently selected.
 - **Batch 2 (solid):** Hole "Through All" option — drills the full extent of the solid. NOTE: the
   kernel's `makeHole` is BLIND-ONLY (fails once depth reaches the far face), so through-all cuts a
   full-length cylinder via booleanCut instead. Headless test confirms a clean through-hole (π·r²·h).
