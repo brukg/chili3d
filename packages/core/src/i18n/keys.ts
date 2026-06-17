@@ -182,6 +182,7 @@ export const I18N_KEYS = [
     "command.modify.fillet",
     "command.modify.filletAll",
     "command.modify.fillSurface",
+    "command.modify.offsetSurface",
     "command.modify.variableFillet",
     "command.modify.hole",
     "command.modify.linkedArray",

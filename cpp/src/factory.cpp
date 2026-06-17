@@ -28,6 +28,7 @@
 #include <BRepLib.hxx>
 #include <BRepOffsetAPI_DraftAngle.hxx>
 #include <BRepOffsetAPI_MakeFilling.hxx>
+#include <BRepOffsetAPI_MakeOffsetShape.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
 #include <BRepOffsetAPI_MakePipeShell.hxx>
 #include <BRepOffsetAPI_MakeThickSolid.hxx>
@@ -589,6 +590,18 @@ public:
         return ShapeResult { makeSolid.Solid(), true, "" };
     }
 
+    // Offset a surface (face/shell) perpendicular to itself by a signed distance, producing a new
+    // open surface — unlike makeThickSolid, which closes it into a solid.
+    static ShapeResult offsetSurface(const TopoDS_Shape& shape, double distance)
+    {
+        BRepOffsetAPI_MakeOffsetShape offsetMaker;
+        offsetMaker.PerformBySimple(shape, distance);
+        if (!offsetMaker.IsDone()) {
+            return ShapeResult { TopoDS_Shape(), false, "Failed to offset surface" };
+        }
+        return ShapeResult { offsetMaker.Shape(), true, "" };
+    }
+
     static ShapeResult makeThickSolidBySimple(const TopoDS_Shape& shape, double thickness)
     {
         BRepOffsetAPI_MakeThickSolid makeThickSolid;
@@ -904,6 +917,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("face", &ShapeFactory::face)
         .class_function("shell", &ShapeFactory::shell)
         .class_function("solid", &ShapeFactory::solid)
+        .class_function("offsetSurface", &ShapeFactory::offsetSurface)
         .class_function("makeThickSolidBySimple", &ShapeFactory::makeThickSolidBySimple)
         .class_function("makeThickSolidByJoin", &ShapeFactory::makeThickSolidByJoin)
         .class_function("simplifyShape", &ShapeFactory::simplifyShape)

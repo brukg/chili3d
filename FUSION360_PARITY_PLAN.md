@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 3:** **Offset Surface** — a new surface parallel to the selected face(s)/shell at a signed
+  normal distance (Fusion's "Offset" surface), via a NEW kernel factory `offsetSurface` (C++
+  BRepOffsetAPI_MakeOffsetShape::PerformBySimple; WASM rebuilt). Distinct from Thicken (which closes
+  to a solid). WASM test: a 10×10 face offset by 5 is a parallel 100 mm² face on the z=5 plane.
+
 - **Batch 3:** **Ruled Surface** — a dedicated 2-rail ruled surface command (Fusion's "Ruled"): select
   two edges/wires, build the straight-line surface between them via a ruled, non-solid loft. Discoverable
   one-click alternative to the general Loft. WASM test: a ruled surface between two parallel 10mm

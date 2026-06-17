@@ -475,6 +475,9 @@ export class ShapeFactory implements IShapeFactory {
     combine(shapes: IShape[]): Result<ICompound> {
         return convertShapeResult(wasm.ShapeFactory.combine(ensureOccShape(shapes))) as Result<ICompound>;
     }
+    offsetSurface(shape: IShape, distance: number): Result<IShape> {
+        return convertShapeResult(wasm.ShapeFactory.offsetSurface(ensureOccShape(shape)[0], distance));
+    }
     makeThickSolidBySimple(shape: IShape, thickness: number): Result<IShape> {
         return convertShapeResult(
             wasm.ShapeFactory.makeThickSolidBySimple(ensureOccShape(shape)[0], thickness),

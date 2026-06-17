@@ -25,6 +25,7 @@ export * from "./linkedRevolve";
 export * from "./mirror";
 export * from "./move";
 export * from "./moveToOrigin";
+export * from "./offsetSurface";
 export * from "./pipeFeature";
 export * from "./pushPull";
 export * from "./removeFeature";

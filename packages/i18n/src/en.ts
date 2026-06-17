@@ -200,6 +200,7 @@ export default {
         "command.modify.fillet": "Fillet",
         "command.modify.filletAll": "Fillet All Edges",
         "command.modify.fillSurface": "Fill Surface",
+        "command.modify.offsetSurface": "Offset Surface",
         "command.modify.variableFillet": "Variable Fillet",
         "command.modify.hole": "Hole",
         "command.modify.linkedArray": "Linked Array",

@@ -80,6 +80,8 @@ export interface IShapeFactory {
     booleanFuse(shape1: IShape[], shape2: IShape[], simplifyShape: boolean): Result<IShape>;
     sewing(shape1: IShape, shape2: IShape): Result<IShape>;
     combine(shapes: IShape[]): Result<ICompound>;
+    /** Offset a surface (face/shell) perpendicular to itself by a signed distance → a new open surface. */
+    offsetSurface(shape: IShape, distance: number): Result<IShape>;
     makeThickSolidBySimple(shape: IShape, thickness: number): Result<IShape>;
     makeThickSolidByJoin(shape: IShape, closingFaces: IShape[], thickness: number): Result<IShape>;
     fillet(shape: IShape, edges: number[], radius: number): Result<IShape>;
