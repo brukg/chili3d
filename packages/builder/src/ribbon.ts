@@ -97,6 +97,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         "workingPlane.midPlane",
                         "workingPlane.tangent",
                         "workingPlane.normalToCurve",
+                        "workingPlane.throughPoint",
                     ],
                 ],
             },

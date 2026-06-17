@@ -373,3 +373,27 @@ export class PlaneNormalToCurve extends MultistepCommand {
         ];
     }
 }
+
+// Construction plane parallel to a face, passing through a picked point — Fusion's "plane through point,
+// parallel to plane". Same orientation as the face, repositioned to the point.
+@command({
+    key: "workingPlane.throughPoint",
+    icon: "icon-setWorkingPlane",
+})
+export class PlaneThroughPoint extends MultistepCommand {
+    protected override executeMainTask() {
+        const view = this.application.activeView;
+        if (!view) return;
+        const data = this.stepDatas[0].shapes[0];
+        const face = data.shape.transformedMul(data.transform) as IFace;
+        const [, normal] = face.normal(0, 0);
+        view.workplane = new Plane({ origin: this.stepDatas[1].point!, normal, xvec: planeXVec(normal) });
+    }
+
+    protected override getSteps(): IStep[] {
+        return [
+            new SelectShapeStep(ShapeTypes.face, "prompt.select.faces"),
+            new PointStep("prompt.pickPoint"),
+        ];
+    }
+}

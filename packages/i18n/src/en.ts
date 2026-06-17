@@ -285,6 +285,7 @@ export default {
         "command.workingPlane.midPlane": "Midplane",
         "command.workingPlane.tangent": "Tangent Plane",
         "command.workingPlane.normalToCurve": "Plane Normal to Curve",
+        "command.workingPlane.throughPoint": "Plane Through Point",
         "command.workingPlane.set": "Set",
         "command.workingPlane.toggleDynamic": "Toggle",
         "common.3DNavigation": "3D Navigation",

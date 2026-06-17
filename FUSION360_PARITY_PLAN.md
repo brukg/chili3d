@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 4:** **Plane Through Point** — a construction plane parallel to a selected face, repositioned to
+  pass through a picked point (Fusion's "plane through point, parallel to plane"). Rounds out the
+  construction-plane family (offset / at-angle / midplane / tangent / normal-to-curve / 3-point / from-
+  section / through-point).
+
 - **Batch 1:** **Overall Slot** — the two picked points are the slot's outermost ends (total length), so
   the arc centres are inset from them by the radius (Fusion's overall/two-point slot). Completes the
   straight-slot trio (centre-to-centre / centre-point / overall).

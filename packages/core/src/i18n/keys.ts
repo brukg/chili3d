@@ -277,6 +277,7 @@ export const I18N_KEYS = [
     "command.workingPlane.midPlane",
     "command.workingPlane.tangent",
     "command.workingPlane.normalToCurve",
+    "command.workingPlane.throughPoint",
     "command.workingPlane.set",
     "command.workingPlane.toggleDynamic",
     "common.3DNavigation",
