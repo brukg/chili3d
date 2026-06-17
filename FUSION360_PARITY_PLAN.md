@@ -217,6 +217,8 @@ Items marked **[session]** were shipped in the current rollout.
   **SPLINE entities** now too (fit points preferred over control points → shapeFactory.interpolate;
   closed flag → periodic). DXF import covers LINE/CIRCLE/ARC/LWPOLYLINE(+bulge)/ELLIPSE/SPLINE — the
   full common DXF 2D entity set. Parser tests cover fit-point preference and control-point fallback.
+  **Partial ellipses** now import too (start/end params 41/42 → shapeFactory.ellipseArc; full 0..2π span
+  → closed ellipse) — completes ELLIPSE coverage now that the elliptical-arc factory exists.
 - **Batch 1/3 (started):** Sketch Rectangle — two-corner rectangle created as a fully-constrained
   SketchNode (H/V edges + signed width/height dimensions), editable like a real sketch profile
   (vs the static create.rect face). Headless test: solves to an exact 30×20 rectangle.

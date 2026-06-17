@@ -117,8 +117,39 @@ describe("DXF importer", () => {
         const e = entities[0];
         expect(e.type).toBe("ellipse");
         if (e.type === "ellipse") {
-            expect(e).toMatchObject({ cx: 1, cy: 2, mx: 4, my: 0, ratio: 0.5 });
-            expect(e.sweep).toBeCloseTo(2 * Math.PI, 5);
+            expect(e).toMatchObject({ cx: 1, cy: 2, mx: 4, my: 0, ratio: 0.5, start: 0 });
+            expect(e.end).toBeCloseTo(2 * Math.PI, 5);
+        }
+    });
+
+    test("parses a partial ELLIPSE (start/end parameters)", () => {
+        const dxf = [
+            "0",
+            "ELLIPSE",
+            "10",
+            "0",
+            "20",
+            "0", // centre
+            "11",
+            "5",
+            "21",
+            "0", // major radius 5 along +x
+            "40",
+            "0.4", // ratio
+            "41",
+            "0",
+            "42",
+            "1.5707963", // 0 → π/2 (a quarter arc)
+            "0",
+            "EOF",
+        ].join("\n");
+        const entities = parseDxf(dxf);
+        expect(entities.length).toBe(1);
+        const e = entities[0];
+        expect(e.type).toBe("ellipse");
+        if (e.type === "ellipse") {
+            expect(e.start).toBeCloseTo(0, 6);
+            expect(e.end).toBeCloseTo(Math.PI / 2, 5);
         }
     });
 

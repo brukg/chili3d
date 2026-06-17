@@ -9,7 +9,16 @@ export type DxfEntity =
     | { type: "circle"; cx: number; cy: number; r: number }
     | { type: "arc"; cx: number; cy: number; r: number; start: number; end: number }
     | { type: "polyline"; vertices: { x: number; y: number; bulge: number }[]; closed: boolean }
-    | { type: "ellipse"; cx: number; cy: number; mx: number; my: number; ratio: number; sweep: number }
+    | {
+          type: "ellipse";
+          cx: number;
+          cy: number;
+          mx: number;
+          my: number;
+          ratio: number;
+          start: number;
+          end: number;
+      }
     | { type: "spline"; points: { x: number; y: number }[]; closed: boolean };
 
 const KNOWN = new Set(["LINE", "CIRCLE", "ARC", "LWPOLYLINE", "ELLIPSE", "SPLINE"]);
@@ -58,7 +67,8 @@ export function parseDxf(text: string): DxfEntity[] {
                 mx: c[11] ?? 0,
                 my: c[21] ?? 0,
                 ratio: c[40] ?? 1,
-                sweep: Math.abs((c[42] ?? 0) - (c[41] ?? 0)), // 0 ⇒ params omitted ⇒ full ellipse
+                start: c[41] ?? 0, // start/end parameters (radians); 0..2π ⇒ full ellipse
+                end: c[42] ?? 2 * Math.PI,
             });
         } else if (type === "SPLINE" && spline) {
             // Fit points are points the curve passes through (ideal for interpolation); fall back to the
@@ -150,15 +160,17 @@ export function importDxf(document: IDocument, name: string, text: string): Resu
             continue;
         } else if (e.type === "ellipse") {
             const majorR = Math.hypot(e.mx, e.my);
-            // Only full ellipses are built; partial ellipse arcs (a non-2π sweep) are skipped.
-            if (majorR < 1e-9 || (e.sweep > 1e-9 && Math.abs(e.sweep - 2 * Math.PI) > 1e-3)) continue;
-            const el = shapeFactory.ellipse(
-                { x: 0, y: 0, z: 1 },
-                { x: e.cx, y: e.cy, z },
-                { x: e.mx / majorR, y: e.my / majorR, z },
-                majorR,
-                majorR * e.ratio,
-            );
+            if (majorR < 1e-9) continue;
+            const normal = { x: 0, y: 0, z: 1 };
+            const center = { x: e.cx, y: e.cy, z };
+            const xvec = { x: e.mx / majorR, y: e.my / majorR, z };
+            const minorR = majorR * e.ratio;
+            const sweep = e.end - e.start;
+            // A full 0..2π span builds a closed ellipse; any other span builds the partial arc.
+            const el =
+                Math.abs(sweep - 2 * Math.PI) < 1e-6 || sweep <= 1e-9
+                    ? shapeFactory.ellipse(normal, center, xvec, majorR, minorR)
+                    : shapeFactory.ellipseArc(normal, center, xvec, majorR, minorR, e.start, e.end);
             if (el.isOk) edges.push(el.value);
             continue;
         } else if (e.type === "spline") {
