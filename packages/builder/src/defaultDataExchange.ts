@@ -18,13 +18,14 @@ import { exportDxf } from "./dxf/dxfExporter";
 import { importObj } from "./obj/objImporter";
 import { importPly } from "./ply/plyImporter";
 import { exportThreeMf } from "./threemf/threeMfExporter";
+import { importThreeMf } from "./threemf/threeMfImporter";
 import { exportUrdf } from "./urdf/urdfExporter";
 import { importUrdf } from "./urdf/urdfImporter";
 import { validateRobotTree } from "./urdf/urdfValidate";
 
 export class DefaultDataExchange implements IDataExchange {
     importFormats(): string[] {
-        return [".step", ".stp", ".iges", ".igs", ".brep", ".stl", ".obj", ".ply", ".urdf"];
+        return [".step", ".stp", ".iges", ".igs", ".brep", ".stl", ".obj", ".ply", ".3mf", ".urdf"];
     }
 
     exportFormats(): string[] {
@@ -63,6 +64,8 @@ export class DefaultDataExchange implements IDataExchange {
             importResult = importObj(document, file.name, await file.text());
         } else if (this.extensionIs(fileName, ".ply")) {
             importResult = importPly(document, file.name, await file.text());
+        } else if (this.extensionIs(fileName, ".3mf")) {
+            importResult = await importThreeMf(document, file.name, new Uint8Array(await file.arrayBuffer()));
         } else if (this.extensionIs(fileName, ".step", ".stp")) {
             importResult = await this.importStep(document, file);
         } else if (this.extensionIs(fileName, ".iges", ".igs")) {

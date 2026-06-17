@@ -102,8 +102,10 @@ Items marked **[session]** were shipped in the current rollout.
   dependency) → Mesh (surface) → MeshNode, wired into DefaultDataExchange (`.obj` added to import
   formats). Handles polygons (fan-triangulated), v/vt/vn face tokens, negative indices; computes
   per-vertex normals. Headless tests: a cube parses to 8 verts / 12 triangles. **ASCII PLY import**
-  too (shared buildSurfaceMeshNode helper; binary PLY rejected gracefully). _Remaining mesh import:
-  3MF/GLTF, binary PLY, mesh→BRep, reduce/remesh._
+  too (shared buildSurfaceMeshNode helper; binary PLY rejected gracefully). **3MF import** too (JSZip
+  to open the package, order-independent regex parse of the `<model>` vertices/triangles). Mesh import
+  now covers STL/OBJ/PLY/3MF — matching what the exporter supports. _Remaining: GLTF/binary PLY import,
+  mesh→BRep, reduce/remesh._
 - **Batch 1/3 (started):** Sketch Rectangle — two-corner rectangle created as a fully-constrained
   SketchNode (H/V edges + signed width/height dimensions), editable like a real sketch profile
   (vs the static create.rect face). Headless test: solves to an exact 30×20 rectangle.
