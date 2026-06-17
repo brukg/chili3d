@@ -91,6 +91,37 @@ describe("DXF importer", () => {
         }
     });
 
+    test("parses an ELLIPSE entity (centre, major axis, ratio, sweep)", () => {
+        const dxf = [
+            "0",
+            "ELLIPSE",
+            "10",
+            "1",
+            "20",
+            "2", // centre (1,2)
+            "11",
+            "4",
+            "21",
+            "0", // major axis endpoint (4,0) → major radius 4
+            "40",
+            "0.5", // minor/major ratio → minor radius 2
+            "41",
+            "0",
+            "42",
+            "6.283185307", // full sweep (2π)
+            "0",
+            "EOF",
+        ].join("\n");
+        const entities = parseDxf(dxf);
+        expect(entities.length).toBe(1);
+        const e = entities[0];
+        expect(e.type).toBe("ellipse");
+        if (e.type === "ellipse") {
+            expect(e).toMatchObject({ cx: 1, cy: 2, mx: 4, my: 0, ratio: 0.5 });
+            expect(e.sweep).toBeCloseTo(2 * Math.PI, 5);
+        }
+    });
+
     test("ignores unsupported entities and sections", () => {
         const dxf =
             "0\nSECTION\n2\nHEADER\n0\nTEXT\n10\n1\n20\n2\n0\nLINE\n10\n0\n20\n0\n11\n1\n21\n1\n0\nEOF\n";

@@ -114,8 +114,9 @@ Items marked **[session]** were shipped in the current rollout.
   parser is headless-tested. **LWPOLYLINE** too (the common polyline entity; accumulates the repeated
   10/20 vertex codes, honours the closed flag, builds line segments). **Bulge arcs** too (code 42):
   a non-zero bulge curves the segment into an arc via the proven apex → computeArcFromPoints recipe
-  (exported from app and reused). Headless test: bulge 1 = a radius-5 semicircle. _Remaining: SPLINE,
-  ELLIPSE entities._
+  (exported from app and reused). Headless test: bulge 1 = a radius-5 semicircle. **Full ELLIPSE
+  entities** too (centre + major axis + ratio → shapeFactory.ellipse; partial ellipse arcs skipped).
+  DXF import now covers LINE/CIRCLE/ARC/LWPOLYLINE(+bulge)/ELLIPSE. _Remaining: SPLINE._
 - **Batch 1/3 (started):** Sketch Rectangle — two-corner rectangle created as a fully-constrained
   SketchNode (H/V edges + signed width/height dimensions), editable like a real sketch profile
   (vs the static create.rect face). Headless test: solves to an exact 30×20 rectangle.
