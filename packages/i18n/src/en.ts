@@ -138,6 +138,7 @@ export default {
         "command.create.sketchRect3p": "Sketch Rectangle (3 Points)",
         "command.create.sketchSlot": "Sketch Slot",
         "command.create.roundedRect": "Rounded Rectangle",
+        "command.create.sketchFillet": "Sketch Fillet",
         "command.create.sphere": "Sphere",
         "command.create.sweep": "Sweep",
         "command.create.thickSolid": "Thick Solid",

@@ -3,7 +3,7 @@
 
 import { XYZ } from "@chili3d/core";
 import { describe, expect, test } from "@rstest/core";
-import { computeCircleFromPoints, intersectTwoPlanes } from "../src/commands/create/arcUtils";
+import { computeCircleFromPoints, filletCorner, intersectTwoPlanes } from "../src/commands/create/arcUtils";
 
 describe("computeCircleFromPoints (3-point circle math)", () => {
     test("three points of the unit circle give centre (0,0,0) and radius 1", () => {
@@ -78,5 +78,32 @@ describe("intersectTwoPlanes (two-plane axis math)", () => {
             new XYZ({ x: 0, y: 0, z: 1 }),
         );
         expect(result).toBeUndefined();
+    });
+});
+
+describe("filletCorner (round a corner between two rays)", () => {
+    test("a 90° corner with radius 2 has tangent points 2 from the corner", () => {
+        const f = filletCorner(XYZ.zero, new XYZ({ x: 10, y: 0, z: 0 }), new XYZ({ x: 0, y: 10, z: 0 }), 2)!;
+        expect(f).toBeDefined();
+        // tangentDist = r / tan(45°) = 2.
+        expect(f.t1.x).toBeCloseTo(2, 6);
+        expect(f.t1.y).toBeCloseTo(0, 6);
+        expect(f.t2.x).toBeCloseTo(0, 6);
+        expect(f.t2.y).toBeCloseTo(2, 6);
+        // The arc centre is r from both tangent points (a valid fillet).
+        expect(f.center.distanceTo(f.t1)).toBeCloseTo(2, 6);
+        expect(f.center.distanceTo(f.t2)).toBeCloseTo(2, 6);
+        // The mid point lies on the arc (r from centre) and nearest the corner.
+        expect(f.center.distanceTo(f.mid)).toBeCloseTo(2, 6);
+    });
+
+    test("a radius too large for the rays returns undefined", () => {
+        const f = filletCorner(XYZ.zero, new XYZ({ x: 1, y: 0, z: 0 }), new XYZ({ x: 0, y: 1, z: 0 }), 5);
+        expect(f).toBeUndefined();
+    });
+
+    test("a collinear corner returns undefined", () => {
+        const f = filletCorner(XYZ.zero, new XYZ({ x: 10, y: 0, z: 0 }), new XYZ({ x: -10, y: 0, z: 0 }), 2);
+        expect(f).toBeUndefined();
     });
 });

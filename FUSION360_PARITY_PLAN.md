@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1:** **Sketch Fillet** — round the corner between two straight edges that share an endpoint
+  with a tangent arc of a given radius (Fusion's sketch fillet): the edges are trimmed to the tangent
+  points and joined by the fillet arc → wire. Pure `filletCorner(C,A,B,r)` recipe (tangent points + arc
+  midpoint, rejects too-large radius / collinear corners) → computeArcFromPoints. Unit tests on the
+  recipe + a WASM test confirming a radius-2 arc of length π for a 90° corner.
+
 - **Batch 4:** **Points Along Curve** — drop equally-spaced construction points along each selected
   edge/wire (Fusion's "points along path"), via the kernel's `uniformAbscissaByCount` (true arc-length
   spacing, so arcs/splines divide evenly). Editable count (= segments → count+1 points incl. ends).

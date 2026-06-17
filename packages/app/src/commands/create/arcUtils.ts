@@ -82,6 +82,30 @@ export function intersectTwoPlanes(p1: XYZ, n1: XYZ, p2: XYZ, n2: XYZ) {
     return { point, direction: u.normalize()! };
 }
 
+/**
+ * Compute a fillet arc that rounds the corner C between the two rays C→A and C→B with radius r.
+ * Returns the two tangent points (t1 on C→A, t2 on C→B) and a midpoint on the arc — ready to feed to
+ * computeArcFromPoints. Returns undefined when the rays are degenerate or (anti)parallel, or when the
+ * radius is too large for the available ray lengths.
+ */
+export function filletCorner(C: XYZ, A: XYZ, B: XYZ, r: number) {
+    const d1 = A.sub(C).normalize();
+    const d2 = B.sub(C).normalize();
+    if (!d1 || !d2) return undefined;
+    const cosPhi = Math.max(-1, Math.min(1, d1.dot(d2)));
+    const phi = Math.acos(cosPhi);
+    if (phi < 1e-6 || phi > Math.PI - 1e-6) return undefined; // collinear corner
+    const tangentDist = r / Math.tan(phi / 2);
+    if (tangentDist > C.distanceTo(A) || tangentDist > C.distanceTo(B)) return undefined;
+
+    const t1 = C.add(d1.multiply(tangentDist));
+    const t2 = C.add(d2.multiply(tangentDist));
+    const bisector = d1.add(d2).normalize()!;
+    const center = C.add(bisector.multiply(r / Math.sin(phi / 2)));
+    const mid = center.add(C.sub(center).normalize()!.multiply(r)); // arc point nearest the corner
+    return { t1, t2, mid, center };
+}
+
 function positiveAngle(from: XYZ, to: XYZ, normal: XYZ): number {
     const dot = from.dot(to);
     const crossVec = from.cross(to);
