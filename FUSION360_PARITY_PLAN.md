@@ -11,6 +11,9 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8:** **Measure Perimeter** — report the total boundary length of a face (sum of every bounding
+  edge's true curve length, outer wire plus holes), as Fusion's measure panel does. New
+  `measure.perimeter` command. WASM tests: a 10×20 rect face → 60; a disc r=5 → 2π·5.
 - **Batch 6:** **Heal Body** — run ShapeFix over a body to repair degenerate edges, broken wire order,
   gaps and bad face orientations, then report (via the new `isValid()`) whether it came out valid — the
   repair counterpart to Check Geometry. The kernel `ShapeFactory::fixShape` (ShapeFix_Shape) was already
