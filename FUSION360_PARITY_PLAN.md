@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1:** **Project to Plane** — orthographically project selected edges/wires onto the active
+  workplane along its normal (Fusion's "Project" geometry into the active sketch), in one step (vs the
+  existing convert.curveProjection which needs an explicit target face). Builds a target face at the
+  workplane sized to the selection, projects each curve, and combines the results. WASM test: a circle
+  5mm above XY projects to a same-radius circle on XY.
+
 - **Batch 8:** **Measure Arc Angle** — report the included (sweep) angle of a selected circular arc edge
   (a circle is parametrized by angle, so the sweep is the curve's parameter span). Complements Measure
   Radius. WASM test: 90° and 135° arcs report their sweep.

@@ -126,6 +126,7 @@ export default {
         "command.create.axisNormalToFace": "垂直于面的轴",
         "command.create.axisTwoPoints": "两点构造轴",
         "command.create.projectedView": "投影视图",
+        "command.create.projectToPlane": "投影到平面",
         "command.create.polygon": "多段线",
         "command.create.regularPolygon": "正多边形",
         "command.create.pyramid": "棱锥",

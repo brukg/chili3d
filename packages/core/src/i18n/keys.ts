@@ -121,6 +121,7 @@ export const I18N_KEYS = [
     "command.create.axisNormalToFace",
     "command.create.axisTwoPoints",
     "command.create.projectedView",
+    "command.create.projectToPlane",
     "command.create.polygon",
     "command.create.regularPolygon",
     "command.create.pyramid",

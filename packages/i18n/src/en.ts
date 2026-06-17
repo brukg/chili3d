@@ -126,6 +126,7 @@ export default {
         "command.create.axisNormalToFace": "Axis Normal to Face",
         "command.create.axisTwoPoints": "Axis Through Two Points",
         "command.create.projectedView": "Projected View",
+        "command.create.projectToPlane": "Project to Plane",
         "command.create.polygon": "Pline",
         "command.create.regularPolygon": "Regular Polygon",
         "command.create.pyramid": "Pyramid",

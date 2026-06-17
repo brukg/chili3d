@@ -45,6 +45,7 @@ export * from "./pointsAlongCurve";
 export * from "./polygon";
 export * from "./polyline";
 export * from "./projectedView";
+export * from "./projectToPlane";
 export * from "./pyramid";
 export * from "./rect";
 export * from "./regularPolygon";
