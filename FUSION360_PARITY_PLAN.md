@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 2:** **Emboss** — extrude a profile face along its normal and fuse it onto a target body
+  (raise, default) or cut it into the body (engrave) by a given depth — Fusion's emboss/engrave for
+  planar profiles, one of the last genuinely-missing CREATE features. WASM tests: a r=3 profile engraved
+  5 deep removes π·9·5; raised 5 tall adds π·9·5 (8000 ∓ 141.37).
+
 - **Batch 1:** **Arc Slot** — a curved (3-point arc) slot: pick three points defining the centre arc;
   the width is the editable radius (Fusion's arc slot). Built from an outer arc (R+r), a semicircular end
   cap, an inner arc (R−r) and a start cap → wire → face, via a pure probe-verified `curvedSlotEdges`

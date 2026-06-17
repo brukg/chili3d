@@ -12,6 +12,7 @@ export * from "./chamferDA";
 export * from "./createJoint";
 export * from "./createLink";
 export * from "./draft";
+export * from "./emboss";
 export * from "./explode";
 export * from "./exportUrdf";
 export * from "./fillet";
