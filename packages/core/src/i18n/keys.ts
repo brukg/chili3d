@@ -102,6 +102,7 @@ export const I18N_KEYS = [
     "command.create.intersectionPoint",
     "command.create.axis",
     "command.create.axisTwoFaces",
+    "command.create.axisNormalToFace",
     "command.create.polygon",
     "command.create.regularPolygon",
     "command.create.pyramid",

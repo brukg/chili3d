@@ -35,6 +35,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     "create.intersectionPoint",
                     "create.axis",
                     "create.axisTwoFaces",
+                    "create.axisNormalToFace",
                     "create.polygon",
                     "create.bezier",
                 ],

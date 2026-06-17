@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 4:** **Axis Normal to Face** — construction axis perpendicular to a face at a picked point
+  (Fusion's "axis perpendicular to face at point"), via recovered surface parameters → true normal
+  (works on curved faces). Completes the axis family: circular-edge axis, two-faces axis, normal-to-
+  face axis. WASM test: normal recovered from a picked box-face point matches the face normal.
+
 - **Batch 4:** **Plane Normal to Curve** — construction plane along a path (Fusion's "plane along
   path"): pick an edge and a point on it; the workplane sits there with its normal along the curve
   tangent (`curve.d1(u).vec`), ready for a sweep/loft profile drawn perpendicular to the path. WASM
