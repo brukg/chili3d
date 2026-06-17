@@ -2,6 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 export * from "./angle";
+export * from "./area";
 export * from "./boundingBox";
 export * from "./centerOfMass";
 export * from "./edgeLength";

@@ -30,7 +30,8 @@ Items marked **[session]** were shipped in the current rollout.
   world-space centroid (`ISolid.massProperties().centerOfMass`). Measure Bounding Box — reports the
   selection's overall dx×dy×dz. Measure Radius — radius/diameter of a circular edge (via CurveUtils.
   isCircle). Measure Edge Length — total true (curve) length of selected edges/wires, so arcs measure
-  along the curve. _Remaining: section analysis, draft/curvature/zebra analysis._
+  along the curve. Measure Area — total surface area of selected faces (IFace.area()). _Remaining:
+  section analysis, draft/curvature/zebra analysis._
 - **Batch 11:** Toggle Perspective/Orthographic projection command (flips `cameraController.cameraType`).
 - **Batch 11:** Invert Selection (Ctrl+Shift+A) — selects every object not currently selected.
 - **Batch 2 (solid):** Hole "Through All" option — drills the full extent of the solid. NOTE: the
