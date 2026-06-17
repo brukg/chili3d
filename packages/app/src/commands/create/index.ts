@@ -26,6 +26,7 @@ export * from "./ellipsoid";
 export * from "./extractEdges";
 export * from "./extractFaces";
 export * from "./extrude";
+export * from "./faceCenterPoint";
 export * from "./group";
 export * from "./helix";
 export * from "./intersectionPoint";

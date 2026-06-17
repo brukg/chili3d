@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 4:** **Point at Face Center** — drop a construction point at each selected face's centre (its
+  oriented-bounding-box centre: the centroid for a planar face, the mid-axis point for a curved face).
+  Completes the construction-point family (vertex/midpoint/circle-center/intersection/face-center).
+  WASM tests: a 10×20 rect centres at (5,10,0); a cylinder side face centres on the axis at mid-height.
+
 - **Batch 8:** **Measure Edge Angle** — the acute angle between two edges from their tangent directions
   (|cosθ|, orientation-independent): perpendicular → 90°, parallel → 0°. Complements Face Angle and the
   3-point Measure Angle. WASM test: ⟂ lines → 90°, diagonal → 45° (same for a reversed edge).
