@@ -9,9 +9,10 @@ export type DxfEntity =
     | { type: "circle"; cx: number; cy: number; r: number }
     | { type: "arc"; cx: number; cy: number; r: number; start: number; end: number }
     | { type: "polyline"; vertices: { x: number; y: number; bulge: number }[]; closed: boolean }
-    | { type: "ellipse"; cx: number; cy: number; mx: number; my: number; ratio: number; sweep: number };
+    | { type: "ellipse"; cx: number; cy: number; mx: number; my: number; ratio: number; sweep: number }
+    | { type: "spline"; points: { x: number; y: number }[]; closed: boolean };
 
-const KNOWN = new Set(["LINE", "CIRCLE", "ARC", "LWPOLYLINE", "ELLIPSE"]);
+const KNOWN = new Set(["LINE", "CIRCLE", "ARC", "LWPOLYLINE", "ELLIPSE", "SPLINE"]);
 
 /**
  * Parse a DXF file's LINE / CIRCLE / ARC entities. DXF is a stream of (group-code, value) line pairs;
@@ -25,6 +26,12 @@ export function parseDxf(text: string): DxfEntity[] {
     let codes: Record<number, number> = {};
     // LWPOLYLINE repeats codes 10/20 per vertex, so it needs its own accumulator.
     let poly: { vertices: { x: number; y: number; bulge: number }[]; closed: boolean } | null = null;
+    // SPLINE repeats 10/20 (control points) and 11/21 (fit points), so it also accumulates separately.
+    let spline: {
+        control: { x: number; y: number }[];
+        fit: { x: number; y: number }[];
+        closed: boolean;
+    } | null = null;
 
     const flush = () => {
         const c = codes;
@@ -53,10 +60,16 @@ export function parseDxf(text: string): DxfEntity[] {
                 ratio: c[40] ?? 1,
                 sweep: Math.abs((c[42] ?? 0) - (c[41] ?? 0)), // 0 ⇒ params omitted ⇒ full ellipse
             });
+        } else if (type === "SPLINE" && spline) {
+            // Fit points are points the curve passes through (ideal for interpolation); fall back to the
+            // control points when no fit points are present.
+            const pts = spline.fit.length >= 2 ? spline.fit : spline.control;
+            if (pts.length >= 2) entities.push({ type: "spline", points: pts, closed: spline.closed });
         }
         type = null;
         codes = {};
         poly = null;
+        spline = null;
     };
 
     for (let i = 0; i + 1 < lines.length; i += 2) {
@@ -68,6 +81,7 @@ export function parseDxf(text: string): DxfEntity[] {
             const t = value.toUpperCase();
             type = KNOWN.has(t) ? t : null;
             if (type === "LWPOLYLINE") poly = { vertices: [], closed: false };
+            if (type === "SPLINE") spline = { control: [], fit: [], closed: false };
         } else if (type === "LWPOLYLINE" && poly) {
             const n = Number(value);
             const last = poly.vertices[poly.vertices.length - 1];
@@ -75,6 +89,14 @@ export function parseDxf(text: string): DxfEntity[] {
             else if (code === 10) poly.vertices.push({ x: n, y: 0, bulge: 0 });
             else if (code === 20 && last) last.y = n;
             else if (code === 42 && last) last.bulge = n; // arc bulge for the segment after this vertex
+        } else if (type === "SPLINE" && spline) {
+            const n = Number(value);
+            if (code === 70)
+                spline.closed = (n & 1) === 1; // bit 0 = closed
+            else if (code === 10) spline.control.push({ x: n, y: 0 });
+            else if (code === 20) spline.control[spline.control.length - 1].y = n;
+            else if (code === 11) spline.fit.push({ x: n, y: 0 });
+            else if (code === 21) spline.fit[spline.fit.length - 1].y = n;
         } else if (type) {
             codes[code] = Number(value);
         }
@@ -138,6 +160,12 @@ export function importDxf(document: IDocument, name: string, text: string): Resu
                 majorR * e.ratio,
             );
             if (el.isOk) edges.push(el.value);
+            continue;
+        } else if (e.type === "spline") {
+            // Build a B-spline through the (fit or control) points; the points are the curve's path.
+            const pts = e.points.map((p) => ({ x: p.x, y: p.y, z }));
+            const sp = shapeFactory.interpolate(pts, e.closed);
+            if (sp.isOk) edges.push(sp.value);
             continue;
         } else {
             const a = (e.start * Math.PI) / 180;

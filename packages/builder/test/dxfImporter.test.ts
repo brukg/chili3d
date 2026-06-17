@@ -122,6 +122,80 @@ describe("DXF importer", () => {
         }
     });
 
+    test("parses a SPLINE entity, preferring fit points over control points", () => {
+        const dxf = [
+            "0",
+            "SPLINE",
+            "70",
+            "0", // open
+            "10",
+            "0",
+            "20",
+            "0", // control point (ignored when fit points exist)
+            "10",
+            "5",
+            "20",
+            "9",
+            "11",
+            "0",
+            "21",
+            "0", // fit point 1
+            "11",
+            "4",
+            "21",
+            "3", // fit point 2
+            "11",
+            "8",
+            "21",
+            "0", // fit point 3
+            "0",
+            "EOF",
+        ].join("\n");
+        const entities = parseDxf(dxf);
+        expect(entities.length).toBe(1);
+        const e = entities[0];
+        expect(e.type).toBe("spline");
+        if (e.type === "spline") {
+            expect(e.closed).toBe(false);
+            expect(e.points).toEqual([
+                { x: 0, y: 0 },
+                { x: 4, y: 3 },
+                { x: 8, y: 0 },
+            ]);
+        }
+    });
+
+    test("falls back to a SPLINE's control points when there are no fit points", () => {
+        const dxf = [
+            "0",
+            "SPLINE",
+            "70",
+            "1", // closed
+            "10",
+            "0",
+            "20",
+            "0",
+            "10",
+            "10",
+            "20",
+            "0",
+            "10",
+            "10",
+            "20",
+            "10",
+            "0",
+            "EOF",
+        ].join("\n");
+        const entities = parseDxf(dxf);
+        expect(entities.length).toBe(1);
+        const e = entities[0];
+        expect(e.type).toBe("spline");
+        if (e.type === "spline") {
+            expect(e.closed).toBe(true);
+            expect(e.points.length).toBe(3);
+        }
+    });
+
     test("ignores unsupported entities and sections", () => {
         const dxf =
             "0\nSECTION\n2\nHEADER\n0\nTEXT\n10\n1\n20\n2\n0\nLINE\n10\n0\n20\n0\n11\n1\n21\n1\n0\nEOF\n";

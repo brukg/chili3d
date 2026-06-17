@@ -166,7 +166,9 @@ Items marked **[session]** were shipped in the current rollout.
   a non-zero bulge curves the segment into an arc via the proven apex → computeArcFromPoints recipe
   (exported from app and reused). Headless test: bulge 1 = a radius-5 semicircle. **Full ELLIPSE
   entities** too (centre + major axis + ratio → shapeFactory.ellipse; partial ellipse arcs skipped).
-  DXF import now covers LINE/CIRCLE/ARC/LWPOLYLINE(+bulge)/ELLIPSE. _Remaining: SPLINE._
+  **SPLINE entities** now too (fit points preferred over control points → shapeFactory.interpolate;
+  closed flag → periodic). DXF import covers LINE/CIRCLE/ARC/LWPOLYLINE(+bulge)/ELLIPSE/SPLINE — the
+  full common DXF 2D entity set. Parser tests cover fit-point preference and control-point fallback.
 - **Batch 1/3 (started):** Sketch Rectangle — two-corner rectangle created as a fully-constrained
   SketchNode (H/V edges + signed width/height dimensions), editable like a real sketch profile
   (vs the static create.rect face). Headless test: solves to an exact 30×20 rectangle.
