@@ -79,8 +79,87 @@ export function parseSvg(text: string): SvgEntity[] {
     return out;
 }
 
+// Approximate an SVG elliptical-arc (endpoint parametrization) with cubic Beziers (≤90° each). Returns
+// control-point quads [p0,c1,c2,p3] in SVG space — point-based, so the importer's y-flip applies cleanly.
+export function arcToBeziers(
+    x1: number,
+    y1: number,
+    rx: number,
+    ry: number,
+    phi: number,
+    fA: boolean,
+    fS: boolean,
+    x2: number,
+    y2: number,
+): { x: number; y: number }[][] {
+    if (rx === 0 || ry === 0 || (x1 === x2 && y1 === y2)) return [];
+    rx = Math.abs(rx);
+    ry = Math.abs(ry);
+    const cosP = Math.cos(phi);
+    const sinP = Math.sin(phi);
+    const dx = (x1 - x2) / 2;
+    const dy = (y1 - y2) / 2;
+    const x1p = cosP * dx + sinP * dy;
+    const y1p = -sinP * dx + cosP * dy;
+    const lambda = (x1p * x1p) / (rx * rx) + (y1p * y1p) / (ry * ry);
+    if (lambda > 1) {
+        const s = Math.sqrt(lambda);
+        rx *= s;
+        ry *= s;
+    }
+    const num = Math.max(0, rx * rx * ry * ry - rx * rx * y1p * y1p - ry * ry * x1p * x1p);
+    const denom = rx * rx * y1p * y1p + ry * ry * x1p * x1p;
+    const coef = (fA !== fS ? 1 : -1) * Math.sqrt(num / denom);
+    const cxp = (coef * (rx * y1p)) / ry;
+    const cyp = (-coef * (ry * x1p)) / rx;
+    const cx = cosP * cxp - sinP * cyp + (x1 + x2) / 2;
+    const cy = sinP * cxp + cosP * cyp + (y1 + y2) / 2;
+
+    const ang = (ux: number, uy: number, vx: number, vy: number) => {
+        const dot = ux * vx + uy * vy;
+        const len = Math.hypot(ux, uy) * Math.hypot(vx, vy);
+        let a = Math.acos(Math.min(1, Math.max(-1, dot / len)));
+        if (ux * vy - uy * vx < 0) a = -a;
+        return a;
+    };
+    const theta1 = ang(1, 0, (x1p - cxp) / rx, (y1p - cyp) / ry);
+    let dtheta =
+        ang((x1p - cxp) / rx, (y1p - cyp) / ry, (-x1p - cxp) / rx, (-y1p - cyp) / ry) % (2 * Math.PI);
+    if (!fS && dtheta > 0) dtheta -= 2 * Math.PI;
+    if (fS && dtheta < 0) dtheta += 2 * Math.PI;
+
+    const point = (t: number) => ({
+        x: cx + rx * Math.cos(t) * cosP - ry * Math.sin(t) * sinP,
+        y: cy + rx * Math.cos(t) * sinP + ry * Math.sin(t) * cosP,
+    });
+    const deriv = (t: number) => ({
+        x: -rx * Math.sin(t) * cosP - ry * Math.cos(t) * sinP,
+        y: -rx * Math.sin(t) * sinP + ry * Math.cos(t) * cosP,
+    });
+
+    const segs = Math.max(1, Math.ceil(Math.abs(dtheta) / (Math.PI / 2)));
+    const delta = dtheta / segs;
+    const out: { x: number; y: number }[][] = [];
+    for (let i = 0; i < segs; i++) {
+        const a1 = theta1 + i * delta;
+        const a2 = a1 + delta;
+        const k = (4 / 3) * Math.tan((a2 - a1) / 4);
+        const p1 = point(a1);
+        const p2 = point(a2);
+        const d1 = deriv(a1);
+        const d2 = deriv(a2);
+        out.push([
+            p1,
+            { x: p1.x + k * d1.x, y: p1.y + k * d1.y },
+            { x: p2.x - k * d2.x, y: p2.y - k * d2.y },
+            p2,
+        ]);
+    }
+    return out;
+}
+
 // Parse one <path> data string. Tracks the current point and subpath start; relative commands (lowercase)
-// add to the current point. A quadratic (Q) is promoted to a cubic.
+// add to the current point. A quadratic (Q) is promoted to a cubic; an arc (A) to cubic Beziers.
 function parsePath(d: string, Y: (y: number) => number, out: SvgEntity[]) {
     let cx = 0;
     let cy = 0; // current point in SVG coords (y not yet flipped)
@@ -88,7 +167,7 @@ function parsePath(d: string, Y: (y: number) => number, out: SvgEntity[]) {
     let sy = 0; // subpath start
     const line = (x2: number, y2: number) => out.push({ type: "line", x1: cx, y1: Y(cy), x2, y2: Y(y2) });
 
-    for (const [, cmd, argStr] of d.matchAll(/([MmLlHhVvCcQqZz])([^MmLlHhVvCcSsQqTtAaZz]*)/g)) {
+    for (const [, cmd, argStr] of d.matchAll(/([MmLlHhVvCcQqAaZz])([^MmLlHhVvCcSsQqTtAaZz]*)/g)) {
         const a = numbers(argStr);
         const rel = cmd === cmd.toLowerCase();
         if (cmd === "M" || cmd === "m") {
@@ -156,6 +235,27 @@ function parsePath(d: string, Y: (y: number) => number, out: SvgEntity[]) {
                         { x: ex, y: Y(ey) },
                     ],
                 });
+                cx = ex;
+                cy = ey;
+            }
+        } else if (cmd === "A" || cmd === "a") {
+            // rx ry x-axis-rotation large-arc-flag sweep-flag x y, repeatable.
+            for (let i = 0; i + 6 < a.length; i += 7) {
+                const ex = (rel ? cx : 0) + a[i + 5];
+                const ey = (rel ? cy : 0) + a[i + 6];
+                for (const bz of arcToBeziers(
+                    cx,
+                    cy,
+                    a[i],
+                    a[i + 1],
+                    (a[i + 2] * Math.PI) / 180,
+                    a[i + 3] !== 0,
+                    a[i + 4] !== 0,
+                    ex,
+                    ey,
+                )) {
+                    out.push({ type: "cubic", points: bz.map((p) => ({ x: p.x, y: Y(p.y) })) });
+                }
                 cx = ex;
                 cy = ey;
             }

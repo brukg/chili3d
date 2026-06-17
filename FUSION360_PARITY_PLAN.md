@@ -25,7 +25,10 @@ Items marked **[session]** were shipped in the current rollout.
   absolute + relative; Q promoted to cubic) and `<line>/<polyline>/<polygon>/<rect>/<circle>/<ellipse>`,
   with SVG's y-down flipped to CAD y-up. `importSvg` builds a compound of edges (line / circle / ellipse
   / bezier). Registered in the import dispatch + `.svg` accept list. Parser tests cover shapes, rect,
-  path M/L/Z, relative H/V, and a cubic. _Remaining: arc (A) command._
+  path M/L/Z, relative H/V, and a cubic. **Arc (A) command** now too: a pure `arcToBeziers` does the
+  SVG endpoint→center conversion and approximates the elliptical arc with ≤90° cubic Beziers (point-
+  based, so the y-flip applies cleanly). SVG path support is now complete (M/L/H/V/C/Q/A/Z). Tests:
+  quarter-circle stays on the radius circle; half-circle splits into two segments.
 
 - **Batch 6:** **Mirror about Workplane** — reflect the selected object(s) across the active workplane
   itself (e.g. the XY plane), unlike Mirror which reflects about a vertical plane through a picked line.
