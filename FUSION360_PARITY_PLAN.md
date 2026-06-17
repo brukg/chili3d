@@ -94,6 +94,11 @@ Items marked **[session]** were shipped in the current rollout.
 - **CORRECTION — I/O is already comprehensive:** export covers STEP/IGES/BREP/STL/3MF/PLY/OBJ/GLTF/
   GLB/DXF/URDF; import covers STEP/IGES/BREP/STL/URDF. (Earlier inventory understated this.) The only
   real I/O gap is mesh import (OBJ/PLY/3MF/GLTF → mesh node), which needs a three.js loader.
+- **Batch 7 (mesh, DONE for OBJ):** OBJ mesh import — a pure-TS Wavefront OBJ parser (no three.js
+  dependency) → Mesh (surface) → MeshNode, wired into DefaultDataExchange (`.obj` added to import
+  formats). Handles polygons (fan-triangulated), v/vt/vn face tokens, negative indices; computes
+  per-vertex normals. Headless tests: a cube parses to 8 verts / 12 triangles. _Remaining mesh import:
+  PLY/3MF/GLTF, mesh→BRep, reduce/remesh._
 - **Batch 1/3 (started):** Sketch Rectangle — two-corner rectangle created as a fully-constrained
   SketchNode (H/V edges + signed width/height dimensions), editable like a real sketch profile
   (vs the static create.rect face). Headless test: solves to an exact 30×20 rectangle.
