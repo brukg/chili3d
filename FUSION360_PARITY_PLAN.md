@@ -32,6 +32,9 @@ Items marked **[session]** were shipped in the current rollout.
   isCircle). Measure Edge Length — total true (curve) length of selected edges/wires, so arcs measure
   along the curve. _Remaining: section analysis, draft/curvature/zebra analysis._
 - **Batch 11:** Toggle Perspective/Orthographic projection command (flips `cameraController.cameraType`).
+- **Batch 2 (solid):** symmetric extrude — ExtrudeNode gains a `symmetric` option that extrudes half
+  the length each way from the profile plane (centred result), Fusion's symmetric extrude. Backward
+  compatible (default off). Headless test: length 10 symmetric spans z −5..5 vs 0..10 one-sided.
 - **Batch 4 (construction):** Tangent Plane — pick a face + a point on it; the working plane becomes
   tangent to the face there (origin = point, normal = surface normal via `surface.parameter` +
   `face.normal`). For curved faces this is the local tangent plane to sketch on.

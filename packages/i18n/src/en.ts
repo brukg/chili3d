@@ -348,6 +348,7 @@ export default {
         "option.command.repeat": "Repeat",
         "option.command.thickness": "Thickness",
         "option.command.distance": "Distance",
+        "option.command.symmetric": "Symmetric",
         "option.command.counterboreRadius": "Counterbore Radius",
         "option.command.counterboreDepth": "Counterbore Depth",
         "option.command.countersinkRadius": "Countersink Radius",
