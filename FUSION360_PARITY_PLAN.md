@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 4:** **Points Along Curve** — drop equally-spaced construction points along each selected
+  edge/wire (Fusion's "points along path"), via the kernel's `uniformAbscissaByCount` (true arc-length
+  spacing, so arcs/splines divide evenly). Editable count (= segments → count+1 points incl. ends).
+  WASM tests: a 10mm line ÷5 → 6 points 2mm apart; a quarter circle ÷4 → evenly-spaced by arc length.
+
 - **Batch 4:** **Point at Face Center** — drop a construction point at each selected face's centre (its
   oriented-bounding-box centre: the centroid for a planar face, the mid-axis point for a curved face).
   Completes the construction-point family (vertex/midpoint/circle-center/intersection/face-center).

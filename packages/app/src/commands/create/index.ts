@@ -38,6 +38,7 @@ export * from "./offset";
 export * from "./orientedBoundingBox";
 export * from "./pipe";
 export * from "./point";
+export * from "./pointsAlongCurve";
 export * from "./polygon";
 export * from "./projectedView";
 export * from "./pyramid";

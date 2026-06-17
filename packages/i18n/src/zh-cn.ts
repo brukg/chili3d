@@ -116,6 +116,7 @@ export default {
         "command.create.midpointPoint": "中点",
         "command.create.centerPoint": "圆心点",
         "command.create.faceCenterPoint": "面中心点",
+        "command.create.pointsAlongCurve": "曲线等分点",
         "command.create.intersectionPoint": "交点",
         "command.create.axis": "构造轴",
         "command.create.axisTwoFaces": "两面交线轴",

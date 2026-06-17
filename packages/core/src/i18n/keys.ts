@@ -111,6 +111,7 @@ export const I18N_KEYS = [
     "command.create.midpointPoint",
     "command.create.centerPoint",
     "command.create.faceCenterPoint",
+    "command.create.pointsAlongCurve",
     "command.create.intersectionPoint",
     "command.create.axis",
     "command.create.axisTwoFaces",

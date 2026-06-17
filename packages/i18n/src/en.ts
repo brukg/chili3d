@@ -116,6 +116,7 @@ export default {
         "command.create.midpointPoint": "Point at Midpoint",
         "command.create.centerPoint": "Point at Center",
         "command.create.faceCenterPoint": "Point at Face Center",
+        "command.create.pointsAlongCurve": "Points Along Curve",
         "command.create.intersectionPoint": "Point at Intersection",
         "command.create.axis": "Construction Axis",
         "command.create.axisTwoFaces": "Axis at Two Faces",
