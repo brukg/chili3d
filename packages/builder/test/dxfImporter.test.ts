@@ -54,6 +54,43 @@ describe("DXF importer", () => {
         expect(entities[2]).toEqual({ type: "arc", cx: 1, cy: 1, r: 5, start: 0, end: 90 });
     });
 
+    test("parses a closed LWPOLYLINE with its repeated vertex codes", () => {
+        const dxf = [
+            "0",
+            "LWPOLYLINE",
+            "90",
+            "3",
+            "70",
+            "1", // closed flag
+            "10",
+            "0",
+            "20",
+            "0",
+            "10",
+            "4",
+            "20",
+            "0",
+            "10",
+            "4",
+            "20",
+            "3",
+            "0",
+            "EOF",
+        ].join("\n");
+        const entities = parseDxf(dxf);
+        expect(entities.length).toBe(1);
+        const poly = entities[0];
+        expect(poly.type).toBe("polyline");
+        if (poly.type === "polyline") {
+            expect(poly.closed).toBe(true);
+            expect(poly.vertices).toEqual([
+                { x: 0, y: 0 },
+                { x: 4, y: 0 },
+                { x: 4, y: 3 },
+            ]);
+        }
+    });
+
     test("ignores unsupported entities and sections", () => {
         const dxf =
             "0\nSECTION\n2\nHEADER\n0\nTEXT\n10\n1\n20\n2\n0\nLINE\n10\n0\n20\n0\n11\n1\n21\n1\n0\nEOF\n";

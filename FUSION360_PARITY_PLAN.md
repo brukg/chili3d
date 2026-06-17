@@ -109,7 +109,9 @@ Items marked **[session]** were shipped in the current rollout.
   mesh→BRep, reduce/remesh._
 - **Batch 11 (2D I/O):** DXF import — parses LINE/CIRCLE/ARC group-code entities into edges (XY plane)
   → compound EditableShapeNode (import 2D profiles to extrude; round-trips with the DXF export). Pure
-  parser is headless-tested. _Remaining: LWPOLYLINE/SPLINE entities._
+  parser is headless-tested. **LWPOLYLINE** too (the common polyline entity; accumulates the repeated
+  10/20 vertex codes, honours the closed flag, builds line segments). _Remaining: SPLINE/bulged
+  polyline arcs._
 - **Batch 1/3 (started):** Sketch Rectangle — two-corner rectangle created as a fully-constrained
   SketchNode (H/V edges + signed width/height dimensions), editable like a real sketch profile
   (vs the static create.rect face). Headless test: solves to an exact 30×20 rectangle.
