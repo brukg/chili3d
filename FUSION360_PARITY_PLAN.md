@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **I/O:** **SVG import** — Fusion's "Insert SVG". Pure `parseSvg` handles `<path>` (M/L/H/V/C/Q/Z,
+  absolute + relative; Q promoted to cubic) and `<line>/<polyline>/<polygon>/<rect>/<circle>/<ellipse>`,
+  with SVG's y-down flipped to CAD y-up. `importSvg` builds a compound of edges (line / circle / ellipse
+  / bezier). Registered in the import dispatch + `.svg` accept list. Parser tests cover shapes, rect,
+  path M/L/Z, relative H/V, and a cubic. _Remaining: arc (A) command._
+
 - **Batch 6:** **Mirror about Workplane** — reflect the selected object(s) across the active workplane
   itself (e.g. the XY plane), unlike Mirror which reflects about a vertical plane through a picked line.
   Keeps the original + adds the mirrored copy (clone toggle). Applies `Matrix4.createMirrorWithPlane`;

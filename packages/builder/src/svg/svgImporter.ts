@@ -1,0 +1,198 @@
+// Part of the Chili3d Project, under the AGPL-3.0 License.
+// See LICENSE file in the project root for full license information.
+
+import { EditableShapeNode, type IDocument, type IEdge, type INode, Result } from "@chili3d/core";
+
+// SVG geometry, already converted to CAD coordinates (SVG y points down, so y is negated). A "cubic"
+// carries its four control points (p0 = start, p3 = end) for shapeFactory.bezier.
+export type SvgEntity =
+    | { type: "line"; x1: number; y1: number; x2: number; y2: number }
+    | { type: "cubic"; points: { x: number; y: number }[] }
+    | { type: "circle"; cx: number; cy: number; r: number }
+    | { type: "ellipse"; cx: number; cy: number; rx: number; ry: number };
+
+const NUM = /-?\d*\.?\d+(?:[eE][-+]?\d+)?/g;
+const numbers = (s: string): number[] => (s.match(NUM) ?? []).map(Number);
+const attr = (tag: string, name: string): number => {
+    const m = tag.match(new RegExp(`${name}\\s*=\\s*"([^"]*)"`));
+    return m ? Number.parseFloat(m[1]) : 0;
+};
+
+// Parse an SVG document's drawable geometry. Supports <path> (M/L/H/V/C/Q/Z, absolute + relative) and
+// the <line>/<polyline>/<polygon>/<rect>/<circle>/<ellipse> elements. SVG y is flipped to CAD y.
+export function parseSvg(text: string): SvgEntity[] {
+    const out: SvgEntity[] = [];
+    const Y = (y: number) => -y; // flip to CAD orientation
+
+    for (const tag of text.match(/<(path|line|polyline|polygon|rect|circle|ellipse)\b[^>]*>/g) ?? []) {
+        const name = tag.match(/<(\w+)/)![1];
+        if (name === "line") {
+            out.push({
+                type: "line",
+                x1: attr(tag, "x1"),
+                y1: Y(attr(tag, "y1")),
+                x2: attr(tag, "x2"),
+                y2: Y(attr(tag, "y2")),
+            });
+        } else if (name === "circle") {
+            out.push({ type: "circle", cx: attr(tag, "cx"), cy: Y(attr(tag, "cy")), r: attr(tag, "r") });
+        } else if (name === "ellipse") {
+            out.push({
+                type: "ellipse",
+                cx: attr(tag, "cx"),
+                cy: Y(attr(tag, "cy")),
+                rx: attr(tag, "rx"),
+                ry: attr(tag, "ry"),
+            });
+        } else if (name === "rect") {
+            const x = attr(tag, "x");
+            const y = attr(tag, "y");
+            const w = attr(tag, "width");
+            const h = attr(tag, "height");
+            const pts = [
+                { x, y: Y(y) },
+                { x: x + w, y: Y(y) },
+                { x: x + w, y: Y(y + h) },
+                { x, y: Y(y + h) },
+            ];
+            for (let i = 0; i < 4; i++) {
+                const a = pts[i];
+                const b = pts[(i + 1) % 4];
+                out.push({ type: "line", x1: a.x, y1: a.y, x2: b.x, y2: b.y });
+            }
+        } else if (name === "polyline" || name === "polygon") {
+            const m = tag.match(/points\s*=\s*"([^"]*)"/);
+            const v = m ? numbers(m[1]) : [];
+            const pts: { x: number; y: number }[] = [];
+            for (let i = 0; i + 1 < v.length; i += 2) pts.push({ x: v[i], y: Y(v[i + 1]) });
+            const segs = name === "polygon" ? pts.length : pts.length - 1;
+            for (let i = 0; i < segs; i++) {
+                const a = pts[i];
+                const b = pts[(i + 1) % pts.length];
+                out.push({ type: "line", x1: a.x, y1: a.y, x2: b.x, y2: b.y });
+            }
+        } else {
+            const m = tag.match(/\bd\s*=\s*"([^"]*)"/);
+            if (m) parsePath(m[1], Y, out);
+        }
+    }
+    return out;
+}
+
+// Parse one <path> data string. Tracks the current point and subpath start; relative commands (lowercase)
+// add to the current point. A quadratic (Q) is promoted to a cubic.
+function parsePath(d: string, Y: (y: number) => number, out: SvgEntity[]) {
+    let cx = 0;
+    let cy = 0; // current point in SVG coords (y not yet flipped)
+    let sx = 0;
+    let sy = 0; // subpath start
+    const line = (x2: number, y2: number) => out.push({ type: "line", x1: cx, y1: Y(cy), x2, y2: Y(y2) });
+
+    for (const [, cmd, argStr] of d.matchAll(/([MmLlHhVvCcQqZz])([^MmLlHhVvCcSsQqTtAaZz]*)/g)) {
+        const a = numbers(argStr);
+        const rel = cmd === cmd.toLowerCase();
+        if (cmd === "M" || cmd === "m") {
+            cx = (rel ? cx : 0) + a[0];
+            cy = (rel ? cy : 0) + a[1];
+            sx = cx;
+            sy = cy;
+            // Extra coordinate pairs after a moveto are implicit linetos.
+            for (let i = 2; i + 1 < a.length; i += 2) {
+                const nx = (rel ? cx : 0) + a[i];
+                const ny = (rel ? cy : 0) + a[i + 1];
+                line(nx, ny);
+                cx = nx;
+                cy = ny;
+            }
+        } else if (cmd === "L" || cmd === "l") {
+            for (let i = 0; i + 1 < a.length; i += 2) {
+                const nx = (rel ? cx : 0) + a[i];
+                const ny = (rel ? cy : 0) + a[i + 1];
+                line(nx, ny);
+                cx = nx;
+                cy = ny;
+            }
+        } else if (cmd === "H" || cmd === "h") {
+            for (const v of a) {
+                const nx = (rel ? cx : 0) + v;
+                line(nx, cy);
+                cx = nx;
+            }
+        } else if (cmd === "V" || cmd === "v") {
+            for (const v of a) {
+                const ny = (rel ? cy : 0) + v;
+                line(cx, ny);
+                cy = ny;
+            }
+        } else if (cmd === "C" || cmd === "c") {
+            for (let i = 0; i + 5 < a.length; i += 6) {
+                const b = rel ? cx : 0;
+                const c = rel ? cy : 0;
+                const p = [
+                    { x: cx, y: Y(cy) },
+                    { x: b + a[i], y: Y(c + a[i + 1]) },
+                    { x: b + a[i + 2], y: Y(c + a[i + 3]) },
+                    { x: b + a[i + 4], y: Y(c + a[i + 5]) },
+                ];
+                out.push({ type: "cubic", points: p });
+                cx = b + a[i + 4];
+                cy = c + a[i + 5];
+            }
+        } else if (cmd === "Q" || cmd === "q") {
+            // Promote the quadratic (ctrl q, end e) to a cubic: c1 = p0 + 2/3(q−p0), c2 = e + 2/3(q−e).
+            for (let i = 0; i + 3 < a.length; i += 4) {
+                const b = rel ? cx : 0;
+                const c = rel ? cy : 0;
+                const qx = b + a[i];
+                const qy = c + a[i + 1];
+                const ex = b + a[i + 2];
+                const ey = c + a[i + 3];
+                out.push({
+                    type: "cubic",
+                    points: [
+                        { x: cx, y: Y(cy) },
+                        { x: cx + (2 / 3) * (qx - cx), y: Y(cy + (2 / 3) * (qy - cy)) },
+                        { x: ex + (2 / 3) * (qx - ex), y: Y(ey + (2 / 3) * (qy - ey)) },
+                        { x: ex, y: Y(ey) },
+                    ],
+                });
+                cx = ex;
+                cy = ey;
+            }
+        } else if (cmd === "Z" || cmd === "z") {
+            line(sx, sy);
+            cx = sx;
+            cy = sy;
+        }
+    }
+}
+
+/** Import an SVG file's 2D geometry (in the XY plane) as a compound of edges in an EditableShapeNode. */
+export function importSvg(document: IDocument, name: string, text: string): Result<INode> {
+    const edges: IEdge[] = [];
+    const z = 0;
+    for (const e of parseSvg(text)) {
+        if (e.type === "line") {
+            const r = shapeFactory.line({ x: e.x1, y: e.y1, z }, { x: e.x2, y: e.y2, z });
+            if (r.isOk) edges.push(r.value);
+        } else if (e.type === "circle") {
+            const r = shapeFactory.circle({ x: 0, y: 0, z: 1 }, { x: e.cx, y: e.cy, z }, e.r);
+            if (r.isOk) edges.push(r.value);
+        } else if (e.type === "ellipse") {
+            const major = Math.max(e.rx, e.ry);
+            const minor = Math.min(e.rx, e.ry);
+            const xvec = e.rx >= e.ry ? { x: 1, y: 0, z } : { x: 0, y: 1, z };
+            const r = shapeFactory.ellipse({ x: 0, y: 0, z: 1 }, { x: e.cx, y: e.cy, z }, xvec, major, minor);
+            if (r.isOk) edges.push(r.value);
+        } else if (e.type === "cubic") {
+            const r = shapeFactory.bezier(e.points.map((p) => ({ x: p.x, y: p.y, z })));
+            if (r.isOk) edges.push(r.value);
+        }
+    }
+    if (edges.length === 0) {
+        return Result.err("SVG contains no supported geometry");
+    }
+    const compound = shapeFactory.combine(edges);
+    if (!compound.isOk) return Result.err(compound.error);
+    return Result.ok(new EditableShapeNode({ document, name, shape: compound.value }));
+}
