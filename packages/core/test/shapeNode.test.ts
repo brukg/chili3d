@@ -64,6 +64,9 @@ class MockShape implements IShape {
     extremaDistance(other: IShape): number {
         return 0;
     }
+    reversed(): IShape {
+        return this;
+    }
     isClosed(): boolean {
         return true;
     }

@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 3:** **Reverse Normal** — flip a face/shell's topological orientation (surface normals) via
+  the already-bound `TopoDS_Shape.reversed()`, surfaced as `IShape.reversed()` (no WASM rebuild).
+  New `modify.reverseNormal` command builds reversed EditableShapeNodes from the selection. Useful
+  before sewing/thickening or 3D-print export. WASM test asserts orientation flips and double-reverse
+  restores it. (Patch via fillSurface and ruled/open surfaces via loft were already present.)
+
 - **Batch 6/8:** **Measure Mass** — physical-material density → mass (Fusion's physical material).
   Editable `density` property (kg/m³, default steel 7850); reports mass in g and kg from the solid's
   kernel volume: mass(g) = density · volume(mm³) · 1e-6. WASM test: 10 mm steel cube → 7.85 g.

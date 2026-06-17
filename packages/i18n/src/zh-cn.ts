@@ -209,6 +209,7 @@ export default {
         "command.modify.removeShapes": "删除子元素",
         "command.modify.rib": "筋",
         "command.modify.rotate": "旋转",
+        "command.modify.reverseNormal": "反转法线",
         "command.modify.sew": "缝合",
         "command.modify.simplifyShape": "简化",
         "command.modify.split": "分割",

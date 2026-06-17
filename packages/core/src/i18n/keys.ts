@@ -191,6 +191,7 @@ export const I18N_KEYS = [
     "command.modify.removeShapes",
     "command.modify.rib",
     "command.modify.rotate",
+    "command.modify.reverseNormal",
     "command.modify.sew",
     "command.modify.simplifyShape",
     "command.modify.split",

@@ -231,6 +231,10 @@ export class OccShape implements IShape {
         return OccShape.wrap(wasm.Shape.clone(this._shape));
     }
 
+    reversed(): IShape {
+        return OccShape.wrap(this._shape.reversed());
+    }
+
     isClosed(): boolean {
         return wasm.Shape.isClosed(this.shape);
     }

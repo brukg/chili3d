@@ -30,6 +30,7 @@ export * from "./pushPull";
 export * from "./removeFeature";
 export * from "./removeFillet";
 export * from "./removeSubShapes";
+export * from "./reverseNormal";
 export * from "./rib";
 export * from "./rotate";
 export * from "./scale";

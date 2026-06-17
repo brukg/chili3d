@@ -45,6 +45,8 @@ export interface IShape extends IDisposable {
     boundingBox(): BoundingBox;
     orientedBoundingBox(): OrientedBoundingBox;
     extremaDistance(other: IShape): number;
+    /** Return a copy of this shape with its topological orientation reversed (flips face/surface normals). */
+    reversed(): IShape;
     fixSmallFace(tolerance: number): IShape;
 }
 

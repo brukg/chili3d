@@ -55,6 +55,9 @@ export class TestEdge implements IEdge {
     extremaDistance(other: IShape): number {
         throw new Error("Method not implemented.");
     }
+    reversed(): IShape {
+        throw new Error("Method not implemented.");
+    }
 
     dispose(): void {
         throw new Error("Method not implemented.");

@@ -209,6 +209,7 @@ export default {
         "command.modify.removeShapes": "Remove Shapes",
         "command.modify.rib": "Rib",
         "command.modify.rotate": "Rotate",
+        "command.modify.reverseNormal": "Reverse Normal",
         "command.modify.sew": "Sew",
         "command.modify.simplifyShape": "Simplify",
         "command.modify.split": "Split",
