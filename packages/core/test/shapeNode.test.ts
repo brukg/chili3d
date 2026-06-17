@@ -70,6 +70,9 @@ class MockShape implements IShape {
     isClosed(): boolean {
         return true;
     }
+    isValid(): boolean {
+        return true;
+    }
     isNull(): boolean {
         return false;
     }

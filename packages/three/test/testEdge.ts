@@ -71,6 +71,9 @@ export class TestEdge implements IEdge {
     isClosed(): boolean {
         throw new Error("Method not implemented.");
     }
+    isValid(): boolean {
+        throw new Error("Method not implemented.");
+    }
     isNull(): boolean {
         throw new Error("Method not implemented.");
     }

@@ -185,6 +185,7 @@ export default {
         "command.measure.radius": "半径",
         "command.measure.boundingBox": "包围盒",
         "command.measure.centerOfMass": "质心",
+        "command.measure.checkGeometry": "检查几何",
         "command.measure.inertia": "惯性矩",
         "command.measure.interference": "干涉检查",
         "command.measure.length": "长度",
@@ -525,6 +526,8 @@ export default {
         "toast.measure.properties:{0}{1}{2}{3}{4}": "体积：{0} mm³，面积：{1} mm²，质心：({2}, {3}, {4})",
         "toast.measure.inertia:{0}{1}{2}{3}{4}{5}":
             "关于质心的惯性矩 (mm⁵) — Ixx: {0}, Iyy: {1}, Izz: {2}; Ixy: {3}, Ixz: {4}, Iyz: {5}",
+        "toast.measure.geometryValid": "几何有效 — 未发现错误",
+        "toast.measure.geometryInvalid:{0}": "几何无效 — {0} 个面未通过检查",
         "toast.measure.boundingBox:{0}{1}{2}": "包围盒：{0} × {1} × {2} mm",
         "toast.measure.radius:{0}{1}": "半径：{0} mm，直径：{1} mm",
         "toast.measure.edgeLength:{0}": "总长度：{0} mm",

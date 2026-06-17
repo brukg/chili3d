@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8/11:** **Check Geometry** — run BRepCheck_Analyzer over a body and report validity
+  (Fusion's Inspect → Check Geometry). New kernel method `Shape::isValid` (BRepCheck_Analyzer, geom
+  checks on) exposed as `IShape.isValid()`; new `measure.checkGeometry` command reports valid, or counts
+  the offending faces when invalid. WASM rebuilt. Tests: a primitive box and a boolean fusion are valid.
 - **Measure:** **Moments of Inertia** — report the inertia tensor of a solid about its centre of mass
   (Fusion's Properties → moments of inertia): the diagonal Ixx/Iyy/Izz and products Ixy/Ixz/Iyz in mm⁵
   (unit density). The kernel already integrated these via `massProperties()`; only the mass/properties
@@ -536,7 +540,7 @@ Chili3D has robotics joints (URDF). Fusion's mechanical assembly joints are a di
 - ❌ View cube (corner orientation widget)
 - ❌ Named views / saved camera positions
 - ❌ Measure with running total / chain
-- ❌ Repair bodies / check geometry
+- 🟡 Check geometry **[session]** (BRepCheck_Analyzer validity report); repair/heal still ❌
 - ❌ Standard view shortcuts (front/top/right/iso = 1..7)
 
 ## Out of scope for a browser CAD (Fusion has, we won't chase) ⛔

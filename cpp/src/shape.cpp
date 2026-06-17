@@ -13,6 +13,7 @@
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
+#include <BRepCheck_Analyzer.hxx>
 #include <BRepExtrema_ExtCC.hxx>
 #include <BRepGProp.hxx>
 #include <BRepGProp_Face.hxx>
@@ -103,6 +104,14 @@ public:
     static bool isClosed(const TopoDS_Shape& shape)
     {
         return BRep_Tool::IsClosed(shape);
+    }
+
+    static bool isValid(const TopoDS_Shape& shape)
+    {
+        if (shape.IsNull())
+            return false;
+        BRepCheck_Analyzer analyzer(shape, true);
+        return analyzer.IsValid();
     }
 
     static ShapeArray findAncestor(const TopoDS_Shape& from, const TopoDS_Shape& subShape,
@@ -555,6 +564,7 @@ EMSCRIPTEN_BINDINGS(Shape)
         .class_function("sectionSS", &Shape::sectionSS)
         .class_function("sectionSP", &Shape::sectionSP)
         .class_function("isClosed", &Shape::isClosed)
+        .class_function("isValid", &Shape::isValid)
         .class_function("splitShapes", &Shape::splitShapes)
         .class_function("removeFeature", &Shape::removeFeature)
         .class_function("removeFillet", &Shape::removeFillet)

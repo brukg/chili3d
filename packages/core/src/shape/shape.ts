@@ -19,6 +19,8 @@ export interface IShape extends IDisposable {
     edgesMeshPosition(): EdgeMeshData;
     matrix: Matrix4;
     isClosed(): boolean;
+    /** Topological/geometric validity per BRepCheck_Analyzer — false for self-intersecting or broken shapes. */
+    isValid(): boolean;
     isNull(): boolean;
     /**
      * they share the same TShape with the same Locations and Orientations.
