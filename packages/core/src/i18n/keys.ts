@@ -218,6 +218,7 @@ export const I18N_KEYS = [
     "command.modify.linkedPathArray",
     "command.modify.linkedRevolve",
     "command.modify.mirror",
+    "command.modify.mirrorWorkplane",
     "command.modify.move",
     "command.modify.moveToOrigin",
     "command.modify.pipeFeature",

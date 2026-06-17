@@ -236,6 +236,7 @@ export default {
         "command.modify.linkedPathArray": "关联路径阵列",
         "command.modify.linkedRevolve": "关联旋转",
         "command.modify.mirror": "镜像",
+        "command.modify.mirrorWorkplane": "关于工作平面镜像",
         "command.modify.move": "移动",
         "command.modify.moveToOrigin": "移动到原点",
         "command.modify.pipeFeature": "管特征",

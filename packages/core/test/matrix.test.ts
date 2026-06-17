@@ -75,6 +75,13 @@ describe("test Transform", () => {
         ).toBeTruthy();
     });
 
+    test("mirror about the XY plane negates z (backs Mirror about Workplane)", () => {
+        const mirror = Matrix4.createMirrorWithPlane(Plane.XY);
+        expect(
+            mirror.ofPoint(new XYZ({ x: 1, y: 2, z: 3 })).isEqualTo(new XYZ({ x: 1, y: 2, z: -3 })),
+        ).toBeTruthy();
+    });
+
     test("test translationPart", () => {
         const matrix = Matrix4.fromTranslation(1, 2, 3);
         expect(matrix.translationPart().isEqualTo(new XYZ({ x: 1, y: 2, z: 3 }))).toBeTruthy();

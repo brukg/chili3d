@@ -236,6 +236,7 @@ export default {
         "command.modify.linkedPathArray": "Linked Path Array",
         "command.modify.linkedRevolve": "Linked Revolve",
         "command.modify.mirror": "Mirror",
+        "command.modify.mirrorWorkplane": "Mirror about Workplane",
         "command.modify.move": "Move",
         "command.modify.moveToOrigin": "Move to Origin",
         "command.modify.pipeFeature": "Pipe Feature",

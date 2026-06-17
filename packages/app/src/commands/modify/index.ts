@@ -26,6 +26,7 @@ export * from "./linkedMove";
 export * from "./linkedPathArray";
 export * from "./linkedRevolve";
 export * from "./mirror";
+export * from "./mirrorWorkplane";
 export * from "./move";
 export * from "./moveToOrigin";
 export * from "./offsetSurface";

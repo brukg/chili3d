@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 6:** **Mirror about Workplane** — reflect the selected object(s) across the active workplane
+  itself (e.g. the XY plane), unlike Mirror which reflects about a vertical plane through a picked line.
+  Keeps the original + adds the mirrored copy (clone toggle). Applies `Matrix4.createMirrorWithPlane`;
+  unit test confirms reflecting across XY negates z.
+
 - **Batch 2:** **Taper Extrude** — extrude a planar face to a height with a draft/taper angle (Fusion's
   extrude taper), built pure-TS by offsetting the face's outer wire by height·tan(angle), lifting it,
   and lofting the two wires into a solid (falls back to a straight prism at ~0°). WASM tests: a 10×10
