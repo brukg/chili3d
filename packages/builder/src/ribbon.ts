@@ -11,6 +11,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                 groupName: "ribbon.group.draw",
                 items: [
                     "create.line",
+                    "create.polyline",
                     "create.sketch",
                     "create.sketchRect",
                     "create.sketchCenterRect",

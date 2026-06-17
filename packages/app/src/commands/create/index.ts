@@ -42,6 +42,7 @@ export * from "./pipe";
 export * from "./point";
 export * from "./pointsAlongCurve";
 export * from "./polygon";
+export * from "./polyline";
 export * from "./projectedView";
 export * from "./pyramid";
 export * from "./rect";

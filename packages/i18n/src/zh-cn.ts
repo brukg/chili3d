@@ -109,6 +109,7 @@ export default {
         "command.create.folder": "文件夹",
         "command.create.group": "创建组",
         "command.create.line": "直线",
+        "command.create.polyline": "折线",
         "command.create.loft": "放样",
         "command.create.ruledSurface": "直纹曲面",
         "command.create.offset": "偏移",

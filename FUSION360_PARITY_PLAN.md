@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1:** **Polyline** — chain connected straight segments by clicking a sequence of points
+  (Fusion's Line tool behaviour, vs the single-segment Line); click the first point again to close into
+  a loop. Builds one wire of line edges. WASM tests: an open 3-point polyline → 2 edges, length 15; a
+  closed 6-8-10 triangle → 3 edges, length 24.
+
 - **I/O:** **SVG import** — Fusion's "Insert SVG". Pure `parseSvg` handles `<path>` (M/L/H/V/C/Q/Z,
   absolute + relative; Q promoted to cubic) and `<line>/<polyline>/<polygon>/<rect>/<circle>/<ellipse>`,
   with SVG's y-down flipped to CAD y-up. `importSvg` builds a compound of edges (line / circle / ellipse

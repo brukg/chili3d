@@ -109,6 +109,7 @@ export default {
         "command.create.folder": "Folder",
         "command.create.group": "Group",
         "command.create.line": "Line",
+        "command.create.polyline": "Polyline",
         "command.create.loft": "Loft",
         "command.create.ruledSurface": "Ruled Surface",
         "command.create.offset": "Offset",
