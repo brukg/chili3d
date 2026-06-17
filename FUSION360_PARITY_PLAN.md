@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8/9:** **Half Section (cutaway)** — cut the selected solid with a plane through its centre
+  (parallel to the active workplane) and keep the back half, exposing the interior — a one-step
+  section/cutaway view (vs split+delete). Cuts away a half-space box via booleanCut; the original body
+  is kept. WASM test: a 20mm cube cut at its centre keeps half the volume (4000).
+
 - **Batch 8/9:** **Cross Section** — cut a solid with a plane through its centre (parallel to the active
   workplane) and build the filled section *face* — the capped cut surface, for section analysis / a
   drawing section view. Unlike Section (intersection curves between two shapes), this assembles the cut

@@ -232,6 +232,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     "convert.curveProjection",
                     "create.projectedView",
                     "create.crossSection",
+                    "create.halfSection",
                     "create.group",
                     ["create.section", "create.offset", "create.copyShape"],
                 ],

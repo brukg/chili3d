@@ -29,6 +29,7 @@ export * from "./extractFaces";
 export * from "./extrude";
 export * from "./faceCenterPoint";
 export * from "./group";
+export * from "./halfSection";
 export * from "./helix";
 export * from "./intersectionPoint";
 export * from "./line";
