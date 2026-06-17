@@ -86,6 +86,7 @@ export const I18N_KEYS = [
     "command.create.boundingBox",
     "command.create.orientedBoundingBox",
     "command.create.circle",
+    "command.create.circle2p",
     "command.create.coil",
     "command.create.helix",
     "command.create.spiral",

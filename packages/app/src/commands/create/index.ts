@@ -14,6 +14,7 @@ export * from "./boundingBox";
 export * from "./box";
 export * from "./centerPoint";
 export * from "./circle";
+export * from "./circle2p";
 export * from "./coil";
 export * from "./cone";
 export * from "./converter";

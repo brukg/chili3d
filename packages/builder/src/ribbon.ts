@@ -28,6 +28,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         items: [
                             "create.rect",
                             "create.circle",
+                            "create.circle2p",
                             "create.ellipse",
                             "create.ellipseArc",
                             "create.regularPolygon",

@@ -90,6 +90,7 @@ export default {
         "command.create.boundingBox": "Bounding Box",
         "command.create.orientedBoundingBox": "Oriented Bounding Box",
         "command.create.circle": "Circle",
+        "command.create.circle2p": "2-Point Circle",
         "command.create.coil": "Coil",
         "command.create.helix": "Helix",
         "command.create.spiral": "Spiral",

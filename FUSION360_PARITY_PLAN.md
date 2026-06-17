@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 1:** **2-Point (diameter) Circle** — pick the two ends of a diameter; centre = their midpoint,
+  radius = half the distance (Fusion's 2-point circle), with a live preview. Thin wrapper over the
+  tested CircleNode. Completes the circle tools (center-radius / 2-point / 3-point).
+
 - **Batch 7:** **Text glTF (.gltf) import** — extends GLB import to text `.gltf` with embedded base64
   (data-URI) buffers. The accessor-walking is factored into a shared `extractMesh(json, buffers)` used
   by both `parseGlb` (single BIN buffer) and the new `parseGltf` (base64-decoded buffers). Wired into

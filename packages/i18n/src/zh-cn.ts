@@ -90,6 +90,7 @@ export default {
         "command.create.boundingBox": "包围盒",
         "command.create.orientedBoundingBox": "有向包围盒",
         "command.create.circle": "圆形",
+        "command.create.circle2p": "两点圆",
         "command.create.coil": "螺旋",
         "command.create.helix": "螺旋线",
         "command.create.spiral": "平面螺旋",
