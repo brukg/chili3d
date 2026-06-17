@@ -18,6 +18,7 @@ export * from "./exportUrdf";
 export * from "./fillet";
 export * from "./filletAll";
 export * from "./fillSurface";
+export * from "./healBody";
 export * from "./hole";
 export * from "./linkedArray";
 export * from "./linkedBoolean";

@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 6:** **Heal Body** — run ShapeFix over a body to repair degenerate edges, broken wire order,
+  gaps and bad face orientations, then report (via the new `isValid()`) whether it came out valid — the
+  repair counterpart to Check Geometry. The kernel `ShapeFactory::fixShape` (ShapeFix_Shape) was already
+  bound but completely unexposed: wired it into `IShapeFactory.fixShape` + the wasm factory, added the
+  `modify.healBody` command. Distinct from Simplify (UnifySameDomain). No WASM rebuild. WASM test:
+  healing a valid box keeps it valid and preserves volume (idempotent on clean input).
 - **Batch 8/11:** **Check Geometry** — run BRepCheck_Analyzer over a body and report validity
   (Fusion's Inspect → Check Geometry). New kernel method `Shape::isValid` (BRepCheck_Analyzer, geom
   checks on) exposed as `IShape.isValid()`; new `measure.checkGeometry` command reports valid, or counts
@@ -497,6 +503,7 @@ Chili3D has robotics joints (URDF). Fusion's mechanical assembly joints are a di
 ## Batch 6 — Modify / direct-edit gaps 🟡
 
 - ✅ Press/Pull **[session]** (planar only; extend to edges/fillet via press-pull)
+- ✅ Heal body (ShapeFix) **[session]**
 - ❌ Delete face with heal (removeFeature exists 🟡; needs friendly command)
 - ❌ Copy/paste bodies in 3D (node clipboard exists; geometric paste with placement)
 - ❌ Physical material assignment + density-driven mass
@@ -541,7 +548,7 @@ Chili3D has robotics joints (URDF). Fusion's mechanical assembly joints are a di
 - ❌ Named views / saved camera positions
 - ❌ Measure with running total / chain
 - 🟡 Check geometry **[session]** (BRepCheck_Analyzer validity report); repair/heal still ❌
-- ❌ Standard view shortcuts (front/top/right/iso = 1..7)
+- ✅ Standard view shortcuts (front/top/right/iso = 1..7) — already bound in Chili3dShortcuts
 
 ## Out of scope for a browser CAD (Fusion has, we won't chase) ⛔
 

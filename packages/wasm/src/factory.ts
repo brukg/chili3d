@@ -598,4 +598,8 @@ export class ShapeFactory implements IShapeFactory {
             ),
         );
     }
+
+    fixShape(shape: IShape): Result<IShape> {
+        return convertShapeResult(wasm.ShapeFactory.fixShape(ensureOccShape(shape)[0]));
+    }
 }
