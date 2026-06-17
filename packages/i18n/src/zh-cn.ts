@@ -102,6 +102,7 @@ export default {
         "command.create.ellipseArc": "椭圆弧",
         "command.create.ellipsoid": "椭球体",
         "command.create.extrude": "挤出",
+        "command.create.taperExtrude": "拔模挤出",
         "command.create.extractEdges": "提取边",
         "command.create.extractFaces": "提取面",
         "command.create.linkedExtrude": "关联挤出",

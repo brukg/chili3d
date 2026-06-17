@@ -119,6 +119,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     },
                     [
                         "create.extrude",
+                        "create.taperExtrude",
                         "create.linkedExtrude",
                         "create.boundingBox",
                         "create.orientedBoundingBox",

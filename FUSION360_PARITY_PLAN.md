@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 2:** **Taper Extrude** — extrude a planar face to a height with a draft/taper angle (Fusion's
+  extrude taper), built pure-TS by offsetting the face's outer wire by height·tan(angle), lifting it,
+  and lofting the two wires into a solid (falls back to a straight prism at ~0°). WASM tests: a 10×10
+  face tapered to a 6×6 top over 5mm is a frustum of volume 326.67; a 0° taper → straight prism (500).
+
 - **Batch 2/6:** **Shell direction option** — the Shell command now offers inward (default; outer
   dimensions preserved) or **outward** walls (inner cavity preserved), via a new `outside` toggle that
   flips the kernel offset sign — Fusion's shell direction. WASM tests: inward shell of an open-top 20mm

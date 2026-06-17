@@ -64,6 +64,7 @@ export * from "./sphere";
 export * from "./spiral";
 export * from "./spline";
 export * from "./sweep";
+export * from "./taperExtrude";
 export * from "./thickSolid";
 export * from "./thread";
 export * from "./torus";

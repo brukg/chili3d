@@ -102,6 +102,7 @@ export default {
         "command.create.ellipseArc": "Elliptical Arc",
         "command.create.ellipsoid": "Ellipsoid",
         "command.create.extrude": "Extrude",
+        "command.create.taperExtrude": "Taper Extrude",
         "command.create.extractEdges": "Extract Edges",
         "command.create.extractFaces": "Extract Faces",
         "command.create.linkedExtrude": "Linked Extrude",
