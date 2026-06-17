@@ -188,6 +188,19 @@ export class ShapeFactory implements IShapeFactory {
         return Result.err("Not OccShape");
     }
 
+    chamferDA(shape: IShape, edges: number[], distance: number, angle: number): Result<IShape> {
+        if (distance < Precision.Distance) {
+            return Result.err("The distance is too small.");
+        }
+        if (edges.length === 0) {
+            return Result.err("The edges is empty.");
+        }
+        if (shape instanceof OccShape) {
+            return convertShapeResult(wasm.ShapeFactory.chamferDA(shape.shape, edges, distance, angle));
+        }
+        return Result.err("Not OccShape");
+    }
+
     removeFeature(shape: IShape, faces: IFace[]): Result<IShape> {
         if (!(shape instanceof OccShape)) {
             return Result.err("Not OccShape");

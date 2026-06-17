@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 2:** **Distance-Angle Chamfer** — set back `distance` on one adjacent face with the bevel at a
+  given `angle` to it (Fusion's distance-and-angle chamfer), completing the chamfer trio (equal /
+  two-distance / distance-angle). New kernel factory `chamferDA` (C++ `MakeChamfer::AddDA`; WASM rebuilt).
+  WASM test: a 20mm cube edge at distance 4 / 45° removes volume 160 (symmetric at 45°, convention-robust).
+
 - **Batch 2:** **Two-Distance (asymmetric) Chamfer** — bevel edges setting back distance1 on one adjacent
   face and distance2 on the other (Fusion's two-distance chamfer), unlike the equal-distance Chamfer. New
   kernel factory `chamferAsym` (C++ `BRepFilletAPI_MakeChamfer::Add(d1,d2,edge,face)` with the reference

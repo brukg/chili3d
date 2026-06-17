@@ -8,6 +8,7 @@ export * from "./brush";
 export * from "./chamfer";
 export * from "./chamferAll";
 export * from "./chamferAsym";
+export * from "./chamferDA";
 export * from "./createJoint";
 export * from "./createLink";
 export * from "./draft";

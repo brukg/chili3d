@@ -174,6 +174,7 @@ export const I18N_KEYS = [
     "command.modify.chamfer",
     "command.modify.chamferAll",
     "command.modify.chamferAsym",
+    "command.modify.chamferDA",
     "command.modify.createJoint",
     "command.modify.createLink",
     "command.modify.exportUrdf",
