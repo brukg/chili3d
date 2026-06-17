@@ -18,6 +18,7 @@ export * from "./coil";
 export * from "./cone";
 export * from "./converter";
 export * from "./copySubShape";
+export * from "./crossSection";
 export * from "./curveProjection";
 export * from "./cylinder";
 export * from "./ellipse";

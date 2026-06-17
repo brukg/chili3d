@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8/9:** **Cross Section** — cut a solid with a plane through its centre (parallel to the active
+  workplane) and build the filled section *face* — the capped cut surface, for section analysis / a
+  drawing section view. Unlike Section (intersection curves between two shapes), this assembles the cut
+  edges into a wire and caps it. WASM test: a 20mm cube cut through its centre → a 20×20 (400 mm²) face.
+
 - **Batch 2:** **Distance-Angle Chamfer** — set back `distance` on one adjacent face with the bevel at a
   given `angle` to it (Fusion's distance-and-angle chamfer), completing the chamfer trio (equal /
   two-distance / distance-angle). New kernel factory `chamferDA` (C++ `MakeChamfer::AddDA`; WASM rebuilt).

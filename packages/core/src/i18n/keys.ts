@@ -124,6 +124,7 @@ export const I18N_KEYS = [
     "command.create.rect",
     "command.create.revol",
     "command.create.section",
+    "command.create.crossSection",
     "command.create.sketch",
     "command.create.sketchCenterRect",
     "command.create.sketchCircle",
