@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **I/O:** **DXF native ELLIPSE export** — the DXF exporter now emits a real ELLIPSE entity for ellipse
+  edges (centre + major-axis vector + minor/major ratio + start/end params) instead of tessellating them
+  into line segments, so ellipses survive an export→import round-trip as ellipses. Added a
+  `CurveUtils.isEllipse` helper. WASM test: an ellipse edge exports as an ELLIPSE that re-parses with the
+  right centre (1,2), major vector (5,0) and ratio 0.4.
+
 - **Batch 1:** **2-Point (diameter) Circle** — pick the two ends of a diameter; centre = their midpoint,
   radius = half the distance (Fusion's 2-point circle), with a live preview. Thin wrapper over the
   tested CircleNode. Completes the circle tools (center-radius / 2-point / 3-point).

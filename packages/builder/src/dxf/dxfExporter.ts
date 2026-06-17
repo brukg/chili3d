@@ -50,6 +50,24 @@ function arcEntity(center: XYZ, radius: number, startDeg: number, endDeg: number
     );
 }
 
+// DXF ELLIPSE: centre (10/20/30), the major-axis endpoint *relative to the centre* (11/21/31), the
+// minor/major ratio (40) and the start/end parameters (41/42, radians).
+function ellipseEntity(center: XYZ, majorVec: XYZ, ratio: number, start: number, end: number): string {
+    return (
+        pair(0, "ELLIPSE") +
+        pair(8, "0") +
+        pair(10, num(center.x)) +
+        pair(20, num(center.y)) +
+        pair(30, num(center.z)) +
+        pair(11, num(majorVec.x)) +
+        pair(21, num(majorVec.y)) +
+        pair(31, num(majorVec.z)) +
+        pair(40, num(ratio)) +
+        pair(41, num(start)) +
+        pair(42, num(end))
+    );
+}
+
 function angleDeg(center: XYZ, point: XYZ): number {
     const a = (Math.atan2(point.y - center.y, point.x - center.x) * 180) / Math.PI;
     return a < 0 ? a + 360 : a;
@@ -74,6 +92,13 @@ function edgeToDxf(edge: IEdge): string {
             angleDeg(basis.center, start),
             angleDeg(basis.center, end),
         );
+    }
+    if (CurveUtils.isEllipse(basis)) {
+        const major = basis.xAxis.multiply(basis.majorRadius);
+        const ratio = basis.minorRadius / basis.majorRadius;
+        const start = curve.isClosed() ? 0 : curve.firstParameter();
+        const end = curve.isClosed() ? 2 * Math.PI : curve.lastParameter();
+        return ellipseEntity(basis.center, major, ratio, start, end);
     }
     // Fallback: tessellate into a chain of straight segments.
     const points = curve.uniformAbscissaByCount(33);

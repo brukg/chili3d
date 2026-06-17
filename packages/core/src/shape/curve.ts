@@ -158,6 +158,10 @@ export class CurveUtils {
         return (curve as ILine).direction !== undefined;
     }
 
+    static isEllipse(curve: ICurve): curve is IEllipse {
+        return curve.curveType === "ellipse";
+    }
+
     static isTrimmed(curve: ICurve): curve is ITrimmedCurve {
         return (curve as ITrimmedCurve).basisCurve !== undefined;
     }
