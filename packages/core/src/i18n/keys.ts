@@ -347,6 +347,7 @@ export const I18N_KEYS = [
     "option.command.counterboreDepth",
     "option.command.countersinkRadius",
     "option.command.countersinkDepth",
+    "option.command.throughAll",
     "option.command.scale",
     "option.command.scaleX",
     "option.command.scaleY",

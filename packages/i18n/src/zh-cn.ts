@@ -353,6 +353,7 @@ export default {
         "option.command.counterboreDepth": "沉头孔深度",
         "option.command.countersinkRadius": "锥形沉头半径",
         "option.command.countersinkDepth": "锥形沉头深度",
+        "option.command.throughAll": "贯通",
         "option.command.scale": "缩放比例",
         "option.command.scaleX": "X 缩放",
         "option.command.scaleY": "Y 缩放",

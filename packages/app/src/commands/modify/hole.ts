@@ -38,6 +38,16 @@ export class HoleCommand extends MultistepCommand {
         this.setProperty("depth", value);
     }
 
+    // Through All: drill all the way through the solid instead of to the given depth (Fusion's
+    // through-all extent). When on, the depth is taken as the solid's bounding-box diagonal.
+    @property("option.command.throughAll")
+    get throughAll() {
+        return this.getPrivateValue("throughAll", false);
+    }
+    set throughAll(value: boolean) {
+        this.setProperty("throughAll", value);
+    }
+
     // Counterbore: a wider, shallow recess at the hole entry for a bolt head to sit flush. A radius
     // larger than the bore and a positive depth turn the plain hole into a counterbored one; the
     // defaults (0) leave a plain cylindrical hole, so existing behaviour is unchanged.
@@ -98,16 +108,33 @@ export class HoleCommand extends MultistepCommand {
             const location = this.stepDatas[1].point!;
             const direction = normal.multiply(-1); // drill inward, opposite the outward face normal
 
-            const holed = shapeFactory.makeHole(worldSolid, location, direction, this.radius, this.depth);
-            if (!holed.isOk) {
-                // EditableShapeNode's constructor assigns the shape directly (bypassing the
-                // setShape error path), so guard here to surface the failure and keep the
-                // original solid instead of silently replacing it with an empty node.
-                PubSub.default.pub("displayError", holed.error);
-                return;
+            // makeHole only produces BLIND holes (it fails once the depth reaches the far face), so a
+            // through-all hole is cut as a full-length cylinder via booleanCut instead. The bore depth
+            // is the solid's bounding-box diagonal so it always clears the part.
+            let result: IShape;
+            if (this.throughAll) {
+                const box = worldSolid.boundingBox();
+                const diag = Math.hypot(box.max.x - box.min.x, box.max.y - box.min.y, box.max.z - box.min.z);
+                const eps = 0.01;
+                const start = location.add(normal.multiply(eps)); // begin just outside the face
+                const bore = shapeFactory.cylinder(direction, start, this.radius, diag * 1.1 + eps);
+                const cut = bore.isOk ? shapeFactory.booleanCut([worldSolid], [bore.value]) : bore;
+                if (!cut.isOk) {
+                    PubSub.default.pub("displayError", cut.error);
+                    return;
+                }
+                result = cut.value;
+            } else {
+                const holed = shapeFactory.makeHole(worldSolid, location, direction, this.radius, this.depth);
+                if (!holed.isOk) {
+                    // EditableShapeNode's constructor assigns the shape directly (bypassing the
+                    // setShape error path), so guard here to surface the failure and keep the
+                    // original solid instead of silently replacing it with an empty node.
+                    PubSub.default.pub("displayError", holed.error);
+                    return;
+                }
+                result = holed.value;
             }
-
-            let result: IShape = holed.value;
             if (this.counterboreRadius > this.radius && this.counterboreDepth > 0) {
                 // Cut a wider, shallow cylinder at the entry. Start it a hair above the surface
                 // (along the outward normal) so the cut isn't coplanar with the face — coplanar

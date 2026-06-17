@@ -353,6 +353,7 @@ export default {
         "option.command.counterboreDepth": "Counterbore Depth",
         "option.command.countersinkRadius": "Countersink Radius",
         "option.command.countersinkDepth": "Countersink Depth",
+        "option.command.throughAll": "Through All",
         "option.command.scale": "Scale",
         "option.command.scaleX": "Scale X",
         "option.command.scaleY": "Scale Y",

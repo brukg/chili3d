@@ -32,6 +32,9 @@ Items marked **[session]** were shipped in the current rollout.
   isCircle). Measure Edge Length — total true (curve) length of selected edges/wires, so arcs measure
   along the curve. _Remaining: section analysis, draft/curvature/zebra analysis._
 - **Batch 11:** Toggle Perspective/Orthographic projection command (flips `cameraController.cameraType`).
+- **Batch 2 (solid):** Hole "Through All" option — drills the full extent of the solid. NOTE: the
+  kernel's `makeHole` is BLIND-ONLY (fails once depth reaches the far face), so through-all cuts a
+  full-length cylinder via booleanCut instead. Headless test confirms a clean through-hole (π·r²·h).
 - **Batch 2 (solid):** symmetric extrude — ExtrudeNode gains a `symmetric` option that extrudes half
   the length each way from the profile plane (centred result), Fusion's symmetric extrude. Backward
   compatible (default off). Headless test: length 10 symmetric spans z −5..5 vs 0..10 one-sided.
