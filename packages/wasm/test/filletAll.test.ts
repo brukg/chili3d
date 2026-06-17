@@ -28,4 +28,18 @@ describe("Fillet all edges (headless)", () => {
         expect(vol).toBeGreaterThan(0);
         expect(vol).toBeLessThan(8000);
     });
+
+    test("chamfering all 12 edges of a 20mm cube yields a valid, smaller solid", async () => {
+        await initWasm({ wasmBinary: WASM_BINARY });
+
+        const factory = new ShapeFactory();
+        const box = factory.box(Plane.XY, 20, 20, 20);
+        const edges = box.value.findSubShapes(ShapeTypes.edge).map((e) => (e as ISubEdgeShape).index);
+        const chamfered = factory.chamfer(box.value, edges, 2);
+        expect(chamfered.isOk).toBe(true);
+        const solids = chamfered.value.findSubShapes(ShapeTypes.solid) as ISolid[];
+        const vol = solids.reduce((s, x) => s + x.volume(), 0);
+        expect(vol).toBeGreaterThan(0);
+        expect(vol).toBeLessThan(8000);
+    });
 });

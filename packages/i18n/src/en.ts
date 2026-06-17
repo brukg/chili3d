@@ -155,6 +155,7 @@ export default {
         "command.modify.brushClear": "Brush Clear",
         "command.modify.brushRemove": "Brush Remove",
         "command.modify.chamfer": "Chamfer",
+        "command.modify.chamferAll": "Chamfer All Edges",
         "command.modify.createJoint": "Create Joint",
         "command.modify.exportUrdf": "Export URDF",
         "error.export.needLinkNode":
