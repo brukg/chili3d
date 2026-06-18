@@ -8,6 +8,7 @@ export * from "./boundingBox";
 export * from "./centerOfMass";
 export * from "./checkGeometry";
 export * from "./coordinates";
+export * from "./curvature";
 export * from "./distance";
 export * from "./edgeAngle";
 export * from "./edgeLength";

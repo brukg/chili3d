@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8:** **Measure Curvature** — report the curvature and radius of curvature of an edge at its
+  mid-parameter (Fusion's curvature analysis, point form). Pure κ = |r′×r″|/|r′|³ from the curve's first
+  and second derivatives (`ICurve.d2`), no kernel change. Unit-tested (no wasm): a circle r=5 → κ=0.2; a
+  line → 0; parametrisation-speed independence.
 - **Batch 8:** **Measure Oriented Bounding Box** — report the dimensions of the *minimal* (oriented) box
   enclosing a shape (`IShape.orientedBoundingBox`, 2×half-extents, sorted) — the true part size for stock
   sizing, regardless of orientation. Distinct from Measure Bounding Box (axis-aligned, inflates when the
@@ -551,7 +555,7 @@ Chili3D has robotics joints (URDF). Fusion's mechanical assembly joints are a di
 - ✅ Measure length/angle/properties/interference
 - ✅ Mass properties: volume/area/COM/inertia + principal moments **[session]**
 - ❌ Section analysis (live section plane with capping)
-- ❌ Curvature comb / zebra / draft analysis / curvature map
+- 🟡 Curvature: point-form measure (measure.curvature) **[session]**; comb/zebra/draft viewport overlays still ❌
 - ❌ Center of mass display marker
 - ❌ Component color cycling / appearance-by-state
 
