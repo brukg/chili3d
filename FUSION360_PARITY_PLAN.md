@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 9:** **SVG import — smooth curves (S/T)** — the path parser now handles the smooth-cubic (S/s)
+  and smooth-quadratic (T/t) commands by reflecting the previous segment's control point about the current
+  point (falling back to the current point when the previous command wasn't the matching curve type),
+  so paths from Illustrator/Inkscape import faithfully. Unit-tested: S reflection, S-without-cubic
+  fallback, T reflection (quad→cubic promotion).
 - **Batch 9:** **SVG export** — export 2D shape edges (sketches, projected views, sections) to an SVG
   document, the vector counterpart of DXF export and round-trip partner of the SVG importer. Lines →
   `<line>`, closed circles → `<circle>`, arcs/ellipses/splines → tessellated `<polyline>`; CAD y-up is

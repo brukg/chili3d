@@ -110,4 +110,34 @@ describe("SVG arc (A) → cubic Beziers", () => {
             expect(e[0].points[3].y).toBeCloseTo(-10, 6);
         }
     });
+
+    test("S reflects the previous cubic's control point about the current point", () => {
+        // C control2 = (10,10); about the endpoint (20,0) that reflects to (30,-10).
+        const e = parseSvg(`<path d="M0,0 C0,0 10,10 20,0 S40,-10 50,0"/>`);
+        expect(e.length).toBe(2);
+        expect(e[1].type).toBe("cubic");
+        if (e[1].type === "cubic") {
+            expect(e[1].points[1].x).toBeCloseTo(30, 6);
+            expect(e[1].points[1].y).toBeCloseTo(10, 6); // SVG -10, y-flipped
+        }
+    });
+
+    test("S with no preceding cubic uses the current point as the first control", () => {
+        const e = parseSvg(`<path d="M0,0 S10,10 20,0"/>`);
+        expect(e[0].type).toBe("cubic");
+        if (e[0].type === "cubic") {
+            expect(e[0].points[1].x).toBeCloseTo(0, 6);
+            expect(e[0].points[1].y).toBeCloseTo(0, 6);
+        }
+    });
+
+    test("T reflects the previous quadratic's control point (promoted to a cubic)", () => {
+        // Q control = (10,10); reflected about (20,0) → (30,-10). Promoted c1.x = 20 + 2/3·(30−20).
+        const e = parseSvg(`<path d="M0,0 Q10,10 20,0 T40,0"/>`);
+        expect(e.length).toBe(2);
+        expect(e[1].type).toBe("cubic");
+        if (e[1].type === "cubic") {
+            expect(e[1].points[1].x).toBeCloseTo(20 + (2 / 3) * 10, 6);
+        }
+    });
 });

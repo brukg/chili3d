@@ -18,7 +18,7 @@ const attr = (tag: string, name: string): number => {
     return m ? Number.parseFloat(m[1]) : 0;
 };
 
-// Parse an SVG document's drawable geometry. Supports <path> (M/L/H/V/C/Q/Z, absolute + relative) and
+// Parse an SVG document's drawable geometry. Supports <path> (M/L/H/V/C/S/Q/T/A/Z, absolute + relative) and
 // the <line>/<polyline>/<polygon>/<rect>/<circle>/<ellipse> elements. SVG y is flipped to CAD y.
 export function parseSvg(text: string): SvgEntity[] {
     const out: SvgEntity[] = [];
@@ -165,9 +165,14 @@ function parsePath(d: string, Y: (y: number) => number, out: SvgEntity[]) {
     let cy = 0; // current point in SVG coords (y not yet flipped)
     let sx = 0;
     let sy = 0; // subpath start
+    let prevCmd = ""; // previous command (uppercased) — drives S/T control-point reflection
+    let lastCubicX = 0; // last cubic second control point, in un-flipped SVG coords
+    let lastCubicY = 0;
+    let lastQuadX = 0; // last quadratic control point, in un-flipped SVG coords
+    let lastQuadY = 0;
     const line = (x2: number, y2: number) => out.push({ type: "line", x1: cx, y1: Y(cy), x2, y2: Y(y2) });
 
-    for (const [, cmd, argStr] of d.matchAll(/([MmLlHhVvCcQqAaZz])([^MmLlHhVvCcSsQqTtAaZz]*)/g)) {
+    for (const [, cmd, argStr] of d.matchAll(/([MmLlHhVvCcSsQqTtAaZz])([^MmLlHhVvCcSsQqTtAaZz]*)/g)) {
         const a = numbers(argStr);
         const rel = cmd === cmd.toLowerCase();
         if (cmd === "M" || cmd === "m") {
@@ -214,8 +219,38 @@ function parsePath(d: string, Y: (y: number) => number, out: SvgEntity[]) {
                     { x: b + a[i + 4], y: Y(c + a[i + 5]) },
                 ];
                 out.push({ type: "cubic", points: p });
+                lastCubicX = b + a[i + 2];
+                lastCubicY = c + a[i + 3];
                 cx = b + a[i + 4];
                 cy = c + a[i + 5];
+            }
+        } else if (cmd === "S" || cmd === "s") {
+            // Smooth cubic: the first control is the reflection of the previous cubic's second control
+            // about the current point (or the current point itself if the previous command wasn't a cubic).
+            for (let i = 0; i + 3 < a.length; i += 4) {
+                const b = rel ? cx : 0;
+                const c = rel ? cy : 0;
+                const reflect = prevCmd === "C" || prevCmd === "S";
+                const c1x = reflect ? 2 * cx - lastCubicX : cx;
+                const c1y = reflect ? 2 * cy - lastCubicY : cy;
+                const c2x = b + a[i];
+                const c2y = c + a[i + 1];
+                const ex = b + a[i + 2];
+                const ey = c + a[i + 3];
+                out.push({
+                    type: "cubic",
+                    points: [
+                        { x: cx, y: Y(cy) },
+                        { x: c1x, y: Y(c1y) },
+                        { x: c2x, y: Y(c2y) },
+                        { x: ex, y: Y(ey) },
+                    ],
+                });
+                lastCubicX = c2x;
+                lastCubicY = c2y;
+                cx = ex;
+                cy = ey;
+                prevCmd = "S";
             }
         } else if (cmd === "Q" || cmd === "q") {
             // Promote the quadratic (ctrl q, end e) to a cubic: c1 = p0 + 2/3(q−p0), c2 = e + 2/3(q−e).
@@ -235,8 +270,36 @@ function parsePath(d: string, Y: (y: number) => number, out: SvgEntity[]) {
                         { x: ex, y: Y(ey) },
                     ],
                 });
+                lastQuadX = qx;
+                lastQuadY = qy;
                 cx = ex;
                 cy = ey;
+            }
+        } else if (cmd === "T" || cmd === "t") {
+            // Smooth quadratic: the control is the reflection of the previous quadratic's control about
+            // the current point (or the current point if the previous command wasn't a quadratic).
+            for (let i = 0; i + 1 < a.length; i += 2) {
+                const b = rel ? cx : 0;
+                const c = rel ? cy : 0;
+                const reflect = prevCmd === "Q" || prevCmd === "T";
+                const qx = reflect ? 2 * cx - lastQuadX : cx;
+                const qy = reflect ? 2 * cy - lastQuadY : cy;
+                const ex = b + a[i];
+                const ey = c + a[i + 1];
+                out.push({
+                    type: "cubic",
+                    points: [
+                        { x: cx, y: Y(cy) },
+                        { x: cx + (2 / 3) * (qx - cx), y: Y(cy + (2 / 3) * (qy - cy)) },
+                        { x: ex + (2 / 3) * (qx - ex), y: Y(ey + (2 / 3) * (qy - ey)) },
+                        { x: ex, y: Y(ey) },
+                    ],
+                });
+                lastQuadX = qx;
+                lastQuadY = qy;
+                cx = ex;
+                cy = ey;
+                prevCmd = "T";
             }
         } else if (cmd === "A" || cmd === "a") {
             // rx ry x-axis-rotation large-arc-flag sweep-flag x y, repeatable.
@@ -264,6 +327,7 @@ function parsePath(d: string, Y: (y: number) => number, out: SvgEntity[]) {
             cx = sx;
             cy = sy;
         }
+        prevCmd = cmd.toUpperCase();
     }
 }
 
