@@ -286,7 +286,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
             },
             {
                 groupName: "ribbon.group.importExport",
-                items: ["file.import", "file.export"],
+                items: ["file.import", "file.export", "file.exportBom"],
             },
             {
                 groupName: "ribbon.group.other",

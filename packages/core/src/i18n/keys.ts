@@ -161,6 +161,7 @@ export const I18N_KEYS = [
     "command.edit.invertSelection",
     "command.edit.undo",
     "command.file.export",
+    "command.file.exportBom",
     "command.file.import",
     "command.measure.angle",
     "command.measure.faceAngle",

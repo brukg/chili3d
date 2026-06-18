@@ -176,6 +176,7 @@ export default {
         "command.view.left": "左视图",
         "command.view.isometric": "等轴测",
         "command.file.export": "导出",
+        "command.file.exportBom": "导出物料清单",
         "command.file.import": "导入",
         "command.measure.angle": "角度",
         "command.measure.faceAngle": "面间角度",

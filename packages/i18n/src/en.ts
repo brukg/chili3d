@@ -176,6 +176,7 @@ export default {
         "command.view.left": "Left",
         "command.view.isometric": "Isometric",
         "command.file.export": "Export",
+        "command.file.exportBom": "Export BOM",
         "command.file.import": "Import",
         "command.measure.angle": "Angle",
         "command.measure.faceAngle": "Face Angle",

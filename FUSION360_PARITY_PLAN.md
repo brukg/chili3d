@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 9:** **Export BOM** — walk the document tree, tally every body (B-rep or mesh) by name, and
+  download the parts list as CSV (Fusion's bill of materials); folders/construction geometry are not
+  parts. Pure-TS `buildBomRows`/`bomToCsv`, unit-tested (quantity tally, alphabetical numbering, CSV
+  quoting of commas/quotes).
 - **Batch 7:** **Mesh Section** — slice a triangle mesh node with a plane through its centre (parallel to
   the active workplane) and emit the section contour as edges — Fusion's mesh plane cut. Pure-TS
   triangle–plane intersection (exported `meshPlaneSegments`), no kernel. Unit test (no wasm): a 10×20×30
@@ -546,7 +550,7 @@ Chili3D has robotics joints (URDF). Fusion's mechanical assembly joints are a di
 - ❌ 2D drawing from model (orthographic/iso views)
 - ❌ Dimensions & annotations on drawings
 - ❌ Section / detail views
-- ❌ BOM / parts list table
+- ✅ BOM / parts list — CSV export (file.exportBom) **[session]**; in-app table view still ❌
 - ❌ Title block, sheets, export PDF/DXF
 
 ## Batch 10 — Visualization / render 🟡
