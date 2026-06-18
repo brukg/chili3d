@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8:** **Measure Oriented Bounding Box** — report the dimensions of the *minimal* (oriented) box
+  enclosing a shape (`IShape.orientedBoundingBox`, 2×half-extents, sorted) — the true part size for stock
+  sizing, regardless of orientation. Distinct from Measure Bounding Box (axis-aligned, inflates when the
+  part is angled). WASM test: a 40°-rotated 10×20×30 box still measures 30 × 20 × 10.
 - **Batch 8:** **Principal Moments of Inertia** — the rotation-invariant eigenvalues of the inertia
   tensor (Fusion's Section Properties principal moments), unlike the body-axis diagonal. Pure closed-form
   symmetric-3×3 eigenvalue solver (`principalMoments`, Smith 1961) over `massProperties()`; new

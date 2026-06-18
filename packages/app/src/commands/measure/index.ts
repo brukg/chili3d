@@ -16,6 +16,7 @@ export * from "./inertia";
 export * from "./interferenceCheck";
 export * from "./length";
 export * from "./mass";
+export * from "./orientedBoundingBox";
 export * from "./perimeter";
 export * from "./principalInertia";
 export * from "./properties";

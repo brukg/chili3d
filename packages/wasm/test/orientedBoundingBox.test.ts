@@ -33,4 +33,17 @@ describe("orientedBoundingBox", () => {
         // Full extents = 2×half; volume of the tight box equals the part's 10·20·30.
         expect(8 * size.x * size.y * size.z).toBeCloseTo(6000, 0);
     });
+
+    // Backs the Measure Oriented Bounding Box readout: 2×half-extents, sorted, recover the true sides.
+    test("a rotated box's measured side lengths sort to 30 / 20 / 10", async () => {
+        await initWasm({ wasmBinary: WASM_BINARY });
+        const factory = new ShapeFactory();
+        const box = factory.box(Plane.XY, 10, 20, 30);
+        const rotated = box.value.transformed(Matrix4.fromAxisRad(XYZ.zero, XYZ.unitZ, (40 * Math.PI) / 180));
+        const { size } = rotated.orientedBoundingBox();
+        const dims = [size.x, size.y, size.z].map((h) => 2 * h).sort((a, b) => b - a);
+        expect(dims[0]).toBeCloseTo(30, 4);
+        expect(dims[1]).toBeCloseTo(20, 4);
+        expect(dims[2]).toBeCloseTo(10, 4);
+    });
 });
