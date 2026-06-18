@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8:** **Measure Delta (ΔXYZ)** — report the signed component deltas ΔX/ΔY/ΔZ and the straight-line
+  distance between two vertices, the multi-axis readout Fusion's measure panel shows for a two-point
+  selection. Distinct from Measure Distance (unsigned minimum gap between any two shapes). WASM test:
+  a 3-4-5 right triangle gives Δ=(3,4,0), distance 5.
 - **Batch 7:** **3MF import — multi-object assemblies** — previously all objects' vertices/triangles were
   concatenated globally without re-basing per-object triangle indices, so any multi-object 3MF imported as
   garbled geometry. Now each `<object>` mesh is parsed on its own and placed through its `<build>` item

@@ -9,6 +9,7 @@ export * from "./centerOfMass";
 export * from "./checkGeometry";
 export * from "./coordinates";
 export * from "./curvature";
+export * from "./delta";
 export * from "./distance";
 export * from "./edgeAngle";
 export * from "./edgeLength";
