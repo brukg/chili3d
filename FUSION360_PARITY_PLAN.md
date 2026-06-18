@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 9:** **DXF import — old-style POLYLINE** — the importer now reads the heavyweight POLYLINE
+  entity (a POLYLINE header, one VERTEX sub-entity per point, SEQEND terminator), accumulating across the
+  intermediate code-0 records, with per-vertex bulge → arc reusing the existing polyline edge builder.
+  Many legacy CAD tools still emit this in place of LWPOLYLINE. Unit-tested: a closed 3-vertex POLYLINE
+  with a bulged last segment parses correctly.
 - **Batch 9:** **SVG import — smooth curves (S/T)** — the path parser now handles the smooth-cubic (S/s)
   and smooth-quadratic (T/t) commands by reflecting the previous segment's control point about the current
   point (falling back to the current point when the previous command wasn't the matching curve type),

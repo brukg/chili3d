@@ -234,4 +234,47 @@ describe("DXF importer", () => {
         expect(entities.length).toBe(1);
         expect(entities[0].type).toBe("line");
     });
+
+    test("imports an old-style POLYLINE (VERTEX sub-entities, SEQEND terminated)", () => {
+        // closed polyline through (0,0) → (10,0) → (10,5), the last vertex carrying a bulge.
+        const dxf = [
+            "0",
+            "POLYLINE",
+            "70",
+            "1",
+            "0",
+            "VERTEX",
+            "10",
+            "0",
+            "20",
+            "0",
+            "0",
+            "VERTEX",
+            "10",
+            "10",
+            "20",
+            "0",
+            "0",
+            "VERTEX",
+            "10",
+            "10",
+            "20",
+            "5",
+            "42",
+            "0.5",
+            "0",
+            "SEQEND",
+            "0",
+            "EOF",
+        ].join("\n");
+        const entities = parseDxf(dxf);
+        expect(entities.length).toBe(1);
+        const e = entities[0];
+        expect(e.type).toBe("polyline");
+        if (e.type === "polyline") {
+            expect(e.closed).toBe(true);
+            expect(e.vertices.length).toBe(3);
+            expect(e.vertices[2]).toEqual({ x: 10, y: 5, bulge: 0.5 });
+        }
+    });
 });

@@ -21,7 +21,7 @@ export type DxfEntity =
       }
     | { type: "spline"; points: { x: number; y: number }[]; closed: boolean };
 
-const KNOWN = new Set(["LINE", "CIRCLE", "ARC", "LWPOLYLINE", "ELLIPSE", "SPLINE"]);
+const KNOWN = new Set(["LINE", "CIRCLE", "ARC", "LWPOLYLINE", "POLYLINE", "ELLIPSE", "SPLINE"]);
 
 /**
  * Parse a DXF file's LINE / CIRCLE / ARC entities. DXF is a stream of (group-code, value) line pairs;
@@ -57,7 +57,7 @@ export function parseDxf(text: string): DxfEntity[] {
                 start: c[50] ?? 0,
                 end: c[51] ?? 0,
             });
-        } else if (type === "LWPOLYLINE" && poly && poly.vertices.length >= 2) {
+        } else if ((type === "LWPOLYLINE" || type === "POLYLINE") && poly && poly.vertices.length >= 2) {
             entities.push({ type: "polyline", vertices: poly.vertices, closed: poly.closed });
         } else if (type === "ELLIPSE") {
             entities.push({
@@ -87,11 +87,31 @@ export function parseDxf(text: string): DxfEntity[] {
         const value = lines[i + 1].trim();
         if (Number.isNaN(code)) continue;
         if (code === 0) {
-            flush();
             const t = value.toUpperCase();
+            // Old-style POLYLINE spans several code-0 records: a POLYLINE header, one VERTEX per point,
+            // then SEQEND. Keep accumulating into `poly` across those boundaries instead of flushing.
+            if (type === "POLYLINE" && poly) {
+                if (t === "VERTEX") {
+                    poly.vertices.push({ x: 0, y: 0, bulge: 0 });
+                    continue;
+                }
+                if (t === "SEQEND") {
+                    flush();
+                    continue;
+                }
+            }
+            flush();
             type = KNOWN.has(t) ? t : null;
-            if (type === "LWPOLYLINE") poly = { vertices: [], closed: false };
+            if (type === "LWPOLYLINE" || type === "POLYLINE") poly = { vertices: [], closed: false };
             if (type === "SPLINE") spline = { control: [], fit: [], closed: false };
+        } else if (type === "POLYLINE" && poly) {
+            const n = Number(value);
+            const last = poly.vertices[poly.vertices.length - 1];
+            if (code === 70)
+                poly.closed = (n & 1) === 1; // header flag, before any VERTEX
+            else if (code === 10 && last) last.x = n;
+            else if (code === 20 && last) last.y = n;
+            else if (code === 42 && last) last.bulge = n; // arc bulge for the segment after this vertex
         } else if (type === "LWPOLYLINE" && poly) {
             const n = Number(value);
             const last = poly.vertices[poly.vertices.length - 1];
