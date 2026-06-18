@@ -260,6 +260,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                     "create.projectedView",
                     "create.crossSection",
                     "create.halfSection",
+                    "create.meshSection",
                     "create.group",
                     ["create.section", "create.offset", "create.copyShape"],
                 ],

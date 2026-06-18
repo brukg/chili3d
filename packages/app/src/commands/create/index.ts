@@ -36,6 +36,7 @@ export * from "./intersectionPoint";
 export * from "./line";
 export * from "./linkedExtrude";
 export * from "./loft";
+export * from "./meshSection";
 export * from "./meshToBrep";
 export * from "./midpointPoint";
 export * from "./offset";

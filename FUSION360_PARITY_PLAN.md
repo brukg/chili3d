@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 7:** **Mesh Section** — slice a triangle mesh node with a plane through its centre (parallel to
+  the active workplane) and emit the section contour as edges — Fusion's mesh plane cut. Pure-TS
+  triangle–plane intersection (exported `meshPlaneSegments`), no kernel. Unit test (no wasm): a 10×20×30
+  box mesh cut at mid-height yields 8 segments totalling perimeter 60; a missing plane yields none.
 - **Batch 7:** **Mesh → BRep** — rebuild an editable faceted B-rep from a triangle mesh node (imported
   STL or a Convert-to-Mesh result), the reverse of Convert to Mesh. NEW kernel `ShapeFactory::meshToShape`
   (BRepBuilderAPI_Sewing over per-triangle faces → shell → solid when watertight) wired to
@@ -527,7 +531,7 @@ Chili3D has robotics joints (URDF). Fusion's mechanical assembly joints are a di
 - ✅ BRep → Mesh conversion (convert.toMesh) **[session]**
 - ✅ Mesh → BRep conversion (convert.meshToBrep, faceted sew) **[session]**
 - ❌ Reduce / remesh / repair mesh
-- ❌ Mesh section / plane cut
+- ✅ Mesh section / plane cut (create.meshSection) **[session]**
 
 ## Batch 8 — Inspection & analysis 🟡
 

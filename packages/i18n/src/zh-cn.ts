@@ -137,6 +137,7 @@ export default {
         "command.create.section": "相交曲线",
         "command.create.crossSection": "截面",
         "command.create.halfSection": "半剖视图",
+        "command.create.meshSection": "网格截面",
         "command.create.sketch": "草图",
         "command.create.sketchCenterRect": "草图中心矩形",
         "command.create.sketchCircle": "草图圆",
