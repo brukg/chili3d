@@ -192,6 +192,7 @@ export default {
         "command.measure.boundingBox": "包围盒",
         "command.measure.orientedBoundingBox": "有向包围盒",
         "command.measure.centerOfMass": "质心",
+        "command.measure.centroid": "形心",
         "command.measure.checkGeometry": "检查几何",
         "command.measure.inertia": "惯性矩",
         "command.measure.principalInertia": "主惯性矩",
@@ -534,6 +535,7 @@ export default {
         "toast.measure.interference:{0}": "物体存在干涉 — 重叠体积：{0} mm³",
         "toast.measure.noInterference": "无干涉",
         "toast.measure.properties:{0}{1}{2}{3}{4}": "体积：{0} mm³，面积：{1} mm²，质心：({2}, {3}, {4})",
+        "toast.measure.centroid:{0}{1}{2}": "形心：({0}, {1}, {2})",
         "toast.measure.inertia:{0}{1}{2}{3}{4}{5}":
             "关于质心的惯性矩 (mm⁵) — Ixx: {0}, Iyy: {1}, Izz: {2}; Ixy: {3}, Ixz: {4}, Iyz: {5}",
         "toast.measure.principalInertia:{0}{1}{2}": "主惯性矩 (mm⁵)：I₁ {0}, I₂ {1}, I₃ {2}",

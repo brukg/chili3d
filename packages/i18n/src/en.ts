@@ -192,6 +192,7 @@ export default {
         "command.measure.boundingBox": "Bounding Box",
         "command.measure.orientedBoundingBox": "Oriented Bounding Box",
         "command.measure.centerOfMass": "Center of Mass",
+        "command.measure.centroid": "Centroid",
         "command.measure.checkGeometry": "Check Geometry",
         "command.measure.inertia": "Moments of Inertia",
         "command.measure.principalInertia": "Principal Moments",
@@ -535,6 +536,7 @@ export default {
         "toast.measure.interference:{0}": "Bodies interfere — overlap volume: {0} mm³",
         "toast.measure.noInterference": "No interference",
         "toast.measure.properties:{0}{1}{2}{3}{4}": "Volume: {0} mm³, Area: {1} mm², Center: ({2}, {3}, {4})",
+        "toast.measure.centroid:{0}{1}{2}": "Centroid: ({0}, {1}, {2})",
         "toast.measure.inertia:{0}{1}{2}{3}{4}{5}":
             "Inertia about center of mass (mm⁵) — Ixx: {0}, Iyy: {1}, Izz: {2}; Ixy: {3}, Ixz: {4}, Iyz: {5}",
         "toast.measure.principalInertia:{0}{1}{2}":

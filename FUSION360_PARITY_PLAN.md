@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8:** **Measure Centroid** — report the area centroid of a face (Fusion's centroid readout for a
+  face/sketch selection), distinct from Center of Mass (the volume centroid of a solid). Pure-TS
+  area-weighted average of the face triangulation's triangle centroids (exact for planar faces), no
+  kernel change. Unit-tested (no wasm): a 10×20 rectangle → (5,10,0); area-weighting and the degenerate
+  case.
 - **Batch 8:** **Measure Delta (ΔXYZ)** — report the signed component deltas ΔX/ΔY/ΔZ and the straight-line
   distance between two vertices, the multi-axis readout Fusion's measure panel shows for a two-point
   selection. Distinct from Measure Distance (unsigned minimum gap between any two shapes). WASM test:
