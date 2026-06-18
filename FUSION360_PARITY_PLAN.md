@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 10/6:** **Material preset library** — a pure data module of 15 common engineering materials
+  (steel, aluminium, brass, titanium, ABS, PLA, glass, …), each with a PBR appearance (colour/metalness/
+  roughness) and a physical density (kg/m³), plus a case-insensitive `findMaterialPreset` lookup. The
+  foundation for the appearance library and density-driven mass. Unit-tested: unique ids, field ranges,
+  handbook densities (steel 7850, water 1000).
 - **Batch 8:** **Measure Centroid** — report the area centroid of a face (Fusion's centroid readout for a
   face/sketch selection), distinct from Center of Mass (the volume centroid of a solid). Pure-TS
   area-weighted average of the face triangulation's triangle centroids (exact for planar faces), no

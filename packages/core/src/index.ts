@@ -12,6 +12,7 @@ export * from "./eventHandlers";
 export * from "./foundation";
 export * from "./i18n";
 export * from "./material";
+export * from "./materialPresets";
 export * from "./math";
 export * from "./model";
 export * from "./modelManager";
