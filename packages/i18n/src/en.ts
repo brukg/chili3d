@@ -192,6 +192,7 @@ export default {
         "command.measure.centerOfMass": "Center of Mass",
         "command.measure.checkGeometry": "Check Geometry",
         "command.measure.inertia": "Moments of Inertia",
+        "command.measure.principalInertia": "Principal Moments",
         "command.measure.interference": "Interference",
         "command.measure.length": "Length",
         "command.measure.distance": "Distance",
@@ -533,6 +534,8 @@ export default {
         "toast.measure.properties:{0}{1}{2}{3}{4}": "Volume: {0} mm³, Area: {1} mm², Center: ({2}, {3}, {4})",
         "toast.measure.inertia:{0}{1}{2}{3}{4}{5}":
             "Inertia about center of mass (mm⁵) — Ixx: {0}, Iyy: {1}, Izz: {2}; Ixy: {3}, Ixz: {4}, Iyz: {5}",
+        "toast.measure.principalInertia:{0}{1}{2}":
+            "Principal moments of inertia (mm⁵): I₁ {0}, I₂ {1}, I₃ {2}",
         "toast.measure.geometryValid": "Geometry is valid — no errors found",
         "toast.measure.geometryInvalid:{0}": "Geometry is invalid — {0} face(s) failed the check",
         "toast.heal.stillInvalid": "Healed, but the body still fails validity checks",

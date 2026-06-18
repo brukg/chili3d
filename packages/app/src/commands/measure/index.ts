@@ -17,6 +17,7 @@ export * from "./interferenceCheck";
 export * from "./length";
 export * from "./mass";
 export * from "./perimeter";
+export * from "./principalInertia";
 export * from "./properties";
 export * from "./radius";
 export * from "./select";

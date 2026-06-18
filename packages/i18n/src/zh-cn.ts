@@ -192,6 +192,7 @@ export default {
         "command.measure.centerOfMass": "质心",
         "command.measure.checkGeometry": "检查几何",
         "command.measure.inertia": "惯性矩",
+        "command.measure.principalInertia": "主惯性矩",
         "command.measure.interference": "干涉检查",
         "command.measure.length": "长度",
         "command.measure.distance": "距离",
@@ -532,6 +533,7 @@ export default {
         "toast.measure.properties:{0}{1}{2}{3}{4}": "体积：{0} mm³，面积：{1} mm²，质心：({2}, {3}, {4})",
         "toast.measure.inertia:{0}{1}{2}{3}{4}{5}":
             "关于质心的惯性矩 (mm⁵) — Ixx: {0}, Iyy: {1}, Izz: {2}; Ixy: {3}, Ixz: {4}, Iyz: {5}",
+        "toast.measure.principalInertia:{0}{1}{2}": "主惯性矩 (mm⁵)：I₁ {0}, I₂ {1}, I₃ {2}",
         "toast.measure.geometryValid": "几何有效 — 未发现错误",
         "toast.measure.geometryInvalid:{0}": "几何无效 — {0} 个面未通过检查",
         "toast.heal.stillInvalid": "已修复，但实体仍未通过有效性检查",

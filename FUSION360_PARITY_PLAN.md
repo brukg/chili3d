@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 8:** **Principal Moments of Inertia** — the rotation-invariant eigenvalues of the inertia
+  tensor (Fusion's Section Properties principal moments), unlike the body-axis diagonal. Pure closed-form
+  symmetric-3×3 eigenvalue solver (`principalMoments`, Smith 1961) over `massProperties()`; new
+  `measure.principalInertia` command. Unit-tested (no wasm): diagonal passthrough, rotation invariance
+  (diag(2,3,5) rotated 45° → {2,3,5}), and a fully-coupled tensor with eigenvalues {1,1,4}.
 - **Batch 9:** **Export BOM** — walk the document tree, tally every body (B-rep or mesh) by name, and
   download the parts list as CSV (Fusion's bill of materials); folders/construction geometry are not
   parts. Pure-TS `buildBomRows`/`bomToCsv`, unit-tested (quantity tally, alphabetical numbering, CSV
@@ -540,6 +545,7 @@ Chili3D has robotics joints (URDF). Fusion's mechanical assembly joints are a di
 ## Batch 8 — Inspection & analysis 🟡
 
 - ✅ Measure length/angle/properties/interference
+- ✅ Mass properties: volume/area/COM/inertia + principal moments **[session]**
 - ❌ Section analysis (live section plane with capping)
 - ❌ Curvature comb / zebra / draft analysis / curvature map
 - ❌ Center of mass display marker
