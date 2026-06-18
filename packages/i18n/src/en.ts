@@ -78,6 +78,7 @@ export default {
         "command.convert.curveProjection": "Projection",
         "command.convert.fuse": "Fuse",
         "command.convert.toFace": "To Face",
+        "command.convert.toMesh": "To Mesh",
         "command.convert.toShell": "To Shell",
         "command.convert.toSolid": "To Solid",
         "command.convert.toWire": "To Wire",

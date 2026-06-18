@@ -78,6 +78,7 @@ export default {
         "command.convert.curveProjection": "曲线投影",
         "command.convert.fuse": "融合",
         "command.convert.toFace": "转为面",
+        "command.convert.toMesh": "转为网格",
         "command.convert.toShell": "转为壳",
         "command.convert.toSolid": "转为体",
         "command.convert.toWire": "转多段线",

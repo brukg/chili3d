@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 7:** **Convert to Mesh** — tessellate a B-rep body (solid/shell/face) into a triangle mesh
+  node, reusing the kernel mesh the viewport already computes (`IShape.mesh.faces` → core `Mesh`/
+  `MeshNode`), leaving the original in place — Fusion's BRep→Mesh. Pure-TS, no kernel change. WASM test:
+  a box tessellates to 12 triangles (36 indices) spanning its bounds, with matching normals/uvs.
 - **Batch 8:** **Measure Perimeter** — report the total boundary length of a face (sum of every bounding
   edge's true curve length, outer wire plus holes), as Fusion's measure panel does. New
   `measure.perimeter` command. WASM tests: a 10×20 rect face → 60; a disc r=5 → 2π·5.
@@ -514,8 +518,8 @@ Chili3D has robotics joints (URDF). Fusion's mechanical assembly joints are a di
 
 ## Batch 7 — Mesh workflows ❌
 
-- 🟡 STL import exists (as mesh node)
-- ❌ Insert mesh / OBJ / 3MF import
+- ✅ STL / OBJ / PLY / 3MF mesh import (as mesh node) **[session]**
+- ✅ BRep → Mesh conversion (convert.toMesh) **[session]**
 - ❌ Mesh → BRep conversion
 - ❌ Reduce / remesh / repair mesh
 - ❌ Mesh section / plane cut

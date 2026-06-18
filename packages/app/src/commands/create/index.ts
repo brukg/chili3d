@@ -73,5 +73,6 @@ export * from "./sweep";
 export * from "./taperExtrude";
 export * from "./thickSolid";
 export * from "./thread";
+export * from "./toMesh";
 export * from "./torus";
 export * from "./tube";
