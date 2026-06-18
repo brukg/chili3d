@@ -151,4 +151,6 @@ export interface IShapeFactory {
     ): Result<IShape>;
     /** Repair a shape with ShapeFix — fixes degenerate edges, wire order, gaps and bad orientations. */
     fixShape(shape: IShape): Result<IShape>;
+    /** Rebuild a faceted B-rep from a triangle soup (every 3 consecutive points = one triangle). */
+    meshToShape(corners: XYZLike[]): Result<IShape>;
 }

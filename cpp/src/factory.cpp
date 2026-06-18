@@ -17,6 +17,7 @@
 #include <BRepBuilderAPI_MakeSolid.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepFeat_MakeCylindricalHole.hxx>
 #include <BRepFeat_MakeLinearForm.hxx>
@@ -959,6 +960,51 @@ public:
         return ShapeResult { fixer.Shape(), true, "" };
     }
 
+    // Rebuild a B-rep from a triangle soup: every consecutive triple of points is one triangle face;
+    // sewing merges the shared edges into a shell, promoted to a solid when the shell comes out closed.
+    // The faceted result mirrors Fusion's Mesh -> BRep for an editable body from imported/converted mesh.
+    static ShapeResult meshToShape(const Vector3Array& corners)
+    {
+        std::vector<Vector3> pts = vecFromJSArray<Vector3>(corners);
+        if (pts.size() < 3 || pts.size() % 3 != 0) {
+            return ShapeResult { TopoDS_Shape(), false, "mesh needs whole triangles (3 points each)" };
+        }
+        BRepBuilderAPI_Sewing sewing(1.0e-6);
+        int added = 0;
+        for (size_t i = 0; i + 2 < pts.size(); i += 3) {
+            BRepBuilderAPI_MakePolygon poly(
+                Vector3::toPnt(pts[i]), Vector3::toPnt(pts[i + 1]), Vector3::toPnt(pts[i + 2]), Standard_True);
+            if (!poly.IsDone()) {
+                continue;
+            }
+            BRepBuilderAPI_MakeFace face(poly.Wire(), Standard_True);
+            if (!face.IsDone()) {
+                continue;
+            }
+            sewing.Add(face.Face());
+            added++;
+        }
+        if (added == 0) {
+            return ShapeResult { TopoDS_Shape(), false, "no valid triangles in mesh" };
+        }
+        sewing.Perform();
+        TopoDS_Shape sewed = sewing.SewedShape();
+        if (sewed.IsNull()) {
+            return ShapeResult { TopoDS_Shape(), false, "failed to sew mesh triangles" };
+        }
+        TopExp_Explorer ex(sewed, TopAbs_SHELL);
+        if (ex.More()) {
+            TopoDS_Shell shell = TopoDS::Shell(ex.Current());
+            if (shell.Closed()) {
+                BRepBuilderAPI_MakeSolid solidBuilder(shell);
+                if (solidBuilder.IsDone()) {
+                    return ShapeResult { solidBuilder.Solid(), true, "" };
+                }
+            }
+        }
+        return ShapeResult { sewed, true, "" };
+    }
+
     static ShapeResult fixSmallFace(const TopoDS_Shape& shape, double tolerance)
     {
         ShapeFix_FixSmallFace fixer;
@@ -1023,6 +1069,7 @@ EMSCRIPTEN_BINDINGS(ShapeFactory)
         .class_function("chamferAsym", &ShapeFactory::chamferAsym)
         .class_function("chamferDA", &ShapeFactory::chamferDA)
         .class_function("fixShape", &ShapeFactory::fixShape)
+        .class_function("meshToShape", &ShapeFactory::meshToShape)
         .class_function("fixSmallFace", &ShapeFactory::fixSmallFace)
         .class_function("loft", &ShapeFactory::loft)
         .class_function("curveProjection", &ShapeFactory::curveProjection);

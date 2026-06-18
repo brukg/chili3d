@@ -602,4 +602,8 @@ export class ShapeFactory implements IShapeFactory {
     fixShape(shape: IShape): Result<IShape> {
         return convertShapeResult(wasm.ShapeFactory.fixShape(ensureOccShape(shape)[0]));
     }
+
+    meshToShape(corners: XYZLike[]): Result<IShape> {
+        return convertShapeResult(wasm.ShapeFactory.meshToShape(corners));
+    }
 }

@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 7:** **Mesh → BRep** — rebuild an editable faceted B-rep from a triangle mesh node (imported
+  STL or a Convert-to-Mesh result), the reverse of Convert to Mesh. NEW kernel `ShapeFactory::meshToShape`
+  (BRepBuilderAPI_Sewing over per-triangle faces → shell → solid when watertight) wired to
+  `IShapeFactory.meshToShape` + `convert.meshToBrep` command. WASM rebuilt; probe-verified before commit.
+  WASM test: a box's own triangle mesh sews back into a valid solid of volume 6000.
 - **Batch 7:** **Convert to Mesh** — tessellate a B-rep body (solid/shell/face) into a triangle mesh
   node, reusing the kernel mesh the viewport already computes (`IShape.mesh.faces` → core `Mesh`/
   `MeshNode`), leaving the original in place — Fusion's BRep→Mesh. Pure-TS, no kernel change. WASM test:
@@ -520,7 +525,7 @@ Chili3D has robotics joints (URDF). Fusion's mechanical assembly joints are a di
 
 - ✅ STL / OBJ / PLY / 3MF mesh import (as mesh node) **[session]**
 - ✅ BRep → Mesh conversion (convert.toMesh) **[session]**
-- ❌ Mesh → BRep conversion
+- ✅ Mesh → BRep conversion (convert.meshToBrep, faceted sew) **[session]**
 - ❌ Reduce / remesh / repair mesh
 - ❌ Mesh section / plane cut
 

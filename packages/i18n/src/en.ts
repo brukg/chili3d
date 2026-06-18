@@ -79,6 +79,7 @@ export default {
         "command.convert.fuse": "Fuse",
         "command.convert.toFace": "To Face",
         "command.convert.toMesh": "To Mesh",
+        "command.convert.meshToBrep": "Mesh to BRep",
         "command.convert.toShell": "To Shell",
         "command.convert.toSolid": "To Solid",
         "command.convert.toWire": "To Wire",

@@ -75,6 +75,7 @@ export const I18N_KEYS = [
     "command.convert.fuse",
     "command.convert.toFace",
     "command.convert.toMesh",
+    "command.convert.meshToBrep",
     "command.convert.toShell",
     "command.convert.toSolid",
     "command.convert.toWire",

@@ -144,7 +144,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                 items: [
                     "convert.toWire",
                     ["convert.toFace", "convert.toShell", "convert.toSolid"],
-                    ["convert.toMesh"],
+                    ["convert.toMesh", "convert.meshToBrep"],
                     ["create.extractEdges", "create.extractFaces"],
                 ],
             },
