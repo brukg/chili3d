@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 7:** **3MF import — build-item transform** — the importer ignored the `<build><item transform>`
+  matrix, so a slicer/CAD-positioned part imported at the origin. Now the (single) build-item's 4×3
+  row-vector affine is baked into the vertices. Unit-tested: a translate lands the part correctly, a 90°
+  Z-rotation maps (2,0,0)→(0,2,0), and a model with no build transform is unchanged.
 - **Batch 9:** **DXF import — old-style POLYLINE** — the importer now reads the heavyweight POLYLINE
   entity (a POLYLINE header, one VERTEX sub-entity per point, SEQEND terminator), accumulating across the
   intermediate code-0 records, with per-vertex bulge → arc reusing the existing polyline edge builder.
