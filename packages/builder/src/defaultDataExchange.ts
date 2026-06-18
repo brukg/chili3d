@@ -19,6 +19,7 @@ import { importDxf } from "./dxf/dxfImporter";
 import { importGlb, importGltf } from "./gltf/gltfImporter";
 import { importObj } from "./obj/objImporter";
 import { importPly } from "./ply/plyImporter";
+import { exportSvg } from "./svg/svgExporter";
 import { importSvg } from "./svg/svgImporter";
 import { exportThreeMf } from "./threemf/threeMfExporter";
 import { importThreeMf } from "./threemf/threeMfImporter";
@@ -60,6 +61,7 @@ export class DefaultDataExchange implements IDataExchange {
             ".gltf",
             ".glb",
             ".dxf",
+            ".svg",
             ".urdf",
         ];
     }
@@ -197,8 +199,9 @@ export class DefaultDataExchange implements IDataExchange {
             if (type === ".step") shapeResult = this.exportStep(document, shapes);
             if (type === ".iges") shapeResult = this.exportIges(document, shapes);
             if (type === ".brep") shapeResult = this.exportBrep(document, shapes);
-            // DXF reads 2D curve geometry directly from the shapes (no kernel converter).
+            // DXF and SVG read 2D curve geometry directly from the shapes (no kernel converter).
             if (type === ".dxf") shapeResult = Result.ok(exportDxf(shapes));
+            if (type === ".svg") shapeResult = Result.ok(exportSvg(shapes));
         }
 
         if (shapeResult) {

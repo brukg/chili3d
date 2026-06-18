@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 9:** **SVG export** — export 2D shape edges (sketches, projected views, sections) to an SVG
+  document, the vector counterpart of DXF export and round-trip partner of the SVG importer. Lines →
+  `<line>`, closed circles → `<circle>`, arcs/ellipses/splines → tessellated `<polyline>`; CAD y-up is
+  flipped into SVG's y-down frame, content fit to a mm viewBox. Wired `.svg` into export formats +
+  dispatch. WASM test: a circle r=5 → `<circle r="5">` in a 10×10 viewBox; a line flips correctly.
 - **Batch 8:** **Measure Curvature** — report the curvature and radius of curvature of an edge at its
   mid-parameter (Fusion's curvature analysis, point form). Pure κ = |r′×r″|/|r′|³ from the curve's first
   and second derivatives (`ICurve.d2`), no kernel change. Unit-tested (no wasm): a circle r=5 → κ=0.2; a
@@ -565,7 +570,7 @@ Chili3D has robotics joints (URDF). Fusion's mechanical assembly joints are a di
 - ❌ Dimensions & annotations on drawings
 - ❌ Section / detail views
 - ✅ BOM / parts list — CSV export (file.exportBom) **[session]**; in-app table view still ❌
-- ❌ Title block, sheets, export PDF/DXF
+- 🟡 Export 2D drawing to DXF + SVG **[session]**; PDF + title block/sheets still ❌
 
 ## Batch 10 — Visualization / render 🟡
 
