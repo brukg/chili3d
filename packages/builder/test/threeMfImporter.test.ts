@@ -63,4 +63,24 @@ describe("3MF importer", () => {
     test("parseItemTransform returns undefined when there is no build transform", () => {
         expect(parseItemTransform(MODEL)).toBeUndefined();
     });
+
+    test("re-bases triangle indices across multiple objects and places each via its item", () => {
+        const tri = `<mesh><vertices>
+            <vertex x="0" y="0" z="0"/><vertex x="1" y="0" z="0"/><vertex x="0" y="1" z="0"/>
+        </vertices><triangles><triangle v1="0" v2="1" v3="2"/></triangles></mesh>`;
+        const xml = `<model><resources>
+            <object id="1" type="model">${tri}</object>
+            <object id="2" type="model">${tri}</object>
+        </resources><build>
+            <item objectid="1"/>
+            <item objectid="2" transform="1 0 0 0 1 0 0 0 1 10 0 0"/>
+        </build></model>`;
+
+        const { position, index } = parseModelXml(xml);
+        expect(position.length).toBe(6 * 3);
+        // Object 2's triangle must reference its own vertices (3,4,5), not (0,1,2).
+        expect(Array.from(index)).toEqual([0, 1, 2, 3, 4, 5]);
+        // Object 2's first vertex (0,0,0) is translated to (10,0,0).
+        expect([position[9], position[10], position[11]]).toEqual([10, 0, 0]);
+    });
 });

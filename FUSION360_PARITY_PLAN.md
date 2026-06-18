@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 7:** **3MF import — multi-object assemblies** — previously all objects' vertices/triangles were
+  concatenated globally without re-basing per-object triangle indices, so any multi-object 3MF imported as
+  garbled geometry. Now each `<object>` mesh is parsed on its own and placed through its `<build>` item
+  (index offset + per-item transform); with no `<build>`, every object is taken at identity. Generalises
+  the prior single-item transform. Unit-tested: two objects re-base to indices [0,1,2,3,4,5] and the
+  second lands at its translated position.
 - **Batch 7:** **3MF import — build-item transform** — the importer ignored the `<build><item transform>`
   matrix, so a slicer/CAD-positioned part imported at the origin. Now the (single) build-item's 4×3
   row-vector affine is baked into the vertices. Unit-tested: a translate lands the part correctly, a 90°

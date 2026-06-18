@@ -29,24 +29,75 @@ function applyItemTransform(verts: number[], t: number[]): void {
     }
 }
 
+interface ObjectMesh {
+    verts: number[];
+    tris: number[];
+}
+
+/** Parse every `<object>`'s mesh into its own vertex/triangle arrays, keyed by object id. */
+function parseObjects(xml: string): Map<string, ObjectMesh> {
+    const objects = new Map<string, ObjectMesh>();
+    for (const m of xml.matchAll(/<object\b([^>]*)>([\s\S]*?)<\/object>/g)) {
+        const id = /\bid\s*=\s*"([^"]*)"/.exec(m[1])?.[1] ?? "";
+        const verts: number[] = [];
+        for (const v of m[2].matchAll(/<vertex\b[^>]*>/g)) {
+            verts.push(attr(v[0], "x"), attr(v[0], "y"), attr(v[0], "z"));
+        }
+        const tris: number[] = [];
+        for (const t of m[2].matchAll(/<triangle\b[^>]*>/g)) {
+            tris.push(attr(t[0], "v1"), attr(t[0], "v2"), attr(t[0], "v3"));
+        }
+        objects.set(id, { verts, tris });
+    }
+    return objects;
+}
+
+interface BuildItem {
+    objectid: string;
+    transform?: number[];
+}
+
+/** Parse the `<build>` items (object id + optional placement transform). */
+function parseBuildItems(xml: string): BuildItem[] {
+    const build = /<build\b[^>]*>([\s\S]*?)<\/build>/.exec(xml);
+    if (!build) return [];
+    const items: BuildItem[] = [];
+    for (const m of build[1].matchAll(/<item\b[^>]*>/g)) {
+        const objectid = /\bobjectid\s*=\s*"([^"]*)"/.exec(m[0])?.[1];
+        if (!objectid) continue;
+        const raw = /\btransform\s*=\s*"([^"]*)"/.exec(m[0])?.[1];
+        const t = raw?.trim().split(/\s+/).map(Number);
+        const transform = t && t.length === 12 && t.every((n) => !Number.isNaN(n)) ? t : undefined;
+        items.push({ objectid, transform });
+    }
+    return items;
+}
+
 /**
- * Parse a 3MF `<model>` XML into a triangle mesh. 3MF stores explicit `<vertex>` (x,y,z) and
- * `<triangle>` (v1,v2,v3) elements, so no triangulation is needed. Attributes are read by name so
- * their order does not matter. A single build-item transform (the common case) is baked into the
- * vertices so the part imports at its intended place rather than the origin.
+ * Parse a 3MF `<model>` XML into a single triangle mesh. 3MF stores explicit `<vertex>` (x,y,z) and
+ * `<triangle>` (v1,v2,v3) elements per `<object>`, then a `<build>` places objects via items with an
+ * optional transform. Each object's triangles are indexed within its own mesh, so they are re-based as
+ * the objects are concatenated; build-item transforms are baked in so parts land where intended. When
+ * there is no `<build>`, every object is taken at identity.
  */
 export function parseModelXml(xml: string): { position: Float32Array; index: Uint32Array } {
-    const verts: number[] = [];
-    for (const m of xml.matchAll(/<vertex\b[^>]*>/g)) {
-        verts.push(attr(m[0], "x"), attr(m[0], "y"), attr(m[0], "z"));
+    const objects = parseObjects(xml);
+    const items = parseBuildItems(xml);
+    const placements: BuildItem[] =
+        items.length > 0 ? items : [...objects.keys()].map((objectid) => ({ objectid }));
+
+    const position: number[] = [];
+    const index: number[] = [];
+    for (const item of placements) {
+        const object = objects.get(item.objectid);
+        if (!object || object.verts.length === 0) continue;
+        const base = position.length / 3;
+        const verts = object.verts.slice();
+        if (item.transform) applyItemTransform(verts, item.transform);
+        for (const c of verts) position.push(c);
+        for (const i of object.tris) index.push(i + base);
     }
-    const tris: number[] = [];
-    for (const m of xml.matchAll(/<triangle\b[^>]*>/g)) {
-        tris.push(attr(m[0], "v1"), attr(m[0], "v2"), attr(m[0], "v3"));
-    }
-    const transform = parseItemTransform(xml);
-    if (transform) applyItemTransform(verts, transform);
-    return { position: new Float32Array(verts), index: new Uint32Array(tris) };
+    return { position: new Float32Array(position), index: new Uint32Array(index) };
 }
 
 /** Import a 3MF package (a zip whose `*.model` part holds the mesh) as a {@link MeshNode}. */
