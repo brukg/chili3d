@@ -1,12 +1,15 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
+import { findMaterialPreset, MaterialPresets } from "../materialPresets";
 import { Matrix4 } from "../math";
 import { property } from "../property";
 import { serializable, serialize } from "../serialize";
 import { FolderNode, type FolderNodeOptions } from "./folderNode";
 import { GeometryNode } from "./geometryNode";
 import { NodeUtils } from "./node";
+
+const PHYSICAL_MATERIAL_OPTIONS: readonly string[] = MaterialPresets.map((p) => p.id);
 
 export interface GroupNodeOptions extends FolderNodeOptions {}
 
@@ -46,4 +49,33 @@ export class GroupNode extends FolderNode {
             }
         });
     }
+
+    /**
+     * Physical material for the whole group: assigning one cascades the chosen material's density to
+     * every mass-bearing descendant (and to this node if it is one), driving their mass. This is the
+     * SEPARATE physical axis — it never changes appearance. Stored for the property panel; descendants'
+     * masses are serialized independently, so no re-cascade runs on document load.
+     */
+    @serialize()
+    @property("node.physicalMaterial", { type: "select", options: PHYSICAL_MATERIAL_OPTIONS })
+    get physicalMaterial(): string {
+        return this.getPrivateValue("physicalMaterial", "");
+    }
+    set physicalMaterial(value: string) {
+        this.setProperty("physicalMaterial", value, () => {
+            const preset = findMaterialPreset(value);
+            if (!preset) return;
+            this.applyPhysicalMaterial(preset.density);
+            for (const node of NodeUtils.findNodes(this, (n) => n instanceof GroupNode)) {
+                (node as GroupNode).applyPhysicalMaterial(preset.density);
+            }
+        });
+    }
+
+    /**
+     * Apply a material density (kg/m³) to this node's own mass. The base group is not mass-bearing, so
+     * this is a no-op; {@link LinkNode} overrides it to set its density-driven mass. Kept here (rather
+     * than importing LinkNode) so the {@link physicalMaterial} cascade stays free of an import cycle.
+     */
+    protected applyPhysicalMaterial(_density: number): void {}
 }

@@ -402,6 +402,7 @@ export const I18N_KEYS = [
     "material.metalnessMap",
     "material.normalMap",
     "material.preset",
+    "node.physicalMaterial",
     "motor.preset",
     "material.roughness",
     "material.roughnessMap",

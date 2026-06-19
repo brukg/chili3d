@@ -408,6 +408,7 @@ export default {
         "material.metalnessMap": "Metalness Map",
         "material.normalMap": "Normal Map",
         "material.preset": "Material",
+        "node.physicalMaterial": "Physical Material",
         "motor.preset": "Motor",
         "material.roughness": "Roughness",
         "material.roughnessMap": "Roughness Map",

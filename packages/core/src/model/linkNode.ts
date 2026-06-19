@@ -4,7 +4,11 @@
 import { XYZ } from "../math";
 import { property } from "../property";
 import { serializable, serialize } from "../serialize";
+import { type ISolid, ShapeTypes } from "../shape";
 import { GroupNode } from "./groupNode";
+import { JointNode } from "./jointNode";
+import { type INodeLinkedList, NodeUtils } from "./node";
+import { ShapeNode } from "./shapeNode";
 
 /**
  * How the link's collision geometry is exported. `convex` emits a convex hull of the link mesh — the
@@ -81,5 +85,34 @@ export class LinkNode extends GroupNode {
     }
     set productOfInertia(value: XYZ) {
         this.setProperty("productOfInertia", value);
+    }
+
+    /** A link is mass-bearing: applying a physical material sets its mass from the material density and
+     * the link's own geometry volume (mass = density · volume). Appearance is untouched. */
+    protected override applyPhysicalMaterial(density: number): void {
+        this.mass = density * this.ownSolidVolume() * 1e-9; // density kg/m³ · volume mm³ → kg
+    }
+
+    // Total volume (mm³) of the link's own solids, descending through folders/groups but stopping at
+    // nested links/joints (their geometry belongs to them). Volume is placement-invariant.
+    private ownSolidVolume(): number {
+        let volume = 0;
+        const walk = (parent: INodeLinkedList) => {
+            let n = parent.firstChild;
+            while (n) {
+                if (!(n instanceof LinkNode || n instanceof JointNode)) {
+                    if (n instanceof ShapeNode && n.shape.isOk) {
+                        for (const sub of n.shape.value.findSubShapes(ShapeTypes.solid)) {
+                            volume += (sub as ISolid).massProperties().volume;
+                        }
+                    } else if (NodeUtils.isLinkedListNode(n)) {
+                        walk(n);
+                    }
+                }
+                n = n.nextSibling;
+            }
+        };
+        walk(this);
+        return volume;
     }
 }

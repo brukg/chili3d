@@ -408,6 +408,7 @@ export default {
         "material.metalnessMap": "金属度贴图",
         "material.normalMap": "法线贴图",
         "material.preset": "材料",
+        "node.physicalMaterial": "物理材料",
         "motor.preset": "电机",
         "material.roughness": "粗糙度",
         "material.roughnessMap": "粗糙度贴图",
