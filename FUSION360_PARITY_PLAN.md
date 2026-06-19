@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Joint Dynamics command** — "how fast can each joint accelerate its load?": per
+  joint it forms the axis inertia (downstream links as point masses + the motor's reflected rotor inertia
+  `rotorInertia·gearRatio²`) and divides the spare torque (`maxEffort − gravity hold`) by it for the peak
+  angular acceleration. Reports the slowest (binding) joint in deg/s² as a toast, full table in console.
+  Pairs with Apply Motor (rotor inertia/gearing) and the dynamic-torque core. Robot ribbon tab.
 - **Batch 11 (robot):** **Max angular acceleration core** — `maxAngularAcceleration(availableTorque,
   inertia)` = spare torque ÷ inertia (rad/s²), the "how fast can this joint accelerate" primitive. Spare
   torque is `maxEffort − |gravity|`; inertia includes the reflected rotor. 0 with no spare, Infinity for

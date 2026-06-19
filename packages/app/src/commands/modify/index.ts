@@ -22,6 +22,7 @@ export * from "./filletAll";
 export * from "./fillSurface";
 export * from "./healBody";
 export * from "./hole";
+export * from "./jointDynamics";
 export * from "./linkedArray";
 export * from "./linkedBoolean";
 export * from "./linkedCircularArray";
