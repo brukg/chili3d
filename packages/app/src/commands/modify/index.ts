@@ -33,6 +33,7 @@ export * from "./mirrorWorkplane";
 export * from "./move";
 export * from "./moveToOrigin";
 export * from "./offsetSurface";
+export * from "./payloadCapacity";
 export * from "./pipeFeature";
 export * from "./pushPull";
 export * from "./removeFeature";

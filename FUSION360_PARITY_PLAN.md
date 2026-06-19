@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Payload Capacity command** — how much the robot can lift at its end effector
+  before a joint saturates: per joint it subtracts the arm's self-load torque from the rated `maxEffort`
+  and divides the remainder by the torque-per-kg a payload adds at the farthest downstream point (end-
+  effector proxy), via `maxPayloadMass`. The binding (smallest) joint sets the capacity, reported as a
+  toast with the full per-joint table in the console. In the robot ribbon tab.
 - **Batch 11 (robot):** **Stability Check command** — answers "does it tip over?" in one click: builds the
   support polygon as the convex hull of the robot's lowest geometry vertices (ground contacts within 1 mm
   of min-Z), projects the whole-robot COM onto the ground, and reports the signed stability margin (mm)
