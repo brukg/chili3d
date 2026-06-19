@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Apply Material command** (supersedes Set Mass from Material) — now sets the material
+  *type* on any selected body, not just a link's mass: it paints the preset's full PBR appearance (colour +
+  metalness + roughness, via a `PhysicalMaterial`) onto every geometry under the selection (bodies, a link's
+  geometry, a folder's contents), and for any selected link also derives its mass from the density. One
+  action drives both how the body looks and, for links, Estimate Torque / the URDF `<inertial>`. Closes the
+  gap where material type only affected mass and never the appearance.
 - **Batch 11 (robot):** **Robot Report command** — the capstone spec sheet: one click consolidates link/joint
   counts, total mass + COM, total installed mechanical power, and peak torque utilization across joints into a
   summary toast (full breakdown to console). Reuses the shared mass model + torque/power cores. Robot ribbon

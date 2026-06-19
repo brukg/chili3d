@@ -2,6 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 export * from "./align";
+export * from "./applyMaterial";
 export * from "./applyMotor";
 export * from "./array";
 export * from "./break";
@@ -51,7 +52,6 @@ export * from "./rotate";
 export * from "./scale";
 export * from "./scaleNonUniform";
 export * from "./setColor";
-export * from "./setLinkMass";
 export * from "./sew";
 export * from "./shell";
 export * from "./simplify";
