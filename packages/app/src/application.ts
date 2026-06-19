@@ -2,6 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 import {
+    AppearancePresets,
     DOCUMENT_FILE_EXTENSION,
     getCurrentApplication,
     I18n,
@@ -20,6 +21,7 @@ import {
     Material,
     Observable,
     ObservableCollection,
+    PhysicalMaterial,
     PLUGIN_FILE_EXTENSION,
     Plane,
     PubSub,
@@ -209,9 +211,18 @@ export class Application extends Observable implements IApplication {
 
     async newDocument(name: string): Promise<IDocument> {
         const document = new Document(this, name);
+        // A neutral default first (so the default material assignment stays neutral), then the full
+        // appearance catalogue so the material picker lists ready-made looks instead of forcing the user
+        // to author each one.
         const lightGray = new Material({ document, name: "LightGray", color: 0xdedede });
         const deepGray = new Material({ document, name: "DeepGray", color: 0x898989 });
-        document.modelManager.materials.push(lightGray, deepGray);
+        const catalogue = AppearancePresets.map((p) => {
+            const material = new PhysicalMaterial({ document, name: p.name, color: p.color });
+            material.metalness = p.metalness;
+            material.roughness = p.roughness;
+            return material;
+        });
+        document.modelManager.materials.push(lightGray, deepGray, ...catalogue);
         await this.createActiveView(document);
         return document;
     }

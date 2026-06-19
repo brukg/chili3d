@@ -11,6 +11,19 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Material system redesign (Fusion-style separation):** split "material" into two independent axes per
+  the user's correction (changing physical material must not repaint; a real list, not typing; apply to
+  *nodes* not just parts). (1) **Appearance** — new `appearancePresets.ts` catalogue (~22 PBR looks);
+  every new document is seeded with it (`application.ts`) so the existing per-part picker lists ready-made
+  materials. `GroupNode` gains a cascading `materialId` so an appearance assigned to a group/link/folder
+  bakes onto all descendant parts (the renderer paints per-part; no renderer change). (2) **Physical
+  material** — `GroupNode.physicalMaterial` (select from the density catalogue) cascades density→mass to
+  descendant links via a `protected applyPhysicalMaterial(density)` hook that `LinkNode` overrides
+  (mass = density·volume); never touches appearance. The two never cross-contaminate. The old conflated
+  robot **Apply Material** command (and its `material.preset`/`materialApplied` keys) is removed — replaced
+  by the two node properties. Unit-tested: appearance cascade (model), physical cascade + appearance-
+  independence (wasm), both catalogues. Spec: `docs/superpowers/specs/2026-06-19-material-system-redesign-design.md`.
+
 - **Batch 11 (robot) — review fix:** A correctness review of the whole robot subsystem found one real bug
   (rest confirmed sound): the URDF exporter's `<mimic joint="...">` referenced the master joint's *raw*
   name, bypassing the `sanitize()` dedup registry — so when two names collided after character substitution
