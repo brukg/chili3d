@@ -567,8 +567,6 @@ export default {
         "toast.measure.mass:{0}{1}": "质量：{0} g（{1} kg）",
         "toast.measure.torque:{0}{1}{2}{3}": "峰值关节 {0}：需要 {1} N·m（额定 {3} N·m 的 {2}%）",
         "toast.robot.noJoints": "模型中没有关节 — 请先创建关节",
-        "toast.robot.massSet:{0}{1}": "已为 {0} 个连杆设置质量；总计 {1} kg",
-        "toast.robot.selectLink": "请选择一个或多个连杆以设置材料",
         "toast.robot.materialApplied:{0}{1}{2}": "已应用 {1}：上色 {0} 个实体，{2} 个连杆设置了质量",
         "toast.robot.noLinks": "模型中没有连杆 — 请先创建连杆",
         "toast.robot.com:{0}{1}{2}{3}": "机器人质量：{0} kg，质心：（{1}，{2}，{3}）mm",

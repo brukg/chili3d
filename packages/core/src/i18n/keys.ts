@@ -559,8 +559,6 @@ export const I18N_KEYS = [
     "toast.measure.mass:{0}{1}",
     "toast.measure.torque:{0}{1}{2}{3}",
     "toast.robot.noJoints",
-    "toast.robot.massSet:{0}{1}",
-    "toast.robot.selectLink",
     "toast.robot.materialApplied:{0}{1}{2}",
     "toast.robot.noLinks",
     "toast.robot.com:{0}{1}{2}{3}",

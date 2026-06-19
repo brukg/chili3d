@@ -569,8 +569,6 @@ export default {
         "toast.measure.mass:{0}{1}": "Mass: {0} g ({1} kg)",
         "toast.measure.torque:{0}{1}{2}{3}": "Peak joint {0}: {1} N·m required ({2}% of {3} N·m rated)",
         "toast.robot.noJoints": "No joints in the model — create joints first",
-        "toast.robot.massSet:{0}{1}": "Set mass on {0} link(s); total {1} kg",
-        "toast.robot.selectLink": "Select one or more links to set their material",
         "toast.robot.materialApplied:{0}{1}{2}": "Applied {1}: painted {0} bodies, mass set on {2} links",
         "toast.robot.noLinks": "No links in the model — create links first",
         "toast.robot.com:{0}{1}{2}{3}": "Robot mass: {0} kg, COM: ({1}, {2}, {3}) mm",

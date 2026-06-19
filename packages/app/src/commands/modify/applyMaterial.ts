@@ -98,14 +98,27 @@ export class ApplyMaterialCommand extends MultistepCommand {
     }
 }
 
-// Every geometry node at or under a selection: the node itself if it is geometry, otherwise its geometry
-// descendants (so painting a link or a folder colours all the bodies inside it).
+// Geometry owned by a selection: the node itself if it is geometry, otherwise its geometry descendants
+// found through folders/groups but stopping at a nested link/joint — so painting a link colours its own
+// bodies, not those of the child links it carries (which may be a different material). Matches the
+// "own geometry" boundary used by the mass and URDF walks.
 function geometryUnder(node: INode): GeometryNode[] {
     if (node instanceof GeometryNode) return [node];
-    if (NodeUtils.isLinkedListNode(node)) {
-        return NodeUtils.findNodes(node, (n) => n instanceof GeometryNode) as GeometryNode[];
-    }
-    return [];
+    if (!NodeUtils.isLinkedListNode(node)) return [];
+    const out: GeometryNode[] = [];
+    const walk = (parent: INodeLinkedList) => {
+        let n = parent.firstChild;
+        while (n) {
+            if (n instanceof GeometryNode) {
+                out.push(n);
+            } else if (!(n instanceof LinkNode || n instanceof JointNode) && NodeUtils.isLinkedListNode(n)) {
+                walk(n);
+            }
+            n = n.nextSibling;
+        }
+    };
+    walk(node);
+    return out;
 }
 
 // Total volume (mm³) of a link's own solids, descending through folders/groups but stopping at nested
