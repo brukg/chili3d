@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Straightened Reach command** — the robot's fully-extended reach: builds the joint
+  tree (each joint's link length = pose-invariant distance to its parent joint's pivot; terminal extent =
+  farthest tip of its direct child link) and runs the longest-chain core. Distinct from Robot Reach (the
+  current-pose bounding radius) — this is the max the arm could reach if straightened. Robot ribbon tab.
 - **Batch 11 (robot):** **Longest-chain reach core** — `longestChain(ReachNode)` over a kinematic tree
   `{length, children}` returns the longest root-to-leaf sum of rigid link lengths — the straightened reach,
   pose-invariant. New `robot/reach.ts`. Unit-tested (single/chain/branch/tip-extent). Backs the Straightened
