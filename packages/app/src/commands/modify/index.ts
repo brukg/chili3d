@@ -37,6 +37,7 @@ export * from "./moveToOrigin";
 export * from "./offsetSurface";
 export * from "./payloadCapacity";
 export * from "./pipeFeature";
+export * from "./powerBudget";
 export * from "./pushPull";
 export * from "./removeFeature";
 export * from "./removeFillet";

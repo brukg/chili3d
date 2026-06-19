@@ -222,6 +222,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         "modify.estimateTorque",
                         "modify.jointDynamics",
                         "modify.payloadCapacity",
+                        "modify.powerBudget",
                         "modify.robotCenterOfMass",
                         "modify.robotReach",
                         "modify.stabilityCheck",

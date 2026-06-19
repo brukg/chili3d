@@ -11,6 +11,9 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Power Budget command** — the robot's installed mechanical power: sums each joint's
+  peak shaft power (`maxEffort · maxVelocity`) into the total the actuators can draw at once — the number to
+  size a battery/PSU — and flags the hungriest joint. Toast + per-joint console table. Robot ribbon tab.
 - **Batch 11 (robot):** **Mechanical power core** — `mechanicalPower(torque, angularVelocity)` =
   |torque · ω| (W); a joint's peak rated power is `maxEffort · maxVelocity`, summed across joints it's the
   robot's installed power for sizing a battery/PSU. Added to `robot/jointTorque.ts`. Unit-tested. Backs the
