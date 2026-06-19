@@ -5,3 +5,4 @@ export * from "./jointTorque";
 export * from "./motorPresets";
 export * from "./reach";
 export * from "./stability";
+export * from "./validate";

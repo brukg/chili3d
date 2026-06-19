@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Robot validation core** — `validateRobot(links, joints)` returns the modelling
+  issues that break or degrade a robot before URDF/sim: zero-mass or geometry-less links, unrated actuated
+  joints (maxEffort ≤ 0), empty position ranges (lower ≥ upper on revolute/prismatic), joints driving no
+  link, non-positive gear ratios, no links at all — each tagged error/warning. Pure over plain specs. New
+  `robot/validate.ts`. Unit-tested (7 cases). Backs the Validate Robot command.
 - **Batch 11 (robot):** **Apply Material command** (supersedes Set Mass from Material) — now sets the material
   *type* on any selected body, not just a link's mass: it paints the preset's full PBR appearance (colour +
   metalness + roughness, via a `PhysicalMaterial`) onto every geometry under the selection (bodies, a link's
