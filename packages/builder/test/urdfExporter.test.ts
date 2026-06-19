@@ -106,6 +106,46 @@ describe("exportUrdf", () => {
         expect(urdf).not.toContain("<transmission");
     });
 
+    test("an actuated joint is exposed through a ros2_control block", async () => {
+        await initWasm({ wasmBinary: WASM_BINARY });
+        const factory = new ShapeFactory();
+        const doc = new TestDocument() as any;
+
+        const base = new LinkNode({ document: doc, name: "base_link" });
+        base.add(
+            new EditableShapeNode({ document: doc, name: "g", shape: factory.box(Plane.XY, 20, 20, 20) }),
+        );
+        const child = new LinkNode({ document: doc, name: "child_link" });
+        const joint = new JointNode({ document: doc, name: "j1", jointType: "revolute" });
+        joint.add(child);
+        base.add(joint);
+
+        const { urdf } = exportUrdf(base, "robot", factory.converter);
+        expect(urdf).toContain('<ros2_control name="robot" type="system">');
+        expect(urdf).toContain("<plugin>mock_components/GenericSystem</plugin>");
+        expect(urdf).toContain('<joint name="j1">');
+        expect(urdf).toContain('<command_interface name="position"/>');
+        expect(urdf).toContain('<state_interface name="velocity"/>');
+    });
+
+    test("a fixed-only robot emits no ros2_control block", async () => {
+        await initWasm({ wasmBinary: WASM_BINARY });
+        const factory = new ShapeFactory();
+        const doc = new TestDocument() as any;
+
+        const base = new LinkNode({ document: doc, name: "base_link" });
+        base.add(
+            new EditableShapeNode({ document: doc, name: "g", shape: factory.box(Plane.XY, 20, 20, 20) }),
+        );
+        const child = new LinkNode({ document: doc, name: "child_link" });
+        const joint = new JointNode({ document: doc, name: "j1", jointType: "fixed" });
+        joint.add(child);
+        base.add(joint);
+
+        const { urdf } = exportUrdf(base, "robot", factory.converter);
+        expect(urdf).not.toContain("<ros2_control");
+    });
+
     test("collects geometry and joints nested inside folders, not just direct children", async () => {
         await initWasm({ wasmBinary: WASM_BINARY });
         const factory = new ShapeFactory();

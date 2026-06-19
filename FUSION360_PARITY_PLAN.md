@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **ros2_control URDF export** — the bridge to real ROS 2 hardware, not just sim: URDF
+  export now emits a `<ros2_control>` block exposing every actuated joint with a position command interface
+  and position/velocity state interfaces, backed by `mock_components/GenericSystem` (the neutral default —
+  swap the `<plugin>` for the real driver on hardware). Additive (keeps `<transmission>`); empty when the
+  robot has no actuated joints. Unit-tested: block + interfaces present for a revolute joint, absent for a
+  fixed-only robot.
 - **Batch 11 (robot):** **Robot Reach command** — the current-pose reach envelope: the max distance (mm)
   from the base link's origin (the link with no link/joint ancestor) to any geometry vertex on the robot —
   the workspace bounding radius at the present joint values (zero the joints for fully-extended reach). In

@@ -36,6 +36,7 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
     const links: string[] = [];
     const joints: string[] = [];
     const transmissions: string[] = [];
+    const controlJoints: string[] = [];
 
     const sanitize = (name: string): string => {
         const base = name.replace(/[^A-Za-z0-9_]/g, "_") || "node";
@@ -85,6 +86,10 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
                 mimic = `    <mimic joint="${masterName}" multiplier="${num(joint.mimicMultiplier)}" offset="${num(joint.mimicOffset)}"/>\n`;
             }
         }
+        // Every actuated joint gets a ros2_control command/state interface (collected for the block
+        // emitted after all joints are walked).
+        controlJoints.push(jointName);
+
         // A geared joint emits a SimpleTransmission carrying the mechanical reduction so the actuator's
         // gearing survives into ros2_control / Gazebo. Direct-drive (ratio 1) joints need none.
         if (joint.gearRatio > 0 && joint.gearRatio !== 1) {
@@ -132,11 +137,36 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
     };
 
     walkLink(root);
+    const safeName = robotName.replace(/[^A-Za-z0-9_]/g, "_");
     const trans = transmissions.length > 0 ? `${transmissions.join("\n")}\n` : "";
+    const ros2 = ros2ControlXml(safeName, controlJoints);
     const urdf =
-        `<?xml version="1.0"?>\n<robot name="${robotName.replace(/[^A-Za-z0-9_]/g, "_")}">\n` +
-        `${links.join("\n")}\n${joints.join("\n")}\n${trans}</robot>\n`;
+        `<?xml version="1.0"?>\n<robot name="${safeName}">\n` +
+        `${links.join("\n")}\n${joints.join("\n")}\n${trans}${ros2}</robot>\n`;
     return { urdf, meshes };
+}
+
+// A `<ros2_control>` block exposing each actuated joint to ros2_control with a position command and
+// position/velocity state interfaces, backed by mock_components/GenericSystem — the neutral default that
+// brings a URDF up in ros2_control for sim/testing without committing to a specific hardware driver (swap
+// the <plugin> for the real one on hardware). Empty when the robot has no actuated joints.
+function ros2ControlXml(robotName: string, jointNames: readonly string[]): string {
+    if (jointNames.length === 0) return "";
+    const joints = jointNames
+        .map(
+            (name) =>
+                `    <joint name="${name}">\n` +
+                `      <command_interface name="position"/>\n` +
+                `      <state_interface name="position"/>\n` +
+                `      <state_interface name="velocity"/>\n` +
+                `    </joint>`,
+        )
+        .join("\n");
+    return (
+        `  <ros2_control name="${robotName}" type="system">\n` +
+        `    <hardware>\n      <plugin>mock_components/GenericSystem</plugin>\n    </hardware>\n` +
+        `${joints}\n  </ros2_control>\n`
+    );
 }
 
 // A nested Link or Joint starts its own body/articulation in the kinematic tree, so when gathering a
