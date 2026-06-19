@@ -44,8 +44,11 @@ export class GroupNode extends FolderNode {
     }
     set materialId(value: string | string[]) {
         this.setProperty("materialId", value, () => {
+            // Cascade a single id (never the array): per-face material arrays are mutated in place by
+            // GeometryNode, so sharing one array reference across parts would corrupt them all.
+            const id = Array.isArray(value) ? (value[0] ?? "") : value;
             for (const node of NodeUtils.findNodes(this, (n) => n instanceof GeometryNode)) {
-                (node as GeometryNode).materialId = value;
+                (node as GeometryNode).materialId = id;
             }
         });
     }

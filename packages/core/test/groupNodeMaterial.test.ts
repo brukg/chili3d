@@ -38,4 +38,18 @@ describe("GroupNode appearance cascade", () => {
     test("a fresh group has an empty appearance", () => {
         expect(new GroupNode({ document: doc, name: "g" }).materialId).toBe("");
     });
+
+    test("cascading an array appearance gives each part a single id, not a shared array", () => {
+        const group = new GroupNode({ document: doc, name: "g" });
+        const a = new FakeGeometry({ document: doc, name: "a" });
+        const b = new FakeGeometry({ document: doc, name: "b" });
+        group.add(a);
+        group.add(b);
+
+        group.materialId = ["mat-1", "mat-2"];
+
+        expect(a.materialId).toBe("mat-1"); // stripped to the base id (a string)
+        expect(b.materialId).toBe("mat-1");
+        expect(Array.isArray(a.materialId)).toBe(false); // not the shared array reference
+    });
 });
