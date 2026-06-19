@@ -20,6 +20,7 @@ export * from "./navigation";
 export * from "./parameter";
 export * from "./plugin";
 export * from "./property";
+export * from "./robot";
 export * from "./selection";
 export * from "./selectionFilter";
 export * from "./serialize";

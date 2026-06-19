@@ -11,6 +11,15 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Joint torque analysis core** — pure physics for sizing a robot's actuators:
+  `gravityHoldingTorque(axis, pivot, masses)` returns the signed static torque (N·m) gravity exerts about
+  a joint axis on the masses it carries downstream — the number you compare against `JointNode.maxEffort`.
+  Plus `totalMass`, `combinedCenterOfMass` (mass-weighted, mm), and `effortUtilization(required, maxEffort)`.
+  Millimetre lever arms, kg masses, right-hand-rule sign; a vertical-axis joint correctly reports ~0 under
+  gravity. New `packages/core/src/robot/` module, no kernel dependency. Unit-tested (11 cases): m·g·d for a
+  horizontal-axis joint, mass/lever scaling, pivot-sets-lever-arm, sign convention, vertical-axis zero,
+  axis-normalization invariance, degenerate axis, utilization ratio. The foundation for a Torque Estimate
+  measure and motor-sizing checks against the existing joint effort limits.
 - **Batch 10/6:** **Material preset library** — a pure data module of 15 common engineering materials
   (steel, aluminium, brass, titanium, ABS, PLA, glass, …), each with a PBR appearance (colour/metalness/
   roughness) and a physical density (kg/m³), plus a case-insensitive `findMaterialPreset` lookup. The
