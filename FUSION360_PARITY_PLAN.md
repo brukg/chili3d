@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Motor preset library** — the joint-side analogue of the material presets: 7
+  representative actuator classes (micro/standard/smart servo, NEMA 17/23 steppers, BLDC+gearbox,
+  harmonic-drive joint), each bundling rated output torque, gear ratio, rotor inertia, max speed, and
+  efficiency — the exact fields a `JointNode` needs to be motorised. Nominal/editable starting points, not
+  datasheets. `findMotorPreset` lookup. New `robot/motorPresets.ts`. Unit-tested (unique ids/ranges,
+  direct-drive vs geared, case-insensitive lookup). Foundation for an Apply Motor command.
 - **Batch 11 (robot):** **Transmission efficiency** — `motorTorque(jointTorque, gearRatio, efficiency)` now
   divides by `gearRatio · efficiency`, so a lossy gearbox makes the motor push harder than ideal; an
   `efficiency` property (0–1, default 1) on `JointNode`, serialized + property-editable. Non-positive
