@@ -11,6 +11,14 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Estimate Torque command** — the one-click motor-sizing check, wiring the torque
+  core into the robot tab next to Create Joint / Export URDF. Walks every joint in the model, gathers its
+  downstream links as point masses at their world centres of mass (volume-weighted across each link's
+  solids, authored `LinkNode.mass`), computes the gravity-holding torque about the joint's world axis
+  through its world pivot at the current pose, and reports the peak (binding) joint as a toast plus a full
+  per-joint table in the console — required N·m vs each joint's rated `maxEffort` and the % utilization.
+  World transforms composed from the ancestor chain (no visual-context dependency). Reuses the tested
+  `gravityHoldingTorque`/`effortUtilization` core.
 - **Batch 11 (robot):** **Joint torque analysis core** — pure physics for sizing a robot's actuators:
   `gravityHoldingTorque(axis, pivot, masses)` returns the signed static torque (N·m) gravity exerts about
   a joint axis on the masses it carries downstream — the number you compare against `JointNode.maxEffort`.

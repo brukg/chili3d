@@ -215,6 +215,7 @@ export default {
         "command.modify.chamferAsym": "Two-Distance Chamfer",
         "command.modify.chamferDA": "Distance-Angle Chamfer",
         "command.modify.createJoint": "Create Joint",
+        "command.modify.estimateTorque": "Estimate Torque",
         "command.modify.exportUrdf": "Export URDF",
         "error.export.needLinkNode":
             "URDF export needs a Link node — use Create Link to define the robot base, then Create Joint between links.",
@@ -551,6 +552,8 @@ export default {
         "toast.measure.distance:{0}": "Minimum distance: {0} mm",
         "toast.measure.delta:{0}{1}{2}{3}": "ΔX: {0}, ΔY: {1}, ΔZ: {2} mm, distance: {3} mm",
         "toast.measure.mass:{0}{1}": "Mass: {0} g ({1} kg)",
+        "toast.measure.torque:{0}{1}{2}{3}": "Peak joint {0}: {1} N·m required ({2}% of {3} N·m rated)",
+        "toast.robot.noJoints": "No joints in the model — create joints first",
         "toast.measure.faceAngle:{0}": "Angle between faces: {0}°",
         "toast.measure.edgeAngle:{0}": "Angle between edges: {0}°",
         "toast.measure.arcAngle:{0}": "Arc angle: {0}°",

@@ -215,6 +215,7 @@ export default {
         "command.modify.chamferAsym": "双距离倒角",
         "command.modify.chamferDA": "距离角度倒角",
         "command.modify.createJoint": "创建关节",
+        "command.modify.estimateTorque": "估算力矩",
         "command.modify.exportUrdf": "导出 URDF",
         "error.export.needLinkNode":
             "URDF 导出需要 Link 节点 — 先用“创建连杆”定义机器人基座，再用“创建关节”连接连杆。",
@@ -549,6 +550,8 @@ export default {
         "toast.measure.distance:{0}": "最小距离：{0} mm",
         "toast.measure.delta:{0}{1}{2}{3}": "ΔX：{0}，ΔY：{1}，ΔZ：{2} mm，距离：{3} mm",
         "toast.measure.mass:{0}{1}": "质量：{0} g（{1} kg）",
+        "toast.measure.torque:{0}{1}{2}{3}": "峰值关节 {0}：需要 {1} N·m（额定 {3} N·m 的 {2}%）",
+        "toast.robot.noJoints": "模型中没有关节 — 请先创建关节",
         "toast.measure.faceAngle:{0}": "面间角度：{0}°",
         "toast.measure.edgeAngle:{0}": "边间角度：{0}°",
         "toast.measure.arcAngle:{0}": "圆弧角度：{0}°",

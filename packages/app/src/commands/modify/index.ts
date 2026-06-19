@@ -13,6 +13,7 @@ export * from "./createJoint";
 export * from "./createLink";
 export * from "./draft";
 export * from "./emboss";
+export * from "./estimateTorque";
 export * from "./explode";
 export * from "./exportUrdf";
 export * from "./fillet";
