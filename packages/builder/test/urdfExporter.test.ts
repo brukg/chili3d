@@ -64,6 +64,35 @@ describe("exportUrdf", () => {
         expect(meshes.has("child_link.stl")).toBe(true);
     });
 
+    test("a mimic reference uses the master joint's deduplicated name on a name collision", () => {
+        const doc = new TestDocument() as any;
+        const stub = {
+            convertToSTL: () => {
+                throw new Error("convertToSTL should not be called for geometry-less links");
+            },
+        } as any;
+
+        // Two joint names that collide after sanitization ("j x" and "j-x" both → "j_x"). The slave
+        // (sanitized first, so it keeps "j_x") mimics the master (suffixed to "j_x_1").
+        const base = new LinkNode({ document: doc, name: "base_link" });
+        const link1 = new LinkNode({ document: doc, name: "link1" });
+        const link2 = new LinkNode({ document: doc, name: "link2" });
+        const master = new JointNode({ document: doc, name: "j x", jointType: "revolute" });
+        const slave = new JointNode({ document: doc, name: "j-x", jointType: "revolute" });
+        master.add(link1);
+        base.add(master);
+        slave.add(link2);
+        link1.add(slave);
+        doc.modelManager.rootNode.add(base); // mount so the mimic master resolves by id
+        slave.mimicJoint = master.id;
+
+        const { urdf } = exportUrdf(base, "robot", stub);
+        expect(urdf).toContain('<joint name="j_x_1"'); // master got the dedup suffix
+        expect(urdf).toContain('<joint name="j_x"'); // slave kept the base name
+        // the mimic must point at the master's emitted (suffixed) name, not the colliding raw name
+        expect(urdf).toContain('<mimic joint="j_x_1"');
+    });
+
     test("a geared joint emits a SimpleTransmission with its mechanical reduction", async () => {
         await initWasm({ wasmBinary: WASM_BINARY });
         const factory = new ShapeFactory();

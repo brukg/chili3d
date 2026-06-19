@@ -11,6 +11,14 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot) — review fix:** A correctness review of the whole robot subsystem found one real bug
+  (rest confirmed sound): the URDF exporter's `<mimic joint="...">` referenced the master joint's *raw*
+  name, bypassing the `sanitize()` dedup registry — so when two names collided after character substitution
+  the mimic pointed at a joint name that was never emitted (a hard URDF parse error). Fixed with a name
+  pre-pass that assigns every link/joint its final deduplicated name in emission order (joints are emitted
+  post-order, so map-as-you-go couldn't resolve an ancestor master); all name lookups now read from it.
+  Regression-tested with a colliding-name mimic pair.
+
 - **Batch 11 (robot):** **Validate Robot command** — one-click model check (like Check Geometry, but for the
   kinematic model): gathers link/joint specs from the tree and runs the validation core, reporting "robot
   valid" when clean or the error/warning counts (full annotated list to console) otherwise. Catches zero-mass

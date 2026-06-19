@@ -47,6 +47,24 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
         return n;
     };
 
+    // Pre-assign the final (deduplicated) name of every link and joint, in the SAME order they are
+    // emitted below, so a <mimic> reference can resolve its master joint's emitted name. This must be a
+    // pre-pass because joints are emitted post-order (a higher master is sanitized after a deeper slave),
+    // and because sanitize() may suffix a colliding name — without it a mimic could reference a name that
+    // never appears as a <joint>, which is a hard URDF parse error.
+    const linkNames = new Map<string, string>();
+    const jointNames = new Map<string, string>();
+    const assignNames = (link: LinkNode): void => {
+        linkNames.set(link.id, sanitize(link.name));
+        for (const joint of childJoints(link)) {
+            const childLink = childLinkOf(joint);
+            if (!childLink) continue;
+            assignNames(childLink);
+            jointNames.set(joint.id, sanitize(joint.name));
+        }
+    };
+    assignNames(root);
+
     const jointXml = (joint: JointNode, parent: string, child: string): string => {
         // The joint's pivot is its location in the parent frame; its orientation (stored as a URDF
         // roll-pitch-yaw triple in degrees) is the rotation part of the `<origin>`.
@@ -55,7 +73,7 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
         const o = joint.orientation;
         const rpy = `${num(MathUtils.degToRad(o.x))} ${num(MathUtils.degToRad(o.y))} ${num(MathUtils.degToRad(o.z))}`;
         const a = joint.axis;
-        const jointName = sanitize(joint.name);
+        const jointName = jointNames.get(joint.id) ?? sanitize(joint.name);
         const head =
             `  <joint name="${jointName}" type="${joint.jointType}">\n` +
             `    <parent link="${parent}"/>\n    <child link="${child}"/>\n` +
@@ -82,7 +100,8 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
         if (joint.mimicJoint) {
             const master = joint.document.modelManager.findNode((n) => n.id === joint.mimicJoint);
             if (master) {
-                const masterName = master.name.replace(/[^A-Za-z0-9_]/g, "_") || "node";
+                const masterName =
+                    jointNames.get(master.id) ?? (master.name.replace(/[^A-Za-z0-9_]/g, "_") || "node");
                 mimic = `    <mimic joint="${masterName}" multiplier="${num(joint.mimicMultiplier)}" offset="${num(joint.mimicOffset)}"/>\n`;
             }
         }
@@ -105,7 +124,7 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
     };
 
     const walkLink = (link: LinkNode): string => {
-        const linkName = sanitize(link.name);
+        const linkName = linkNames.get(link.id) ?? sanitize(link.name);
         const shapes = collectLinkShapes(link);
         let body = "";
         if (shapes.length > 0) {
