@@ -11,6 +11,15 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Static stability core** — "will the robot tip over?": pure 2D ground-plane
+  geometry for the support-polygon stability criterion. `convexHull2D` (monotone chain) builds the support
+  polygon from foot/ground contact points; `pointInPolygon` (ray cast) and `distanceToPolygonBoundary`
+  back `stabilityMargin(comProjection, supportPolygon)` — the signed distance from the COM ground
+  projection to the nearest tipping edge (positive = stable, negative = already tipping, <3 contacts =
+  non-positive). New `packages/core/src/robot/stability.ts`, no kernel dependency. Unit-tested (8 cases):
+  hull of a square + interior point, collinear-drop + CCW, point-in-polygon, edge distances, margin signs,
+  COM-on-edge ≈ 0, line-support never stable. Pairs with `combinedCenterOfMass` to judge a whole robot's
+  stance; foundation for a Stability Check command.
 - **Batch 11 (robot):** **Set Mass from Material command** — pick a physical material (steel, aluminium,
   ABS, …) for one or more links and derive each link's `mass` from its geometry: mass = density · volume,
   density from the `MaterialPresets` library. Closes the material → mass → torque loop (the new mass feeds
