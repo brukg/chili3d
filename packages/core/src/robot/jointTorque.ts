@@ -106,3 +106,46 @@ export function maxPayloadMass(
     if (arm < 1e-9 || gravity <= 0) return Number.POSITIVE_INFINITY;
     return availableTorque / (gravity * arm);
 }
+
+/**
+ * Moment of inertia (kg·m²) of the point masses about the joint axis line through `pivot`, treating each
+ * link as a point mass: I = Σ mᵢ·dᵢ² where dᵢ is the perpendicular distance from the mass to the axis.
+ * This is the rotational inertia an actuator must accelerate, used in {@link requiredJointTorque}. Masses
+ * on the axis contribute nothing. Returns 0 for a degenerate axis.
+ */
+export function inertiaAboutAxis(axis: XYZLike, pivot: XYZLike, masses: readonly PointMass[]): number {
+    const a = new XYZ({ x: axis.x, y: axis.y, z: axis.z }).normalize();
+    if (a === undefined) return 0;
+    let inertia = 0;
+    for (const m of masses) {
+        const rx = (m.center.x - pivot.x) * MM_TO_M;
+        const ry = (m.center.y - pivot.y) * MM_TO_M;
+        const rz = (m.center.z - pivot.z) * MM_TO_M;
+        // Perpendicular component of the lever arm = r − (r·â)â.
+        const along = rx * a.x + ry * a.y + rz * a.z;
+        const px = rx - along * a.x;
+        const py = ry - along * a.y;
+        const pz = rz - along * a.z;
+        inertia += m.mass * (px * px + py * py + pz * pz);
+    }
+    return inertia;
+}
+
+/**
+ * Signed actuator torque (N·m) a joint must supply to move its downstream masses at a given angular
+ * acceleration (rad/s²), from the equation of motion about the axis: I·α = τ_actuator + τ_gravity, so
+ * τ_actuator = I·α − {@link gravityHoldingTorque}. With `angularAccel` = 0 this reduces to the static
+ * holding torque (the negative of the gravity moment); |value| is the effort to compare against the
+ * joint's rated `maxEffort`. Inertia from {@link inertiaAboutAxis} (point-mass model).
+ */
+export function requiredJointTorque(
+    axis: XYZLike,
+    pivot: XYZLike,
+    masses: readonly PointMass[],
+    angularAccel: number,
+    gravity: XYZLike = { x: 0, y: 0, z: -STANDARD_GRAVITY },
+): number {
+    const inertia = inertiaAboutAxis(axis, pivot, masses);
+    const gravityTorque = gravityHoldingTorque(axis, pivot, masses, gravity);
+    return inertia * angularAccel - gravityTorque;
+}

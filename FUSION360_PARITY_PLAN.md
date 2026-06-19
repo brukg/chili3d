@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Dynamic joint torque core** — `requiredJointTorque(axis, pivot, masses, α)` for
+  the moving (not just holding) case: from the equation of motion about the axis, τ_actuator = I·α −
+  gravity torque, with `inertiaAboutAxis` giving the point-mass rotational inertia (Σ m·d_perp², kg·m²).
+  Reduces to the static hold at α=0. Added to `robot/jointTorque.ts`. Unit-tested (4 cases): inertia
+  Σ m·d², on-axis/degenerate zeros, static-hold limit, pure I·α with gravity removed, combined terms.
 - **Batch 11 (robot):** **Payload capacity primitive** — `maxPayloadMass(availableTorque, leverArm)`:
   how much extra mass a joint can lift given the torque budget left after the arm's own weight and the
   horizontal lever arm (mm) the payload hangs at — `budget / (g · arm)`, in kg. Returns 0 with no budget,

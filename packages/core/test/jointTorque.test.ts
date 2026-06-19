@@ -6,8 +6,10 @@ import {
     combinedCenterOfMass,
     effortUtilization,
     gravityHoldingTorque,
+    inertiaAboutAxis,
     maxPayloadMass,
     type PointMass,
+    requiredJointTorque,
     STANDARD_GRAVITY,
     totalMass,
 } from "../src/robot/jointTorque";
@@ -117,5 +119,49 @@ describe("joint torque analysis", () => {
         expect(maxPayloadMass(0, 1000)).toBe(0);
         expect(maxPayloadMass(-5, 1000)).toBe(0);
         expect(maxPayloadMass(10, 0)).toBe(Number.POSITIVE_INFINITY);
+    });
+
+    test("inertiaAboutAxis is Σ m·d_perp² (kg·m²)", () => {
+        // 2 kg at 3 m perpendicular from the Z axis → 2·3² = 18
+        expect(
+            inertiaAboutAxis({ x: 0, y: 0, z: 1 }, { x: 0, y: 0, z: 0 }, [
+                { center: { x: 3000, y: 0, z: 0 }, mass: 2 },
+            ]),
+        ).toBeCloseTo(18, 6);
+        // a mass sitting on the axis contributes nothing
+        expect(
+            inertiaAboutAxis({ x: 0, y: 0, z: 1 }, { x: 0, y: 0, z: 0 }, [
+                { center: { x: 0, y: 0, z: 5000 }, mass: 10 },
+            ]),
+        ).toBeCloseTo(0, 9);
+        // degenerate axis → 0
+        expect(inertiaAboutAxis({ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 0 }, [])).toBe(0);
+    });
+
+    test("requiredJointTorque reduces to the static hold at zero acceleration", () => {
+        const masses: PointMass[] = [{ center: { x: 1000, y: 0, z: 0 }, mass: 1 }];
+        const grav = gravityHoldingTorque({ x: 0, y: 1, z: 0 }, { x: 0, y: 0, z: 0 }, masses);
+        const tau = requiredJointTorque({ x: 0, y: 1, z: 0 }, { x: 0, y: 0, z: 0 }, masses, 0);
+        expect(tau).toBeCloseTo(-grav, 6);
+    });
+
+    test("requiredJointTorque is pure I·α when gravity is removed", () => {
+        // 1 kg at 1 m from the Y axis → I = 1 kg·m²; α = 3 → τ = 3 N·m
+        const tau = requiredJointTorque(
+            { x: 0, y: 1, z: 0 },
+            { x: 0, y: 0, z: 0 },
+            [{ center: { x: 1000, y: 0, z: 0 }, mass: 1 }],
+            3,
+            { x: 0, y: 0, z: 0 },
+        );
+        expect(tau).toBeCloseTo(3, 6);
+    });
+
+    test("requiredJointTorque sums the inertial and gravity terms", () => {
+        const masses: PointMass[] = [{ center: { x: 1000, y: 0, z: 0 }, mass: 1 }];
+        const inertia = inertiaAboutAxis({ x: 0, y: 1, z: 0 }, { x: 0, y: 0, z: 0 }, masses);
+        const grav = gravityHoldingTorque({ x: 0, y: 1, z: 0 }, { x: 0, y: 0, z: 0 }, masses);
+        const tau = requiredJointTorque({ x: 0, y: 1, z: 0 }, { x: 0, y: 0, z: 0 }, masses, 2);
+        expect(tau).toBeCloseTo(inertia * 2 - grav, 6);
     });
 });
