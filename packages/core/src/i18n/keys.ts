@@ -367,6 +367,8 @@ export const I18N_KEYS = [
     "joint.mimicOffset",
     "joint.mimicMultiplier",
     "joint.mimicJoint",
+    "joint.gearRatio",
+    "joint.rotorInertia",
     "joint.damping",
     "joint.maxEffort",
     "joint.maxVelocity",

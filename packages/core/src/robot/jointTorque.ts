@@ -149,3 +149,22 @@ export function requiredJointTorque(
     const gravityTorque = gravityHoldingTorque(axis, pivot, masses, gravity);
     return inertia * angularAccel - gravityTorque;
 }
+
+/**
+ * Inertia (kg·m²) a motor's rotor adds at the joint output through a gear reduction: rotorInertia ·
+ * gearRatio². A high-ratio gearbox makes a tiny rotor dominate the joint's apparent inertia. A ratio of
+ * 0 (or rotor inertia 0) contributes nothing.
+ */
+export function reflectedInertia(rotorInertia: number, gearRatio: number): number {
+    return rotorInertia * gearRatio * gearRatio;
+}
+
+/**
+ * Torque the motor must produce (N·m) to deliver a given joint-output torque through a gear reduction:
+ * jointTorque ÷ gearRatio (the reduction trades speed for torque; efficiency is assumed ideal). Returns
+ * the joint torque unchanged for a non-positive ratio (treated as direct drive).
+ */
+export function motorTorque(jointTorque: number, gearRatio: number): number {
+    if (gearRatio <= 0) return jointTorque;
+    return jointTorque / gearRatio;
+}

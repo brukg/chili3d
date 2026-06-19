@@ -35,6 +35,7 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
     const used = new Set<string>();
     const links: string[] = [];
     const joints: string[] = [];
+    const transmissions: string[] = [];
 
     const sanitize = (name: string): string => {
         const base = name.replace(/[^A-Za-z0-9_]/g, "_") || "node";
@@ -53,8 +54,9 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
         const o = joint.orientation;
         const rpy = `${num(MathUtils.degToRad(o.x))} ${num(MathUtils.degToRad(o.y))} ${num(MathUtils.degToRad(o.z))}`;
         const a = joint.axis;
+        const jointName = sanitize(joint.name);
         const head =
-            `  <joint name="${sanitize(joint.name)}" type="${joint.jointType}">\n` +
+            `  <joint name="${jointName}" type="${joint.jointType}">\n` +
             `    <parent link="${parent}"/>\n    <child link="${child}"/>\n` +
             `    <origin xyz="${xyz}" rpy="${rpy}"/>\n`;
         // fixed and floating joints carry no axis or limit.
@@ -82,6 +84,17 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
                 const masterName = master.name.replace(/[^A-Za-z0-9_]/g, "_") || "node";
                 mimic = `    <mimic joint="${masterName}" multiplier="${num(joint.mimicMultiplier)}" offset="${num(joint.mimicOffset)}"/>\n`;
             }
+        }
+        // A geared joint emits a SimpleTransmission carrying the mechanical reduction so the actuator's
+        // gearing survives into ros2_control / Gazebo. Direct-drive (ratio 1) joints need none.
+        if (joint.gearRatio > 0 && joint.gearRatio !== 1) {
+            transmissions.push(
+                `  <transmission name="${jointName}_trans">\n` +
+                    `    <type>transmission_interface/SimpleTransmission</type>\n` +
+                    `    <joint name="${jointName}"><hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface></joint>\n` +
+                    `    <actuator name="${jointName}_motor"><mechanicalReduction>${num(joint.gearRatio)}</mechanicalReduction></actuator>\n` +
+                    `  </transmission>`,
+            );
         }
         return `${head}${axis}${limit}${dynamics}${mimic}  </joint>`;
     };
@@ -119,9 +132,10 @@ export function exportUrdf(root: LinkNode, robotName: string, converter: IShapeC
     };
 
     walkLink(root);
+    const trans = transmissions.length > 0 ? `${transmissions.join("\n")}\n` : "";
     const urdf =
         `<?xml version="1.0"?>\n<robot name="${robotName.replace(/[^A-Za-z0-9_]/g, "_")}">\n` +
-        `${links.join("\n")}\n${joints.join("\n")}\n</robot>\n`;
+        `${links.join("\n")}\n${joints.join("\n")}\n${trans}</robot>\n`;
     return { urdf, meshes };
 }
 

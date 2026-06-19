@@ -144,4 +144,14 @@ describe("JointNode", () => {
         const p = joint.transform.ofPoint(new XYZ({ x: 1, y: 2, z: 3 }));
         expect(p.distanceTo(new XYZ({ x: 1, y: 2, z: 3 }))).toBeLessThan(1e-6);
     });
+
+    test("gear ratio and rotor inertia default to direct drive and are settable", () => {
+        const joint = new JointNode({ document: doc, name: "j" });
+        expect(joint.gearRatio).toBe(1);
+        expect(joint.rotorInertia).toBe(0);
+        joint.gearRatio = 50;
+        joint.rotorInertia = 0.002;
+        expect(joint.gearRatio).toBe(50);
+        expect(joint.rotorInertia).toBe(0.002);
+    });
 });

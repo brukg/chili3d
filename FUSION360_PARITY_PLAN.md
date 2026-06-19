@@ -11,6 +11,13 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Joint gear ratio + reflected inertia** — joints now model their actuator gearing:
+  `gearRatio` (motor turns per joint turn, default 1 = direct drive) and `rotorInertia` (kg·m²) on
+  `JointNode`, both serialized + property-panel editable. Pure helpers `reflectedInertia(rotorInertia,
+  gearRatio)` = rotor·ratio² and `motorTorque(jointTorque, gearRatio)` = torque ÷ ratio in the robot core.
+  URDF export emits a `<transmission>` (SimpleTransmission + `<mechanicalReduction>`) for geared joints,
+  and import reads it back onto `gearRatio` — full round-trip. Unit-tested: node defaults/setters, the two
+  helpers, transmission export (geared emits, direct-drive doesn't), and mechanicalReduction round-trip.
 - **Batch 11 (robot):** **Payload Capacity command** — how much the robot can lift at its end effector
   before a joint saturates: per joint it subtracts the arm's self-load torque from the rated `maxEffort`
   and divides the remainder by the torque-per-kg a payload adds at the farthest downstream point (end-

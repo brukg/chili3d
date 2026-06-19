@@ -118,6 +118,31 @@ export class JointNode extends GroupNode {
         this.setProperty("maxEffort", value);
     }
 
+    /**
+     * Gear reduction ratio (motor turns per joint turn). The actuator runs faster and lighter than the
+     * joint: motor-side torque is joint torque ÷ ratio, and the rotor's inertia is felt at the joint
+     * multiplied by ratio². Default 1 (direct drive). Maps to the URDF `<transmission>` mechanical
+     * reduction.
+     */
+    @serialize()
+    @property("joint.gearRatio")
+    get gearRatio(): number {
+        return this.getPrivateValue("gearRatio", 1);
+    }
+    set gearRatio(value: number) {
+        this.setProperty("gearRatio", value);
+    }
+
+    /** Motor rotor inertia in SI kg·m² (reflected to the joint as rotorInertia·gearRatio²). Default 0. */
+    @serialize()
+    @property("joint.rotorInertia")
+    get rotorInertia(): number {
+        return this.getPrivateValue("rotorInertia", 0);
+    }
+    set rotorInertia(value: number) {
+        this.setProperty("rotorInertia", value);
+    }
+
     @serialize()
     @property("joint.damping")
     get damping(): number {

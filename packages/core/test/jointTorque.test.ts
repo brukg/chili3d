@@ -8,7 +8,9 @@ import {
     gravityHoldingTorque,
     inertiaAboutAxis,
     maxPayloadMass,
+    motorTorque,
     type PointMass,
+    reflectedInertia,
     requiredJointTorque,
     STANDARD_GRAVITY,
     totalMass,
@@ -163,5 +165,18 @@ describe("joint torque analysis", () => {
         const grav = gravityHoldingTorque({ x: 0, y: 1, z: 0 }, { x: 0, y: 0, z: 0 }, masses);
         const tau = requiredJointTorque({ x: 0, y: 1, z: 0 }, { x: 0, y: 0, z: 0 }, masses, 2);
         expect(tau).toBeCloseTo(inertia * 2 - grav, 6);
+    });
+
+    test("reflectedInertia scales the rotor inertia by the ratio squared", () => {
+        expect(reflectedInertia(0.001, 100)).toBeCloseTo(10, 9); // 0.001·100² = 10
+        expect(reflectedInertia(0.5, 1)).toBeCloseTo(0.5, 9); // direct drive
+        expect(reflectedInertia(0, 50)).toBe(0);
+    });
+
+    test("motorTorque is joint torque divided by the gear ratio", () => {
+        expect(motorTorque(100, 50)).toBeCloseTo(2, 9);
+        expect(motorTorque(10, 1)).toBeCloseTo(10, 9); // direct drive
+        expect(motorTorque(10, 0)).toBe(10); // non-positive ratio → unchanged
+        expect(motorTorque(-20, 4)).toBeCloseTo(-5, 9); // sign preserved
     });
 });

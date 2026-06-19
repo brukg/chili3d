@@ -133,6 +133,7 @@ describe("importUrdf (round-trip)", () => {
         j1.friction = 0.2;
         j1.maxEffort = 33;
         j1.maxVelocity = 7;
+        j1.gearRatio = 50;
         j1.add(link1);
         base.add(j1);
         const j2 = new JointNode({ document: doc, name: "j2", jointType: "revolute" });
@@ -157,6 +158,7 @@ describe("importUrdf (round-trip)", () => {
         expect(j1b.friction).toBeCloseTo(0.2, 4);
         expect(j1b.maxEffort).toBeCloseTo(33, 4);
         expect(j1b.maxVelocity).toBeCloseTo(7, 4);
+        expect(j1b.gearRatio).toBeCloseTo(50, 4); // transmission mechanicalReduction round-trips
 
         const link1b = firstChildOfType(j1b, LinkNode)!;
         const j2b = firstChildOfType(link1b, JointNode)!;

@@ -64,6 +64,48 @@ describe("exportUrdf", () => {
         expect(meshes.has("child_link.stl")).toBe(true);
     });
 
+    test("a geared joint emits a SimpleTransmission with its mechanical reduction", async () => {
+        await initWasm({ wasmBinary: WASM_BINARY });
+        const factory = new ShapeFactory();
+        const doc = new TestDocument() as any;
+
+        const base = new LinkNode({ document: doc, name: "base_link" });
+        base.add(
+            new EditableShapeNode({ document: doc, name: "g", shape: factory.box(Plane.XY, 20, 20, 20) }),
+        );
+        const child = new LinkNode({ document: doc, name: "child_link" });
+        child.add(
+            new EditableShapeNode({ document: doc, name: "g", shape: factory.box(Plane.XY, 10, 10, 10) }),
+        );
+        const joint = new JointNode({ document: doc, name: "j1", jointType: "revolute" });
+        joint.gearRatio = 50;
+        joint.add(child);
+        base.add(joint);
+
+        const { urdf } = exportUrdf(base, "robot", factory.converter);
+        expect(urdf).toContain('<transmission name="j1_trans">');
+        expect(urdf).toContain("<mechanicalReduction>50</mechanicalReduction>");
+        expect(urdf).toContain('<actuator name="j1_motor">');
+    });
+
+    test("a direct-drive joint (ratio 1) emits no transmission", async () => {
+        await initWasm({ wasmBinary: WASM_BINARY });
+        const factory = new ShapeFactory();
+        const doc = new TestDocument() as any;
+
+        const base = new LinkNode({ document: doc, name: "base_link" });
+        base.add(
+            new EditableShapeNode({ document: doc, name: "g", shape: factory.box(Plane.XY, 20, 20, 20) }),
+        );
+        const child = new LinkNode({ document: doc, name: "child_link" });
+        const joint = new JointNode({ document: doc, name: "j1", jointType: "revolute" });
+        joint.add(child);
+        base.add(joint);
+
+        const { urdf } = exportUrdf(base, "robot", factory.converter);
+        expect(urdf).not.toContain("<transmission");
+    });
+
     test("collects geometry and joints nested inside folders, not just direct children", async () => {
         await initWasm({ wasmBinary: WASM_BINARY });
         const factory = new ShapeFactory();

@@ -118,6 +118,15 @@ export function importUrdf(
         joint.mimicJoint = master.id;
     }
 
+    // Transmissions: carry each SimpleTransmission's mechanical reduction back onto its joint's gear
+    // ratio so an exported gearbox survives a round-trip.
+    for (const el of direct("transmission")) {
+        const jointName = el.querySelector("joint")?.getAttribute("name") ?? "";
+        const reduction = el.querySelector("mechanicalReduction")?.textContent;
+        const joint = joints.get(jointName);
+        if (joint && reduction && reduction.trim() !== "") joint.gearRatio = Number(reduction);
+    }
+
     for (const [name, link] of links) {
         if (!childNames.has(name)) return link;
     }
