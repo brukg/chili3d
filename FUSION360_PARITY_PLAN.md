@@ -11,6 +11,11 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Stability Check command** — answers "does it tip over?" in one click: builds the
+  support polygon as the convex hull of the robot's lowest geometry vertices (ground contacts within 1 mm
+  of min-Z), projects the whole-robot COM onto the ground, and reports the signed stability margin (mm)
+  with a stable/unstable verdict via the static-stability core. Added `robotWorldSolids` to the shared
+  mass-model helper. In the robot ribbon tab.
 - **Batch 11 (robot):** **Robot Center of Mass command** — total mass (kg) and combined world COM (mm) of
   the whole robot, aggregating every link as a mass-weighted point mass via the shared mass-model helper
   (`robotModel.ts`, also now backing Estimate Torque). Distinct from Measure Center of Mass (single-solid

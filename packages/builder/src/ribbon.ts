@@ -218,7 +218,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                 groupName: "ribbon.group.robot",
                 items: [
                     ["modify.createJoint", "modify.createLink", "modify.setLinkMass"],
-                    ["modify.estimateTorque", "modify.robotCenterOfMass"],
+                    ["modify.estimateTorque", "modify.robotCenterOfMass", "modify.stabilityCheck"],
                     ["modify.exportUrdf"],
                 ],
             },

@@ -50,6 +50,7 @@ export * from "./sew";
 export * from "./shell";
 export * from "./simplify";
 export * from "./split";
+export * from "./stabilityCheck";
 export * from "./thicken";
 export * from "./trim";
 export * from "./variableFillet";

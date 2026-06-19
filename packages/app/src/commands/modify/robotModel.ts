@@ -92,3 +92,12 @@ export function robotPointMasses(root: INodeLinkedList): PointMass[] {
     const links = NodeUtils.findNodes(root, (n) => n instanceof LinkNode) as LinkNode[];
     return links.map((link) => ({ center: linkWorldCenterOfMass(link), mass: link.mass }));
 }
+
+/** Every solid of every {@link LinkNode} under `root`, in world coordinates — for contact/extent
+ * queries (e.g. the ground-contact points that form the support polygon). */
+export function robotWorldSolids(root: INodeLinkedList): ISolid[] {
+    const links = NodeUtils.findNodes(root, (n) => n instanceof LinkNode) as LinkNode[];
+    const out: ISolid[] = [];
+    for (const link of links) out.push(...linkWorldSolids(link));
+    return out;
+}
