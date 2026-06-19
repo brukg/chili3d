@@ -217,6 +217,7 @@ export default {
         "command.modify.createJoint": "Create Joint",
         "command.modify.estimateTorque": "Estimate Torque",
         "command.modify.setLinkMass": "Set Mass from Material",
+        "command.modify.robotCenterOfMass": "Robot Center of Mass",
         "command.modify.exportUrdf": "Export URDF",
         "error.export.needLinkNode":
             "URDF export needs a Link node — use Create Link to define the robot base, then Create Joint between links.",
@@ -558,6 +559,8 @@ export default {
         "toast.robot.noJoints": "No joints in the model — create joints first",
         "toast.robot.massSet:{0}{1}": "Set mass on {0} link(s); total {1} kg",
         "toast.robot.selectLink": "Select one or more links to set their material",
+        "toast.robot.noLinks": "No links in the model — create links first",
+        "toast.robot.com:{0}{1}{2}{3}": "Robot mass: {0} kg, COM: ({1}, {2}, {3}) mm",
         "toast.measure.faceAngle:{0}": "Angle between faces: {0}°",
         "toast.measure.edgeAngle:{0}": "Angle between edges: {0}°",
         "toast.measure.arcAngle:{0}": "Arc angle: {0}°",

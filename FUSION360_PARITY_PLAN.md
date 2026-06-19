@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Robot Center of Mass command** — total mass (kg) and combined world COM (mm) of
+  the whole robot, aggregating every link as a mass-weighted point mass via the shared mass-model helper
+  (`robotModel.ts`, also now backing Estimate Torque). Distinct from Measure Center of Mass (single-solid
+  volume centroid); this robot-level COM feeds the stability check. In the robot ribbon tab.
 - **Batch 11 (robot):** **Dynamic joint torque core** — `requiredJointTorque(axis, pivot, masses, α)` for
   the moving (not just holding) case: from the equation of motion about the axis, τ_actuator = I·α −
   gravity torque, with `inertiaAboutAxis` giving the point-mass rotational inertia (Σ m·d_perp², kg·m²).

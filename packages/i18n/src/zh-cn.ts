@@ -217,6 +217,7 @@ export default {
         "command.modify.createJoint": "创建关节",
         "command.modify.estimateTorque": "估算力矩",
         "command.modify.setLinkMass": "按材料设置质量",
+        "command.modify.robotCenterOfMass": "机器人质心",
         "command.modify.exportUrdf": "导出 URDF",
         "error.export.needLinkNode":
             "URDF 导出需要 Link 节点 — 先用“创建连杆”定义机器人基座，再用“创建关节”连接连杆。",
@@ -556,6 +557,8 @@ export default {
         "toast.robot.noJoints": "模型中没有关节 — 请先创建关节",
         "toast.robot.massSet:{0}{1}": "已为 {0} 个连杆设置质量；总计 {1} kg",
         "toast.robot.selectLink": "请选择一个或多个连杆以设置材料",
+        "toast.robot.noLinks": "模型中没有连杆 — 请先创建连杆",
+        "toast.robot.com:{0}{1}{2}{3}": "机器人质量：{0} kg，质心：（{1}，{2}，{3}）mm",
         "toast.measure.faceAngle:{0}": "面间角度：{0}°",
         "toast.measure.edgeAngle:{0}": "边间角度：{0}°",
         "toast.measure.arcAngle:{0}": "圆弧角度：{0}°",
