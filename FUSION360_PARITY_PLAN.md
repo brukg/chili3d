@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Longest-chain reach core** — `longestChain(ReachNode)` over a kinematic tree
+  `{length, children}` returns the longest root-to-leaf sum of rigid link lengths — the straightened reach,
+  pose-invariant. New `robot/reach.ts`. Unit-tested (single/chain/branch/tip-extent). Backs the Straightened
+  Reach command.
 - **Batch 11 (robot):** **Power Budget command** — the robot's installed mechanical power: sums each joint's
   peak shaft power (`maxEffort · maxVelocity`) into the total the actuators can draw at once — the number to
   size a battery/PSU — and flags the hungriest joint. Toast + per-joint console table. Robot ribbon tab.
