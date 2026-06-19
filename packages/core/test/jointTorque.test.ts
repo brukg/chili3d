@@ -6,6 +6,7 @@ import {
     combinedCenterOfMass,
     effortUtilization,
     gravityHoldingTorque,
+    maxPayloadMass,
     type PointMass,
     STANDARD_GRAVITY,
     totalMass,
@@ -101,5 +102,20 @@ describe("joint torque analysis", () => {
         expect(effortUtilization(-50, 100)).toBeCloseTo(0.5, 6);
         expect(effortUtilization(120, 100)).toBeCloseTo(1.2, 6);
         expect(effortUtilization(10, 0)).toBe(Number.POSITIVE_INFINITY);
+    });
+
+    test("maxPayloadMass is budget / (g · lever arm)", () => {
+        // g N·m of budget at 1 m → exactly 1 kg
+        expect(maxPayloadMass(STANDARD_GRAVITY, 1000)).toBeCloseTo(1, 6);
+        // double the budget at 2 m → still 1 kg
+        expect(maxPayloadMass(2 * STANDARD_GRAVITY, 2000)).toBeCloseTo(1, 6);
+        // half the lever arm doubles the liftable mass
+        expect(maxPayloadMass(STANDARD_GRAVITY, 500)).toBeCloseTo(2, 6);
+    });
+
+    test("maxPayloadMass is 0 with no budget and Infinity on the axis", () => {
+        expect(maxPayloadMass(0, 1000)).toBe(0);
+        expect(maxPayloadMass(-5, 1000)).toBe(0);
+        expect(maxPayloadMass(10, 0)).toBe(Number.POSITIVE_INFINITY);
     });
 });

@@ -11,6 +11,13 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Payload capacity primitive** — `maxPayloadMass(availableTorque, leverArm)`:
+  how much extra mass a joint can lift given the torque budget left after the arm's own weight and the
+  horizontal lever arm (mm) the payload hangs at — `budget / (g · arm)`, in kg. Returns 0 with no budget,
+  Infinity on the axis (no gravity load). Added to `robot/jointTorque.ts` next to `effortUtilization`;
+  reuses `STANDARD_GRAVITY`/`MM_TO_M`. Unit-tested (2 cases, 5 asserts): g-at-1 m = 1 kg, budget/lever
+  scaling, zero-budget and on-axis edges. The "how much can this arm lift?" answer to pair with Estimate
+  Torque.
 - **Batch 11 (robot):** **Static stability core** — "will the robot tip over?": pure 2D ground-plane
   geometry for the support-polygon stability criterion. `convexHull2D` (monotone chain) builds the support
   polygon from foot/ground contact points; `pointInPolygon` (ray cast) and `distanceToPolygonBoundary`

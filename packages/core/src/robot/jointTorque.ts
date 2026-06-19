@@ -88,3 +88,21 @@ export function effortUtilization(requiredTorque: number, maxEffort: number): nu
     if (maxEffort <= 0) return Number.POSITIVE_INFINITY;
     return Math.abs(requiredTorque) / maxEffort;
 }
+
+/**
+ * Maximum additional payload mass (kg) a joint can hold, given the torque budget left after the arm's
+ * own weight and the horizontal lever arm (mm) at which the payload hangs. `availableTorque` is N·m
+ * already net of the self-load (e.g. `maxEffort − |gravityHoldingTorque(...)|`). Returns 0 when no budget
+ * remains, and Infinity when the lever arm is ~0 (a payload on the joint axis exerts no torque about it,
+ * so gravity never limits it). This is the "how much can this joint lift at arm's length?" check.
+ */
+export function maxPayloadMass(
+    availableTorque: number,
+    leverArm: number,
+    gravity: number = STANDARD_GRAVITY,
+): number {
+    if (availableTorque <= 0) return 0;
+    const arm = Math.abs(leverArm) * MM_TO_M;
+    if (arm < 1e-9 || gravity <= 0) return Number.POSITIVE_INFINITY;
+    return availableTorque / (gravity * arm);
+}
