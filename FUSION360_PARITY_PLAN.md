@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Mechanical power core** — `mechanicalPower(torque, angularVelocity)` =
+  |torque · ω| (W); a joint's peak rated power is `maxEffort · maxVelocity`, summed across joints it's the
+  robot's installed power for sizing a battery/PSU. Added to `robot/jointTorque.ts`. Unit-tested. Backs the
+  Power Budget command.
 - **Batch 11 (robot):** **Joint time-to-speed** — `timeToReachSpeed(targetSpeed, angularAccel)` =
   speed ÷ accel (s), guarded; surfaced in the Joint Dynamics command, which now also reports how long the
   slowest joint takes to spin up to its `maxVelocity` (toast + per-joint console). Core unit-tested.

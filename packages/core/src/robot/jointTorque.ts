@@ -195,3 +195,12 @@ export function timeToReachSpeed(targetSpeed: number, angularAccel: number): num
     if (angularAccel <= 0) return Number.POSITIVE_INFINITY;
     return targetSpeed / angularAccel;
 }
+
+/**
+ * Mechanical (shaft) power in watts at an operating point: |torque · angularVelocity|, with torque in
+ * N·m and angularVelocity in rad/s. A joint's peak rated power is `maxEffort · maxVelocity`; summed over
+ * the joints it is the robot's installed power, the basis for sizing a battery or power supply.
+ */
+export function mechanicalPower(torque: number, angularVelocity: number): number {
+    return Math.abs(torque * angularVelocity);
+}

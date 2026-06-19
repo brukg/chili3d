@@ -9,6 +9,7 @@ import {
     inertiaAboutAxis,
     maxAngularAcceleration,
     maxPayloadMass,
+    mechanicalPower,
     motorTorque,
     type PointMass,
     reflectedInertia,
@@ -200,5 +201,11 @@ describe("joint torque analysis", () => {
         expect(timeToReachSpeed(10, 5)).toBeCloseTo(2, 9); // 10 rad/s at 5 rad/s² → 2 s
         expect(timeToReachSpeed(0, 5)).toBe(0); // already at rest target
         expect(timeToReachSpeed(10, 0)).toBe(Number.POSITIVE_INFINITY); // no acceleration → never
+    });
+
+    test("mechanicalPower is |torque · angular velocity| (W)", () => {
+        expect(mechanicalPower(2, 5)).toBeCloseTo(10, 9); // 2 N·m at 5 rad/s = 10 W
+        expect(mechanicalPower(-2, 5)).toBeCloseTo(10, 9); // magnitude
+        expect(mechanicalPower(3, 0)).toBe(0); // stalled → no mechanical power
     });
 });
