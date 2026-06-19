@@ -14,6 +14,7 @@ import {
     reflectedInertia,
     requiredJointTorque,
     STANDARD_GRAVITY,
+    timeToReachSpeed,
     totalMass,
 } from "../src/robot/jointTorque";
 
@@ -193,5 +194,11 @@ describe("joint torque analysis", () => {
         expect(maxAngularAcceleration(0, 2)).toBe(0); // no spare torque
         expect(maxAngularAcceleration(-3, 2)).toBe(0); // gravity already over budget
         expect(maxAngularAcceleration(10, 0)).toBe(Number.POSITIVE_INFINITY); // nothing to accelerate
+    });
+
+    test("timeToReachSpeed is target speed over acceleration", () => {
+        expect(timeToReachSpeed(10, 5)).toBeCloseTo(2, 9); // 10 rad/s at 5 rad/s² → 2 s
+        expect(timeToReachSpeed(0, 5)).toBe(0); // already at rest target
+        expect(timeToReachSpeed(10, 0)).toBe(Number.POSITIVE_INFINITY); // no acceleration → never
     });
 });

@@ -572,7 +572,7 @@ export default {
         "toast.robot.unstable:{0}": "不稳定（会倾倒）— 裕度 {0} mm",
         "toast.robot.payload:{0}{1}": "最大负载：{0} kg（受关节 {1} 限制）",
         "toast.robot.motorSet:{0}{1}": "已将 {1} 应用到 {0} 个关节",
-        "toast.robot.dynamics:{0}{1}": "最慢关节 {1}：最大 {0} deg/s²",
+        "toast.robot.dynamics:{0}{1}{2}": "最慢关节 {1}：最大 {0} deg/s²（{2}s 达到最大速度）",
         "toast.robot.reach:{0}": "臂展：距底座 {0} mm（当前姿态）",
         "toast.robot.selectJoint": "请选择一个或多个关节以应用电机",
         "toast.measure.faceAngle:{0}": "面间角度：{0}°",

@@ -12,6 +12,7 @@ import {
     NodeUtils,
     PubSub,
     reflectedInertia,
+    timeToReachSpeed,
 } from "@chili3d/core";
 import { robotPointMasses, worldTransformOf } from "./robotModel";
 
@@ -57,15 +58,19 @@ export class JointDynamicsCommand implements ICommand {
             const accel = maxAngularAcceleration(available, inertia); // rad/s²
 
             const deg = Number.isFinite(accel) ? (accel * RAD_TO_DEG).toFixed(1) : "∞";
+            const reachTime = timeToReachSpeed(joint.maxVelocity, accel);
+            const t = Number.isFinite(reachTime) ? `${reachTime.toFixed(2)}s` : "∞";
             console.log(
-                `[dynamics] ${joint.name}: max ${deg} deg/s² (inertia ${inertia.toFixed(5)} kg·m², ` +
-                    `spare ${available.toFixed(3)} N·m)`,
+                `[dynamics] ${joint.name}: max ${deg} deg/s², ${t} to max speed ` +
+                    `(inertia ${inertia.toFixed(5)} kg·m², spare ${available.toFixed(3)} N·m)`,
             );
             if (!slowest || accel < slowest.accel) slowest = { joint, accel };
         }
 
         if (!slowest) return;
         const deg = Number.isFinite(slowest.accel) ? (slowest.accel * RAD_TO_DEG).toFixed(1) : "∞";
-        PubSub.default.pub("showToast", "toast.robot.dynamics:{0}{1}", deg, slowest.joint.name);
+        const reachTime = timeToReachSpeed(slowest.joint.maxVelocity, slowest.accel);
+        const t = Number.isFinite(reachTime) ? reachTime.toFixed(2) : "∞";
+        PubSub.default.pub("showToast", "toast.robot.dynamics:{0}{1}{2}", deg, slowest.joint.name, t);
     }
 }

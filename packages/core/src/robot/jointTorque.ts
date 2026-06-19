@@ -184,3 +184,14 @@ export function maxAngularAcceleration(availableTorque: number, inertia: number)
     if (inertia <= 0) return Number.POSITIVE_INFINITY;
     return availableTorque / inertia;
 }
+
+/**
+ * Time (s) to accelerate from rest to a target speed at a constant acceleration: targetSpeed ÷
+ * angularAccel. Use the same angular units for both (rad/s with rad/s², or deg with deg). Returns 0 for a
+ * non-positive target (already there) and Infinity for a non-positive acceleration (never gets there).
+ */
+export function timeToReachSpeed(targetSpeed: number, angularAccel: number): number {
+    if (targetSpeed <= 0) return 0;
+    if (angularAccel <= 0) return Number.POSITIVE_INFINITY;
+    return targetSpeed / angularAccel;
+}

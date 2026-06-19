@@ -565,7 +565,7 @@ export const I18N_KEYS = [
     "toast.robot.payload:{0}{1}",
     "toast.robot.motorSet:{0}{1}",
     "toast.robot.selectJoint",
-    "toast.robot.dynamics:{0}{1}",
+    "toast.robot.dynamics:{0}{1}{2}",
     "toast.robot.reach:{0}",
     "toast.measure.faceAngle:{0}",
     "toast.measure.edgeAngle:{0}",

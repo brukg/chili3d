@@ -11,6 +11,9 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Joint time-to-speed** — `timeToReachSpeed(targetSpeed, angularAccel)` =
+  speed ÷ accel (s), guarded; surfaced in the Joint Dynamics command, which now also reports how long the
+  slowest joint takes to spin up to its `maxVelocity` (toast + per-joint console). Core unit-tested.
 - **Batch 11 (robot):** **ros2_control URDF export** — the bridge to real ROS 2 hardware, not just sim: URDF
   export now emits a `<ros2_control>` block exposing every actuated joint with a position command interface
   and position/velocity state interfaces, backed by `mock_components/GenericSystem` (the neutral default —

@@ -574,7 +574,7 @@ export default {
         "toast.robot.unstable:{0}": "Unstable (tips over) — margin {0} mm",
         "toast.robot.payload:{0}{1}": "Max payload: {0} kg (limited by joint {1})",
         "toast.robot.motorSet:{0}{1}": "Applied {1} to {0} joint(s)",
-        "toast.robot.dynamics:{0}{1}": "Slowest joint {1}: max {0} deg/s²",
+        "toast.robot.dynamics:{0}{1}{2}": "Slowest joint {1}: max {0} deg/s² ({2}s to max speed)",
         "toast.robot.reach:{0}": "Reach: {0} mm from base (current pose)",
         "toast.robot.selectJoint": "Select one or more joints to apply a motor",
         "toast.measure.faceAngle:{0}": "Angle between faces: {0}°",
