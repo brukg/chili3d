@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Max angular acceleration core** — `maxAngularAcceleration(availableTorque,
+  inertia)` = spare torque ÷ inertia (rad/s²), the "how fast can this joint accelerate" primitive. Spare
+  torque is `maxEffort − |gravity|`; inertia includes the reflected rotor. 0 with no spare, Infinity for
+  zero inertia. Added to `robot/jointTorque.ts`. Unit-tested (4 cases). Backs the Joint Dynamics command.
 - **Batch 11 (robot):** **Apply Motor command** — pick an actuator preset and apply it to selected joint(s),
   setting `maxEffort`/`gearRatio`/`rotorInertia`/`maxVelocity`/`efficiency` in one step (the joint-side
   analogue of Set Mass from Material). The specs flow straight into Estimate Torque, Payload Capacity, and

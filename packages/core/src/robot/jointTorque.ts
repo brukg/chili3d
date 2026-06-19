@@ -171,3 +171,16 @@ export function motorTorque(jointTorque: number, gearRatio: number, efficiency =
     const eff = efficiency > 0 ? efficiency : 1;
     return jointTorque / (gearRatio * eff);
 }
+
+/**
+ * Peak angular acceleration (rad/s²) a joint can produce from the torque left over after gravity:
+ * availableTorque ÷ inertia (Newton's law for rotation). `availableTorque` is the actuator's spare torque
+ * (e.g. `maxEffort − |gravityHoldingTorque|`) and `inertia` is the rotational inertia about the axis
+ * including the reflected rotor (see {@link inertiaAboutAxis} + {@link reflectedInertia}). Returns 0 with
+ * no spare torque, Infinity for zero inertia (nothing to accelerate).
+ */
+export function maxAngularAcceleration(availableTorque: number, inertia: number): number {
+    if (availableTorque <= 0) return 0;
+    if (inertia <= 0) return Number.POSITIVE_INFINITY;
+    return availableTorque / inertia;
+}

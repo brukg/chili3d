@@ -7,6 +7,7 @@ import {
     effortUtilization,
     gravityHoldingTorque,
     inertiaAboutAxis,
+    maxAngularAcceleration,
     maxPayloadMass,
     motorTorque,
     type PointMass,
@@ -185,5 +186,12 @@ describe("joint torque analysis", () => {
         expect(motorTorque(100, 50, 0.8)).toBeCloseTo(2.5, 9);
         expect(motorTorque(100, 50, 1)).toBeCloseTo(2, 9); // lossless
         expect(motorTorque(100, 50, 0)).toBeCloseTo(2, 9); // non-positive efficiency → ideal
+    });
+
+    test("maxAngularAcceleration is spare torque over inertia", () => {
+        expect(maxAngularAcceleration(10, 2)).toBeCloseTo(5, 9); // 10 N·m / 2 kg·m² = 5 rad/s²
+        expect(maxAngularAcceleration(0, 2)).toBe(0); // no spare torque
+        expect(maxAngularAcceleration(-3, 2)).toBe(0); // gravity already over budget
+        expect(maxAngularAcceleration(10, 0)).toBe(Number.POSITIVE_INFINITY); // nothing to accelerate
     });
 });
