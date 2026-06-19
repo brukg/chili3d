@@ -44,6 +44,7 @@ export * from "./removeSubShapes";
 export * from "./reverseNormal";
 export * from "./rib";
 export * from "./robotCenterOfMass";
+export * from "./robotReach";
 export * from "./rotate";
 export * from "./scale";
 export * from "./scaleNonUniform";

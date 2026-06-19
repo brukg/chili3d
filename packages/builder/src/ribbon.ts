@@ -223,6 +223,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         "modify.jointDynamics",
                         "modify.payloadCapacity",
                         "modify.robotCenterOfMass",
+                        "modify.robotReach",
                         "modify.stabilityCheck",
                     ],
                     ["modify.exportUrdf"],

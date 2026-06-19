@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Robot Reach command** — the current-pose reach envelope: the max distance (mm)
+  from the base link's origin (the link with no link/joint ancestor) to any geometry vertex on the robot —
+  the workspace bounding radius at the present joint values (zero the joints for fully-extended reach). In
+  the robot ribbon tab.
 - **Batch 11 (robot):** **Joint Dynamics command** — "how fast can each joint accelerate its load?": per
   joint it forms the axis inertia (downstream links as point masses + the motor's reflected rotor inertia
   `rotorInertia·gearRatio²`) and divides the spare torque (`maxEffort − gravity hold`) by it for the peak
