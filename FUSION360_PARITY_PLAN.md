@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Validate Robot command** — one-click model check (like Check Geometry, but for the
+  kinematic model): gathers link/joint specs from the tree and runs the validation core, reporting "robot
+  valid" when clean or the error/warning counts (full annotated list to console) otherwise. Catches zero-mass
+  links, unrated/rangeless joints, and joints driving nothing before URDF export. Robot ribbon tab.
 - **Batch 11 (robot):** **Robot validation core** — `validateRobot(links, joints)` returns the modelling
   issues that break or degrade a robot before URDF/sim: zero-mass or geometry-less links, unrated actuated
   joints (maxEffort ≤ 0), empty position ranges (lower ≥ upper on revolute/prismatic), joints driving no

@@ -228,6 +228,7 @@ export const DefaultRibbon: RibbonTabProfile[] = [
                         "modify.straightenedReach",
                         "modify.stabilityCheck",
                         "modify.robotReport",
+                        "modify.validateRobot",
                     ],
                     ["modify.exportUrdf"],
                 ],

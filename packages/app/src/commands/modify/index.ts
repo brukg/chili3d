@@ -60,4 +60,5 @@ export * from "./stabilityCheck";
 export * from "./straightenedReach";
 export * from "./thicken";
 export * from "./trim";
+export * from "./validateRobot";
 export * from "./variableFillet";
