@@ -11,6 +11,12 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Set Mass from Material command** — pick a physical material (steel, aluminium,
+  ABS, …) for one or more links and derive each link's `mass` from its geometry: mass = density · volume,
+  density from the `MaterialPresets` library. Closes the material → mass → torque loop (the new mass feeds
+  Estimate Torque and the URDF `<inertial>`). Material chosen via a `select` property; volume summed over
+  each link's own solids (rigid-invariant, no world transform), kg from mm³ via the 1e-9 factor. Lives in
+  the robot ribbon group next to Create Joint / Create Link.
 - **Batch 11 (robot):** **Estimate Torque command** — the one-click motor-sizing check, wiring the torque
   core into the robot tab next to Create Joint / Export URDF. Walks every joint in the model, gathers its
   downstream links as point masses at their world centres of mass (volume-weighted across each link's

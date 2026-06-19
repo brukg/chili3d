@@ -44,6 +44,7 @@ export * from "./rotate";
 export * from "./scale";
 export * from "./scaleNonUniform";
 export * from "./setColor";
+export * from "./setLinkMass";
 export * from "./sew";
 export * from "./shell";
 export * from "./simplify";
