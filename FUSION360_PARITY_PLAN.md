@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Transmission efficiency** — `motorTorque(jointTorque, gearRatio, efficiency)` now
+  divides by `gearRatio · efficiency`, so a lossy gearbox makes the motor push harder than ideal; an
+  `efficiency` property (0–1, default 1) on `JointNode`, serialized + property-editable. Non-positive
+  efficiency is treated as ideal so callers never divide by zero. Unit-tested (80%/lossless/guard).
 - **Batch 11 (robot):** **Joint gear ratio + reflected inertia** — joints now model their actuator gearing:
   `gearRatio` (motor turns per joint turn, default 1 = direct drive) and `rotorInertia` (kg·m²) on
   `JointNode`, both serialized + property-panel editable. Pure helpers `reflectedInertia(rotorInertia,

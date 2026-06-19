@@ -378,6 +378,7 @@ export default {
         "joint.maxEffort": "Max effort",
         "joint.gearRatio": "Gear ratio",
         "joint.rotorInertia": "Rotor inertia",
+        "joint.efficiency": "Transmission efficiency",
         "joint.damping": "Damping",
         "joint.friction": "Friction",
         "joint.mimicJoint": "Mimic joint (id)",

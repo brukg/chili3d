@@ -143,6 +143,17 @@ export class JointNode extends GroupNode {
         this.setProperty("rotorInertia", value);
     }
 
+    /** Transmission efficiency in (0, 1] — the fraction of motor torque that reaches the joint after
+     * gearbox losses. Default 1 (lossless). Used to size the motor against the joint's required torque. */
+    @serialize()
+    @property("joint.efficiency")
+    get efficiency(): number {
+        return this.getPrivateValue("efficiency", 1);
+    }
+    set efficiency(value: number) {
+        this.setProperty("efficiency", value);
+    }
+
     @serialize()
     @property("joint.damping")
     get damping(): number {

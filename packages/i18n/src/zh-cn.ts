@@ -378,6 +378,7 @@ export default {
         "joint.maxEffort": "最大力矩",
         "joint.gearRatio": "减速比",
         "joint.rotorInertia": "转子惯量",
+        "joint.efficiency": "传动效率",
         "joint.damping": "阻尼",
         "joint.friction": "摩擦",
         "joint.mimicJoint": "模仿关节(id)",

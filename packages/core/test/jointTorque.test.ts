@@ -179,4 +179,11 @@ describe("joint torque analysis", () => {
         expect(motorTorque(10, 0)).toBe(10); // non-positive ratio → unchanged
         expect(motorTorque(-20, 4)).toBeCloseTo(-5, 9); // sign preserved
     });
+
+    test("motorTorque accounts for transmission efficiency", () => {
+        // 80% efficient gearbox → motor must push 1/0.8 harder than ideal
+        expect(motorTorque(100, 50, 0.8)).toBeCloseTo(2.5, 9);
+        expect(motorTorque(100, 50, 1)).toBeCloseTo(2, 9); // lossless
+        expect(motorTorque(100, 50, 0)).toBeCloseTo(2, 9); // non-positive efficiency → ideal
+    });
 });

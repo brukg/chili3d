@@ -161,10 +161,13 @@ export function reflectedInertia(rotorInertia: number, gearRatio: number): numbe
 
 /**
  * Torque the motor must produce (N·m) to deliver a given joint-output torque through a gear reduction:
- * jointTorque ÷ gearRatio (the reduction trades speed for torque; efficiency is assumed ideal). Returns
- * the joint torque unchanged for a non-positive ratio (treated as direct drive).
+ * jointTorque ÷ (gearRatio · efficiency). The reduction trades speed for torque; a real gearbox is
+ * lossy, so a sub-unity `efficiency` (0–1) means the motor must push harder than the ideal. Returns the
+ * joint torque unchanged for a non-positive ratio (direct drive); a non-positive efficiency is treated
+ * as ideal (1) so callers never divide by zero.
  */
-export function motorTorque(jointTorque: number, gearRatio: number): number {
+export function motorTorque(jointTorque: number, gearRatio: number, efficiency = 1): number {
     if (gearRatio <= 0) return jointTorque;
-    return jointTorque / gearRatio;
+    const eff = efficiency > 0 ? efficiency : 1;
+    return jointTorque / (gearRatio * eff);
 }
