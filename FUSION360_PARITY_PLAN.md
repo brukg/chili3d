@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Apply Motor command** — pick an actuator preset and apply it to selected joint(s),
+  setting `maxEffort`/`gearRatio`/`rotorInertia`/`maxVelocity`/`efficiency` in one step (the joint-side
+  analogue of Set Mass from Material). The specs flow straight into Estimate Torque, Payload Capacity, and
+  the URDF `<transmission>`. Motor chosen via a `select` property; in the robot ribbon tab.
 - **Batch 11 (robot):** **Motor preset library** — the joint-side analogue of the material presets: 7
   representative actuator classes (micro/standard/smart servo, NEMA 17/23 steppers, BLDC+gearbox,
   harmonic-drive joint), each bundling rated output torque, gear ratio, rotor inertia, max speed, and

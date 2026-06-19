@@ -2,6 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 export * from "./align";
+export * from "./applyMotor";
 export * from "./array";
 export * from "./break";
 export * from "./brush";
