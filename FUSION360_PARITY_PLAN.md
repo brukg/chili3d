@@ -11,6 +11,10 @@ Items marked **[session]** were shipped in the current rollout.
 
 ## Progress log (most recent first)
 
+- **Batch 11 (robot):** **Robot Report command** — the capstone spec sheet: one click consolidates link/joint
+  counts, total mass + COM, total installed mechanical power, and peak torque utilization across joints into a
+  summary toast (full breakdown to console). Reuses the shared mass model + torque/power cores. Robot ribbon
+  tab — the at-a-glance overview tying the individual analyses together.
 - **Batch 11 (robot):** **Straightened Reach command** — the robot's fully-extended reach: builds the joint
   tree (each joint's link length = pose-invariant distance to its parent joint's pivot; terminal extent =
   farthest tip of its direct child link) and runs the longest-chain core. Distinct from Robot Reach (the

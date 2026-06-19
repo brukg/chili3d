@@ -46,6 +46,7 @@ export * from "./reverseNormal";
 export * from "./rib";
 export * from "./robotCenterOfMass";
 export * from "./robotReach";
+export * from "./robotReport";
 export * from "./rotate";
 export * from "./scale";
 export * from "./scaleNonUniform";
